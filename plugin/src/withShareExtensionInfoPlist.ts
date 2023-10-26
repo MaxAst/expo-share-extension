@@ -3,10 +3,7 @@ import { ConfigPlugin, InfoPlist, withInfoPlist } from "expo/config-plugins";
 import fs from "fs";
 import path from "path";
 
-import {
-  getShareExtensionInfoPlistFileName,
-  getShareExtensionName,
-} from "./index";
+import { getShareExtensionName } from "./index";
 
 export const withShareExtensionInfoPlist: ConfigPlugin = (config) => {
   return withInfoPlist(config, (config) => {
@@ -17,11 +14,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin = (config) => {
       targetName
     );
 
-    const filePath = path.join(
-      config.modRequest.platformProjectRoot,
-      targetName,
-      getShareExtensionInfoPlistFileName(config)
-    );
+    const filePath = path.join(targetPath, "Info.plist");
 
     const infoPlist: InfoPlist = {
       CFBundleName: "$(PRODUCT_NAME)",
@@ -36,6 +29,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin = (config) => {
       UIViewControllerBasedStatusBarAppearance: "NO",
       UILaunchStoryboardName: "SplashScreen",
       UIRequiresFullScreen: true,
+      MinimumOSVersion: "14.0",
       NSExtension: {
         NSExtensionAttributes: {
           NSExtensionActivationRule: {
