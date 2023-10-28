@@ -1,5 +1,4 @@
 import { XcodeProject } from "expo/config-plugins";
-import util from "util";
 
 export function addBuildPhases(
   xcodeProject: XcodeProject,
@@ -54,13 +53,14 @@ export function addBuildPhases(
     targetType
   );
 
-  xcodeProject
-    .buildPhaseObject("PBXCopyFilesBuildPhase", groupName, productFile.target)
-    .files.push({
-      value: productFile.uuid,
-      comment: util.format("%s in %s", productFile.basename, productFile.group), // longComment(file);
-    });
-  xcodeProject.addToPbxBuildFileSection(productFile);
+  xcodeProject.addBuildPhase(
+    [],
+    "PBXCopyFilesBuildPhase",
+    "Copy Files",
+    xcodeProject.getFirstTarget().uuid,
+    targetType
+  );
+  xcodeProject.addToPbxCopyfilesBuildPhase(productFile);
 
   // Frameworks build phase
   xcodeProject.addBuildPhase(
@@ -92,6 +92,7 @@ export function addBuildPhases(
       shellPath: "/bin/sh",
       shellScript:
         'if [[ -f "$PODS_ROOT/../.xcode.env" ]]; then\n  source "$PODS_ROOT/../.xcode.env"\nfi\nif [[ -f "$PODS_ROOT/../.xcode.env.local" ]]; then\n  source "$PODS_ROOT/../.xcode.env.local"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT="$PROJECT_DIR"/..\n\nif [[ "$CONFIGURATION" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z "$ENTRY_FILE" ]]; then\n  # Set the entry JS file using the bundler\'s entry resolution.\n  export ENTRY_FILE="$("$NODE_BINARY" -e "require(\'expo/scripts/resolveAppEntry\')" "$PROJECT_ROOT" ios relative | tail -n 1)"\nfi\n\nif [[ -z "$CLI_PATH" ]]; then\n  # Use Expo CLI\n  export CLI_PATH="$("$NODE_BINARY" --print "require.resolve(\'@expo/cli\')")"\nfi\nif [[ -z "$BUNDLE_COMMAND" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND="export:embed"\nfi\n\n`"$NODE_BINARY" --print "require(\'path\').dirname(require.resolve(\'react-native/package.json\')) + \'/scripts/react-native-xcode.sh\'"`\n\n',
+      // 'if [[ -f "$PODS_ROOT/../.xcode.env" ]]; then\n  source "$PODS_ROOT/../.xcode.env"\nfi\nif [[ -f "$PODS_ROOT/../.xcode.env.local" ]]; then\n  source "$PODS_ROOT/../.xcode.env.local"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT="$PROJECT_DIR"/..\n\nif [[ "$CONFIGURATION" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z "$ENTRY_FILE" ]]; then\n  # Set the entry JS file using the bundler\'s entry resolution.\n  export ENTRY_FILE="$PROJECT_ROOT/index.share.js"\nfi\n\nif [[ -z "$CLI_PATH" ]]; then\n  # Use Expo CLI\n  export CLI_PATH="$("$NODE_BINARY" --print "require.resolve(\'@expo/cli\')")"\nfi\nif [[ -z "$BUNDLE_COMMAND" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND="export:embed"\nfi\n\n`"$NODE_BINARY" --print "require(\'path\').dirname(require.resolve(\'react-native/package.json\')) + \'/scripts/react-native-xcode.sh\'"`\n\n',
     },
     buildPath
   );

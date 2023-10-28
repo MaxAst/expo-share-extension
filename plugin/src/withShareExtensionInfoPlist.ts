@@ -37,7 +37,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin = (config) => {
             NSExtensionActivationSupportsWebPageWithMaxCount: 1,
           },
         },
-        NSExtensionMainStoryboard: "MainInterface",
+        NSExtensionPrincipalClass: "AppDelegate",
         NSExtensionPointIdentifier: "com.apple.share-services",
       },
       NSAppTransportSecurity: {
