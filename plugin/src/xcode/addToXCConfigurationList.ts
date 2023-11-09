@@ -31,6 +31,7 @@ export function addXCConfigurationList(
     SWIFT_EMIT_LOC_STRINGS: "YES",
     TARGETED_DEVICE_FAMILY: `"1,2"`,
     SKIP_INSTALL: "YES",
+    DEFINES_MODULE: "YES",
   };
 
   const buildConfigurationsList = [

@@ -16,38 +16,19 @@ export function addPbxGroup(
     fs.mkdirSync(targetPath, { recursive: true });
   }
 
-  const filesToCopy = [
-    "SplashScreen.storyboard",
-    "AppDelegate.h",
-    "AppDelegate.mm",
-    "main.m",
-  ];
-
-  filesToCopy.forEach((file) => {
-    const source = path.join(platformProjectRoot, projectName, file);
-    copyFileSync(source, targetPath);
-  });
-
-  // Copy Images.xcassets
-  const imagesXcassetsSource = path.join(
-    platformProjectRoot,
-    projectName,
-    "Images.xcassets"
+  const source = path.join(
+    __dirname,
+    "../../swift/ShareExtensionViewController.swift"
   );
-  copyFolderRecursiveSync(imagesXcassetsSource, targetPath);
+  copyFileSync(source, targetPath);
 
   // Add PBX group
   const { uuid: pbxGroupUuid } = xcodeProject.addPbxGroup(
     [
-      "AppDelegate.h",
-      "AppDelegate.mm",
-      "main.m",
+      "ShareExtensionViewController.swift",
       "Info.plist",
-      "Images.xcassets",
-      "SplashScreen.storyboard",
       `${targetName}.entitlements`,
-      "Supporting/Expo.plist",
-      /* "main.jsbundle", */
+      // "main.jsbundle",
     ],
     targetName,
     targetName
@@ -72,23 +53,4 @@ function copyFileSync(source: string, target: string) {
   }
 
   fs.writeFileSync(targetFile, fs.readFileSync(source));
-}
-
-function copyFolderRecursiveSync(source: string, target: string) {
-  const targetPath = path.join(target, path.basename(source));
-  if (!fs.existsSync(targetPath)) {
-    fs.mkdirSync(targetPath, { recursive: true });
-  }
-
-  if (fs.lstatSync(source).isDirectory()) {
-    const files = fs.readdirSync(source);
-    files.forEach((file) => {
-      const currentPath = path.join(source, file);
-      if (fs.lstatSync(currentPath).isDirectory()) {
-        copyFolderRecursiveSync(currentPath, targetPath);
-      } else {
-        copyFileSync(currentPath, targetPath);
-      }
-    });
-  }
 }
