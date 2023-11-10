@@ -32,3 +32,15 @@ For this, I need to build an expo config plugin, that allows me to create an iOS
 2. Select Go > Go to Folder from the menu bar or press Shift + Cmd + G.
 3. Enter ~/Library/Logs/DiagnosticReports/ and click Go.
 4. Look for any recent crash logs related to your share extension. These logs should have a .crash or .ips extension.
+
+## Credits
+
+This project would not be possible without existing work in the react native ecosystem. I'd like to give credit to the following projects and their authors:
+
+- https://github.com/Expensify/react-native-share-menu
+- https://github.com/ajith-ab/react-native-receive-sharing-intent
+- https://github.com/timedtext/expo-config-plugin-ios-share-extension
+- https://github.com/achorein/expo-share-intent-demo
+- https://github.com/EvanBacon/pillar-valley/tree/master/targets/widgets
+- https://github.com/andrew-levy/react-native-safari-extension
+- https://github.com/bndkt/react-native-app-clip
