@@ -51,6 +51,7 @@ This project would not be possible without existing work in the react native eco
 - https://github.com/ajith-ab/react-native-receive-sharing-intent
 - https://github.com/timedtext/expo-config-plugin-ios-share-extension
 - https://github.com/achorein/expo-share-intent-demo
+- https://github.com/andrewsardone/react-native-ios-share-extension
 - https://github.com/EvanBacon/pillar-valley/tree/master/targets/widgets
 - https://github.com/andrew-levy/react-native-safari-extension
 - https://github.com/bndkt/react-native-app-clip
