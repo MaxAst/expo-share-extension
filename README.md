@@ -2,9 +2,19 @@
 
 ## Intro
 
-I want to build an app, that works similar to Pinterest, where users can save links of clothing items that they've come across while shopping online.
+My goal is to build an iOS app, that has an iOS share extension with a custom view (similar to e.g. Pinterest). I've found a few projects that do this, but they either don't work with Expo, or they do not allow me to use a custom view when triggering the share extension. That's why I started to build this project.
 
-For this, I need to build an expo config plugin, that allows me to create an iOS share extension with a custom UI. The plugin will generate the necessary files and add them to my project.
+## TODOs
+
+- [ ] Fix DEBUG build configuration -> iOS share extension target is always in release mode when running the app (see XCode logs to see the print output from `plugin/swift/ShareExtensionViewController.swift`)
+- [ ] The share extension currently uses the same bundle as the main app. I want to create a separate entry point (e.g. index.share.js), to be able to use a separate bundle for the share extension (iOS share extensions have a memory limit, so we need to keep the bundle size small)
+
+## Development
+
+1. Start the expo module build in watch mode: `npm run build`
+2. Start the config plugin build in watch mode: `npm run build plugin`
+3. `cd /example` and generate the iOS project: `npx expo prebuild -p ios`
+4. Run the app from the /example folder: `npm run ios`
 
 ## Troubleshooting
 
