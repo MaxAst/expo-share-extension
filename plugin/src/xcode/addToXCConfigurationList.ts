@@ -25,13 +25,8 @@ export function addXCConfigurationList(
     SWIFT_VERSION: "5.0",
     VERSIONING_SYSTEM: `"apple-generic"`,
     CODE_SIGN_ENTITLEMENTS: `${targetName}/${targetName}.entitlements`,
-    CODE_SIGN_STYLE: "Automatic",
     GENERATE_INFOPLIST_FILE: "YES",
     MARKETING_VERSION: `"${marketingVersion ?? 1}"`,
-    SWIFT_EMIT_LOC_STRINGS: "YES",
-    TARGETED_DEVICE_FAMILY: `"1,2"`,
-    SKIP_INSTALL: "YES",
-    DEFINES_MODULE: "YES",
   };
 
   const buildConfigurationsList = [
@@ -40,6 +35,7 @@ export function addXCConfigurationList(
       isa: "XCBuildConfiguration",
       buildSettings: {
         ...commonBuildSettings,
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "DEBUG",
       },
     },
     {
