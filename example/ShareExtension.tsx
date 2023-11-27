@@ -1,11 +1,16 @@
 import * as ExpoShareExtension from "expo-share-extension";
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 
-export default function App() {
+export default function ShareExtension() {
   return (
     <View style={styles.container}>
       <Text style={{ color: "#313639" }}>{ExpoShareExtension.hello()}</Text>
-      <Button title="Add from App" onPress={() => Alert.alert("added")} />
+      <Button
+        title="Add from share extension"
+        onPress={() => {
+          console.log("pressed from share extension");
+        }}
+      />
     </View>
   );
 }

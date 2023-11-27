@@ -7,7 +7,7 @@ My goal is to build an iOS app, that has an iOS share extension with a custom vi
 ## TODOs
 
 - [x] Fix DEBUG build configuration -> iOS share extension target is always in release mode when running the app (see XCode logs to see the print output from `plugin/swift/ShareExtensionViewController.swift`)
-- [ ] The share extension currently uses the same bundle as the main app. I want to create a separate entry point (e.g. index.share.js), to be able to use a separate bundle for the share extension (iOS share extensions have a memory limit, so we need to keep the bundle size small)
+- [x] The share extension currently uses the same bundle as the main app. I want to create a separate entry point (e.g. index.share.js), to be able to use a separate bundle for the share extension (iOS share extensions have a memory limit, so we need to keep the bundle size small)
 
 ## Development
 

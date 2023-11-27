@@ -8,7 +8,7 @@ class ShareExtensionViewController: UIViewController {
 
         #if DEBUG
             // Setup the React Native view for Debug mode
-            let jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")
+            let jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
             // let jsCodeLocation = URL(string: "http://127.0.0.1:8081/node_modules/expo/AppEntry.bundle?platform=ios&dev=true&minify=false")
         #else
             // Setup the React Native view for Release mode
@@ -18,7 +18,7 @@ class ShareExtensionViewController: UIViewController {
         if let validJsCodeLocation = jsCodeLocation {
             let rootView = RCTRootView(
                 bundleURL: validJsCodeLocation,
-                moduleName: "main",
+                moduleName: "extension",
                 initialProperties: nil,
                 launchOptions: nil
             )
