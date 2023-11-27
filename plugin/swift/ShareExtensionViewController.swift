@@ -6,15 +6,13 @@ class ShareExtensionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = .red
-
-        // Setup the React Native view
-        let jsCodeLocation: URL?
-
         #if DEBUG
-            jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry", fallbackResource: nil)
+            // Setup the React Native view for Debug mode
+            let jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")
+            // let jsCodeLocation = URL(string: "http://127.0.0.1:8081/node_modules/expo/AppEntry.bundle?platform=ios&dev=true&minify=false")
         #else
-            jsCodeLocation = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+            // Setup the React Native view for Release mode
+            let jsCodeLocation = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
         #endif
 
         if let validJsCodeLocation = jsCodeLocation {
