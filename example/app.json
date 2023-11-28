@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.shareextension.example"
@@ -26,6 +28,30 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["../app.plugin.js"]
+    "plugins": [
+      "../app.plugin.js"
+    ],
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "exposhareextensionexampleShareExtension",
+                  "bundleIdentifier": "expo.modules.shareextension.example.ShareExtension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.expo.modules.shareextension.example.ShareExtension"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "e7e82672-550b-4e78-8e92-5f6231d13230"
+      }
+    }
   }
 }

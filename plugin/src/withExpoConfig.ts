@@ -41,8 +41,8 @@ export const withExpoConfig: ConfigPlugin = (config) => {
               appExtensions: [
                 {
                   ...(shareExtensionConfig ?? {
-                    extensionName,
-                    extensionBundleIdentifier,
+                    targetName: extensionName,
+                    bundleIdentifier: extensionBundleIdentifier,
                   }),
                   entitlements: {
                     ...shareExtensionConfig?.entitlements,
