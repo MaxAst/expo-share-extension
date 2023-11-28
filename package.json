@@ -1,7 +1,7 @@
 {
   "name": "expo-share-extension",
   "version": "0.1.0",
-  "description": "My new module",
+  "description": "Expo config plugin to create an iOS share extension.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
