@@ -6,8 +6,9 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "ios-extension": "expo run:ios --scheme",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "eas-build-pre-install": "cd .. && npm install && npm run build && npm run build plugin",
+    "prebuild": "expo prebuild -p ios --clean"
   },
   "dependencies": {
     "expo": "~49.0.15",
