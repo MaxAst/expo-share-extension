@@ -21,11 +21,14 @@
     "expo-share-extension",
     "ExpoShareExtension"
   ],
-  "repository": "https://github.com/MaxAst/expo-share-extension",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxAst/expo-share-extension.git"
+  },
   "bugs": {
     "url": "https://github.com/MaxAst/expo-share-extension/issues"
   },
-  "author": "Max Ast <maxast31@gmail.com> (https://github.com/MaxAst)",
+  "author": "Max Ast (https://github.com/MaxAst)",
   "license": "MIT",
   "homepage": "https://github.com/MaxAst/expo-share-extension#readme",
   "dependencies": {},
