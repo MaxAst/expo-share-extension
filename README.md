@@ -1,47 +1,90 @@
 # Expo Share Extension
 
-## Intro
+![npm](https://img.shields.io/npm/v/expo-share-extension.svg)
+![License](https://img.shields.io/npm/l/expo-share-extension.svg)
+![Downloads](https://img.shields.io/npm/dm/expo-share-extension.svg)
+![GitHub stars](https://img.shields.io/github/stars/MaxAst/expo-share-extension.svg)
 
-My goal is to build an iOS app, that has an iOS share extension with a custom view (similar to e.g. Pinterest). I've found a few projects that do this, but they either don't work with Expo, or they do not allow me to use a custom view when triggering the share extension. That's why I started to build this project.
+Create an iOS share extension with a custom view (similar to e.g. Pinterest).
 
-## TODOs
+## Installation
 
-- [x] Fix DEBUG build configuration -> iOS share extension target is always in release mode when running the app (see XCode logs to see the print output from `plugin/swift/ShareExtensionViewController.swift`)
-- [x] The share extension currently uses the same bundle as the main app. I want to create a separate entry point (e.g. index.share.js), to be able to use a separate bundle for the share extension (iOS share extensions have a memory limit, so we need to keep the bundle size small)
+1. Install the package
+
+```
+npx expo install expo-share-extension
+```
+
+2. Update app.json/app.config.js
+
+```
+"expo": {
+  ...
+  "plugins": ["expo-share-extension"],
+  ...
+}
+```
+
+3. Update package.json
+
+```
+{
+  ...
+  "main": "index.js",
+  ...
+}
+```
+
+4. Create an `index.js` in the root of your project
+
+```
+import { registerRootComponent } from "expo";
+import { AppRegistry } from "react-native";
+
+import App from "./App";
+import ShareExtension from "./ShareExtension";
+
+registerRootComponent(App);
+
+AppRegistry.registerComponent("extension", () => ShareExtension);
+
+```
 
 ## Development
+
+If you want to contribute to this project, you can use the example app to test your changes. Run the following commands to get started:
 
 1. Start the expo module build in watch mode: `npm run build`
 2. Start the config plugin build in watch mode: `npm run build plugin`
 3. `cd /example` and generate the iOS project: `npx expo prebuild -p ios`
 4. Run the app from the /example folder: `npm run ios`
 
-## Troubleshooting
+### Troubleshooting
 
-### Clear XCode Cache
+#### Clear XCode Cache
 
 1. navigate to `~/Library/Developer/Xcode/DerivedData/`
 2. `rm -rf` folders that are prefixed with your project name
 
-### Clear CocoaPods Cache
+#### Clear CocoaPods Cache
 
 1. `pod cache clean --all`
 2. `pod deintegrate`
 
-### Attach Debugger to Share Extension Process:
+#### Attach Debugger to Share Extension Process:
 
 1. In XCode in the top menu, navigate to Debug > Attach to Process.
 2. In the submenu, you should see a list of running processes. Find your share extension's name in this list. If you don't see it, you can try typing its name into the search box at the bottom.
 3. Once you've located your share extension's process, click on it to attach the debugger to that process.
 4. With the debugger attached, you can also set breakpoints within your share extension's code. If these breakpoints are hit, Xcode will pause execution and allow you to inspect variables and step through your code, just like you would with your main app.
 
-### Check Device Logs
+#### Check Device Logs
 
 1. Open the Console app from the Applications/Utilities folder
 2. Select your device from the Devices list
 3. Filter the log messages by process name matching your share extension target name
 
-### Check Crash Logs
+#### Check Crash Logs
 
 1. On your Mac, open Finder.
 2. Select Go > Go to Folder from the menu bar or press Shift + Cmd + G.
