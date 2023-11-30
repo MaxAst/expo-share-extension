@@ -24,6 +24,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin = (config) => {
       CFBundleExecutable: "$(EXECUTABLE_NAME)",
       CFBundleInfoDictionaryVersion: "6.0",
       CFBundlePackageType: "$(PRODUCT_BUNDLE_PACKAGE_TYPE)",
+      UILaunchStoryboardName: "SplashScreen",
       NSExtension: {
         NSExtensionAttributes: {
           NSExtensionActivationRule: {

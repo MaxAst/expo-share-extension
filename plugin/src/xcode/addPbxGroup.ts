@@ -16,11 +16,15 @@ export function addPbxGroup(
     fs.mkdirSync(targetPath, { recursive: true });
   }
 
-  const source = path.join(
-    __dirname,
-    "../../swift/ShareExtensionViewController.swift"
+  copyFileSync(
+    path.join(__dirname, "../../swift/ShareExtensionViewController.swift"),
+    targetPath
   );
-  copyFileSync(source, targetPath);
+
+  copyFileSync(
+    path.join(platformProjectRoot, projectName, "SplashScreen.storyboard"),
+    targetPath
+  );
 
   // Add PBX group
   const { uuid: pbxGroupUuid } = xcodeProject.addPbxGroup(
@@ -28,6 +32,7 @@ export function addPbxGroup(
       "ShareExtensionViewController.swift",
       "Info.plist",
       `${targetName}.entitlements`,
+      "SplashScreen.storyboard",
       // "main.jsbundle",
     ],
     targetName,

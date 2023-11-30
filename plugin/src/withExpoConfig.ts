@@ -14,7 +14,9 @@ type iOSExtensionConfig = {
 
 // extend expo app config with app extension config for our share extension
 export const withExpoConfig: ConfigPlugin = (config) => {
-  if (!config.ios?.bundleIdentifier) throw new Error("No bundle identifier");
+  if (!config.ios?.bundleIdentifier) {
+    throw new Error("You need to specify ios.bundleIdentifier in app.json.");
+  }
 
   const extensionName = getShareExtensionName(config);
   const extensionBundleIdentifier = getShareExtensionBundleIdentifier(config);
