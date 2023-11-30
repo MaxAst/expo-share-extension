@@ -7,11 +7,8 @@ class ShareExtensionViewController: UIViewController {
         super.viewDidLoad()
 
         #if DEBUG
-            // Setup the React Native view for Debug mode
             let jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
-            // let jsCodeLocation = URL(string: "http://127.0.0.1:8081/node_modules/expo/AppEntry.bundle?platform=ios&dev=true&minify=false")
         #else
-            // Setup the React Native view for Release mode
             let jsCodeLocation = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
         #endif
 
