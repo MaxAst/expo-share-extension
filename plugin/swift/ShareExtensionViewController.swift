@@ -7,7 +7,7 @@ class ShareExtensionViewController: UIViewController {
         super.viewDidLoad()
 
         #if DEBUG
-            let jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+            let jsCodeLocation = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index.share")
         #else
             let jsCodeLocation = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
         #endif
