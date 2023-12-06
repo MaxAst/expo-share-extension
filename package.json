@@ -31,11 +31,13 @@
   "author": "Max Ast (https://github.com/MaxAst)",
   "license": "MIT",
   "homepage": "https://github.com/MaxAst/expo-share-extension#readme",
-  "dependencies": {},
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
   "devDependencies": {
-    "@types/react": "^18.0.25",
-    "expo-module-scripts": "^3.0.11",
-    "expo-modules-core": "^1.5.11"
+    "@types/react": "^18.2.42",
+    "expo-module-scripts": "^3.1.0",
+    "expo-modules-core": "^1.5.12"
   },
   "peerDependencies": {
     "expo": "*",
