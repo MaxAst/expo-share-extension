@@ -10,11 +10,15 @@ import { withShareExtensionTarget } from "./withShareExtensionTarget";
 
 export const getAppGroups = (identifier: string) => [`group.${identifier}`];
 
-export const getShareExtensionBundleIdentifier = (config: ExpoConfig) => {
+export const getAppBundleIdentifier = (config: ExpoConfig) => {
   if (!config.ios?.bundleIdentifier) {
     throw new Error("No bundle identifier");
   }
-  return `${config.ios?.bundleIdentifier}.ShareExtension`;
+  return config.ios?.bundleIdentifier;
+};
+
+export const getShareExtensionBundleIdentifier = (config: ExpoConfig) => {
+  return `${getAppBundleIdentifier(config)}.ShareExtension`;
 };
 
 export const getShareExtensionName = (config: ExpoConfig) => {
