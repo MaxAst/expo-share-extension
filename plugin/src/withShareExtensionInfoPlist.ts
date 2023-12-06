@@ -3,9 +3,11 @@ import { ConfigPlugin, InfoPlist, withInfoPlist } from "expo/config-plugins";
 import fs from "fs";
 import path from "path";
 
-import { getShareExtensionName } from "./index";
+import { type BackgroundColor, getShareExtensionName } from "./index";
 
-export const withShareExtensionInfoPlist: ConfigPlugin = (config) => {
+export const withShareExtensionInfoPlist: ConfigPlugin<{
+  backgroundColor?: BackgroundColor;
+}> = (config, { backgroundColor }) => {
   return withInfoPlist(config, (config) => {
     const targetName = getShareExtensionName(config);
 
@@ -17,13 +19,35 @@ export const withShareExtensionInfoPlist: ConfigPlugin = (config) => {
     const filePath = path.join(targetPath, "Info.plist");
 
     const infoPlist: InfoPlist = {
-      CFBundleName: "$(PRODUCT_NAME)",
-      CFBundleDisplayName: "$(PRODUCT_NAME) Share Extension",
-      CFBundleIdentifier: "$(PRODUCT_BUNDLE_IDENTIFIER)",
       CFBundleDevelopmentRegion: "$(DEVELOPMENT_LANGUAGE)",
+      CFBundleDisplayName: "$(PRODUCT_NAME) Share Extension",
       CFBundleExecutable: "$(EXECUTABLE_NAME)",
+      CFBundleIdentifier: "$(PRODUCT_BUNDLE_IDENTIFIER)",
       CFBundleInfoDictionaryVersion: "6.0",
+      CFBundleName: "$(PRODUCT_NAME)",
       CFBundlePackageType: "$(PRODUCT_BUNDLE_PACKAGE_TYPE)",
+      CFBundleShortVersionString: "$(MARKETING_VERSION)",
+      CFBundleVersion: "$(CURRENT_PROJECT_VERSION)",
+      LSRequiresIPhoneOS: true,
+      NSAppTransportSecurity: {
+        NSExceptionDomains: {
+          localhost: {
+            NSExceptionAllowsInsecureHTTPLoads: true,
+          },
+        },
+      },
+      UIRequiredDeviceCapabilities: ["armv7"],
+      UIStatusBarStyle: "UIStatusBarStyleDefault",
+      UISupportedInterfaceOrientations: [
+        "UIInterfaceOrientationPortrait",
+        "UIInterfaceOrientationPortraitUpsideDown",
+      ],
+      UIUserInterfaceStyle: "Light",
+      UIViewControllerBasedStatusBarAppearance: false,
+      UIApplicationSceneManifest: {
+        UIApplicationSupportsMultipleScenes: true,
+        UISceneConfigurations: {},
+      },
       NSExtension: {
         NSExtensionAttributes: {
           NSExtensionActivationRule: {
@@ -35,15 +59,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin = (config) => {
           "$(PRODUCT_MODULE_NAME).ShareExtensionViewController",
         NSExtensionPointIdentifier: "com.apple.share-services",
       },
-      NSAppTransportSecurity: {
-        NSAllowsArbitraryLoads: config.developmentClient,
-        NSExceptionDomains: {
-          localhost: {
-            NSExceptionAllowsInsecureHTTPLoads: config.developmentClient,
-          },
-        },
-        NSAllowsLocalNetworking: config.developmentClient,
-      },
+      ShareExtensionBackgroundColor: backgroundColor,
     };
 
     fs.mkdirSync(path.dirname(filePath), {
