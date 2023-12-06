@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 
-export default function ShareExtension() {
+export default function ShareExtension({ url }: { url: string }) {
   return (
     <View
       style={{
@@ -10,7 +10,7 @@ export default function ShareExtension() {
         justifyContent: "center",
       }}
     >
-      <Text style={{ fontFamily: "Inter-Black", fontSize: 30 }}>WTF</Text>
+      <Text style={{ fontSize: 30 }}>{url}</Text>
       <Text style={{ fontSize: 20 }}>Platform Default</Text>
     </View>
   );

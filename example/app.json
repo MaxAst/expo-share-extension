@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.shareextension.example"
@@ -29,7 +27,17 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "../app.plugin.js"
+      [
+        "../app.plugin.js",
+        {
+          "backgroundColor": {
+            "red": 255,
+            "green": 255,
+            "blue": 255,
+            "alpha": 0.8
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {
