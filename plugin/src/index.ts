@@ -1,5 +1,6 @@
 import { type ExpoConfig } from "@expo/config-types";
 import { ConfigPlugin, IOSConfig, withPlugins } from "expo/config-plugins";
+import { z } from "zod";
 
 import { withAppEntitlements } from "./withAppEntitlements";
 import { withExpoConfig } from "./withExpoConfig";
@@ -10,11 +11,15 @@ import { withShareExtensionTarget } from "./withShareExtensionTarget";
 
 export const getAppGroups = (identifier: string) => [`group.${identifier}`];
 
-export const getShareExtensionBundleIdentifier = (config: ExpoConfig) => {
+export const getAppBundleIdentifier = (config: ExpoConfig) => {
   if (!config.ios?.bundleIdentifier) {
     throw new Error("No bundle identifier");
   }
-  return `${config.ios?.bundleIdentifier}.ShareExtension`;
+  return config.ios?.bundleIdentifier;
+};
+
+export const getShareExtensionBundleIdentifier = (config: ExpoConfig) => {
+  return `${getAppBundleIdentifier(config)}.ShareExtension`;
 };
 
 export const getShareExtensionName = (config: ExpoConfig) => {
@@ -26,12 +31,32 @@ export const getShareExtensionEntitlementsFileName = (config: ExpoConfig) => {
   return `${name}.entitlements`;
 };
 
-const withShareExtension: ConfigPlugin = (config) => {
+const rgbaSchema = z.object({
+  red: z.number().min(0).max(255),
+  green: z.number().min(0).max(255),
+  blue: z.number().min(0).max(255),
+  alpha: z.number().min(0).max(1),
+});
+
+export type BackgroundColor = z.infer<typeof rgbaSchema>;
+
+const withShareExtension: ConfigPlugin<{
+  backgroundColor: BackgroundColor;
+}> = (config, props) => {
+  if (props?.backgroundColor) {
+    rgbaSchema.parse(props.backgroundColor);
+  }
+
   return withPlugins(config, [
     withExpoConfig,
     withAppEntitlements,
     [withPodfile, { excludePackages: [] }],
-    withShareExtensionInfoPlist,
+    [
+      withShareExtensionInfoPlist,
+      {
+        backgroundColor: props?.backgroundColor,
+      },
+    ],
     withShareExtensionEntitlements,
     withShareExtensionTarget,
   ]);

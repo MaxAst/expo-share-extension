@@ -4,8 +4,8 @@ import fs from "fs";
 import path from "path";
 
 import {
+  getAppBundleIdentifier,
   getAppGroups,
-  getShareExtensionBundleIdentifier,
   getShareExtensionName,
 } from "./index";
 
@@ -19,7 +19,7 @@ export const withShareExtensionEntitlements: ConfigPlugin = (config) => {
     );
     const filePath = path.join(targetPath, `${targetName}.entitlements`);
 
-    const bundleIdentifier = getShareExtensionBundleIdentifier(config);
+    const bundleIdentifier = getAppBundleIdentifier(config);
 
     const shareExtensionEntitlements = {
       "com.apple.security.application-groups": getAppGroups(bundleIdentifier),

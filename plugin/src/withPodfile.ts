@@ -33,14 +33,7 @@ export const withPodfile: ConfigPlugin<{
         comment: "#",
       }).contents;
 
-      const useExpoModules =
-        excludedPackages && excludedPackages.length > 0
-          ? `exclude = ["${excludedPackages.join(`", "`)}"]
-      use_expo_modules!(exclude: exclude)`
-          : `use_expo_modules!`;
-
       const shareExtensionTarget = `target '${targetName}' do          
-  ${useExpoModules}
   config = use_native_modules!
           
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
