@@ -1,5 +1,5 @@
 {
-  "name": "expo-share-extension-example",
+  "name": "basic",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,8 @@
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.7.1",
     "react": "18.2.0",
-    "react-native": "0.72.6"
+    "react-native": "0.72.6",
+    "expo-dev-client": "~2.4.12"
   },
   "devDependencies": {
     "@babel/core": "^7.23.5",
