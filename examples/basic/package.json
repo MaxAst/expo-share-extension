@@ -7,7 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "eas-build-pre-install": "cd .. && npm install && npm run build && npm run build plugin",
+    "eas-build-pre-install": "cd ../.. && npm install && npm run build && npm run build plugin",
     "prebuild": "expo prebuild -p ios --clean"
   },
   "dependencies": {
@@ -26,7 +26,7 @@
   "private": true,
   "expo": {
     "autolinking": {
-      "nativeModulesDir": ".."
+      "nativeModulesDir": "../.."
     }
   }
 }
