@@ -1,0 +1,69 @@
+{
+  "expo": {
+    "name": "with-firebase",
+    "slug": "with-firebase",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "expo.modules.shareextension.withfirebase",
+      "googleServicesFile": "./firebase-credentials/GoogleService-Info.plist"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "expo.modules.shareextension.withfirebase",
+      "googleServicesFile": "./firebase-credentials/google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "../../app.plugin.js",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "withfirebaseShareExtension",
+                  "bundleIdentifier": "expo.modules.shareextension.withfirebase.ShareExtension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.expo.modules.shareextension.withfirebase"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "6f0eb684-6598-4172-a0f4-3b97856fb527"
+      }
+    }
+  }
+}
