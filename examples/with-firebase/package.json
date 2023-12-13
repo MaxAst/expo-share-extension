@@ -1,5 +1,5 @@
 {
-  "name": "expo-share-extension-example",
+  "name": "with-firebase",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -7,15 +7,21 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "eas-build-pre-install": "cd .. && npm install && npm run build && npm run build plugin",
+    "eas-build-pre-install": "cd ../.. && npm install && npm run build && npm run build plugin",
     "prebuild": "expo prebuild -p ios --clean"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^18.7.1",
+    "@react-native-firebase/auth": "^18.7.1",
+    "@react-native-firebase/firestore": "^18.7.1",
     "expo": "~49.0.21",
+    "expo-build-properties": "~0.8.3",
+    "expo-dev-client": "~2.4.12",
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.7.1",
     "react": "18.2.0",
-    "react-native": "0.72.6"
+    "react-native": "0.72.6",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@babel/core": "^7.23.5",
@@ -25,7 +31,7 @@
   "private": true,
   "expo": {
     "autolinking": {
-      "nativeModulesDir": ".."
+      "nativeModulesDir": "../.."
     }
   }
 }

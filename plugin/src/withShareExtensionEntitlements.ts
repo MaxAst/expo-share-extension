@@ -1,5 +1,5 @@
-import { ConfigPlugin, withInfoPlist } from "@expo/config-plugins";
 import plist from "@expo/plist";
+import { ConfigPlugin, withEntitlementsPlist } from "expo/config-plugins";
 import fs from "fs";
 import path from "path";
 
@@ -10,7 +10,7 @@ import {
 } from "./index";
 
 export const withShareExtensionEntitlements: ConfigPlugin = (config) => {
-  return withInfoPlist(config, (config) => {
+  return withEntitlementsPlist(config, (config) => {
     const targetName = getShareExtensionName(config);
 
     const targetPath = path.join(

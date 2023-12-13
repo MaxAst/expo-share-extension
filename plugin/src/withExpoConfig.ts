@@ -49,7 +49,7 @@ export const withExpoConfig: ConfigPlugin = (config) => {
                   entitlements: {
                     ...shareExtensionConfig?.entitlements,
                     "com.apple.security.application-groups": getAppGroups(
-                      extensionBundleIdentifier
+                      config.ios?.bundleIdentifier
                     ),
                   },
                 },

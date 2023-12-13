@@ -1,5 +1,7 @@
 import { ConfigPlugin } from "@expo/config-plugins";
 import { withXcodeProject } from "expo/config-plugins";
+import fs from "fs";
+import path from "path";
 
 import {
   getShareExtensionBundleIdentifier,
@@ -23,7 +25,11 @@ export const withShareExtensionTarget: ConfigPlugin = (config) => {
 
     const targetUuid = xcodeProject.generateUuid();
     const groupName = "Embed Foundation Extensions";
-    const { projectName, platformProjectRoot } = config.modRequest;
+    const { platformProjectRoot, projectRoot } = config.modRequest;
+
+    const googleServicesFilePath = config.ios?.googleServicesFile
+      ? path.resolve(projectRoot, config.ios.googleServicesFile)
+      : undefined;
 
     const xCConfigurationList = addXCConfigurationList(xcodeProject, {
       targetName,
@@ -49,15 +55,16 @@ export const withShareExtensionTarget: ConfigPlugin = (config) => {
     addTargetDependency(xcodeProject, target);
 
     addPbxGroup(xcodeProject, {
-      projectName: projectName as string,
       targetName,
       platformProjectRoot,
+      googleServicesFilePath,
     });
 
     addBuildPhases(xcodeProject, {
       targetUuid,
       groupName,
       productFile,
+      resources: googleServicesFilePath ? ["GoogleService-Info.plist"] : [],
     });
 
     return config;

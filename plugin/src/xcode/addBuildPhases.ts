@@ -6,6 +6,7 @@ export function addBuildPhases(
     targetUuid,
     groupName,
     productFile,
+    resources,
   }: {
     targetUuid: string;
     groupName: string;
@@ -15,6 +16,7 @@ export function addBuildPhases(
       basename: string;
       group: string;
     };
+    resources: string[];
   }
 ) {
   const buildPath = `"$(CONTENTS_FOLDER_PATH)/ShareExtensions"`;
@@ -74,7 +76,7 @@ export function addBuildPhases(
 
   // Resources build phase
   xcodeProject.addBuildPhase(
-    [],
+    resources,
     "PBXResourcesBuildPhase",
     groupName,
     targetUuid,
