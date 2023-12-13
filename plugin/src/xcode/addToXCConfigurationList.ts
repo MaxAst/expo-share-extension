@@ -27,6 +27,7 @@ export function addXCConfigurationList(
     CODE_SIGN_ENTITLEMENTS: `${targetName}/${targetName}.entitlements`,
     GENERATE_INFOPLIST_FILE: "YES",
     MARKETING_VERSION: `"${marketingVersion ?? 1}"`,
+    ENABLE_ON_DEMAND_RESOURCES: "NO",
   };
 
   const buildConfigurationsList = [
