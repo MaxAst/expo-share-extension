@@ -1,6 +1,5 @@
 import { ConfigPlugin } from "@expo/config-plugins";
 import { withXcodeProject } from "expo/config-plugins";
-import fs from "fs";
 import path from "path";
 
 import {

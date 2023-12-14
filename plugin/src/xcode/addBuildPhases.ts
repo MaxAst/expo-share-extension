@@ -93,7 +93,7 @@ export function addBuildPhases(
     {
       shellPath: "/bin/sh",
       shellScript:
-        'set -e\n\nWITH_ENVIRONMENT="../node_modules/react-native/scripts/xcode/with-environment.sh"\nREACT_NATIVE_XCODE="../node_modules/react-native/scripts/react-native-xcode.sh"\n\nexport ENTRY_FILE=index.share.js\n/bin/sh -c "$WITH_ENVIRONMENT $REACT_NATIVE_XCODE"\n',
+        'set -e; NODE_BINARY=${NODE_BINARY:-node}; REACT_NATIVE_SCRIPTS_PATH=$("$NODE_BINARY" --print "require(\'path\').dirname(require.resolve(\'react-native/package.json\')) + \'/scripts\'"); WITH_ENVIRONMENT="$REACT_NATIVE_SCRIPTS_PATH/xcode/with-environment.sh"; REACT_NATIVE_XCODE="$REACT_NATIVE_SCRIPTS_PATH/react-native-xcode.sh"; export ENTRY_FILE=index.share.js; /bin/sh -c "$WITH_ENVIRONMENT $REACT_NATIVE_XCODE";',
     },
     buildPath
   );
