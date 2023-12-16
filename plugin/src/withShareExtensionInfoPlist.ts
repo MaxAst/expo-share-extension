@@ -18,7 +18,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
 
     const filePath = path.join(targetPath, "Info.plist");
 
-    const infoPlist: InfoPlist = {
+    let infoPlist: InfoPlist = {
       CFBundleDevelopmentRegion: "$(DEVELOPMENT_LANGUAGE)",
       CFBundleDisplayName: "$(PRODUCT_NAME) Share Extension",
       CFBundleExecutable: "$(EXECUTABLE_NAME)",
@@ -61,6 +61,15 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
       },
       ShareExtensionBackgroundColor: backgroundColor,
     };
+
+    // see https://github.com/expo/expo/blob/main/packages/expo-apple-authentication/plugin/src/withAppleAuthIOS.ts#L3-L17
+    if (config.ios?.usesAppleSignIn) {
+      infoPlist = {
+        ...infoPlist,
+        CFBundleAllowedMixedLocalizations:
+          config.modResults.CFBundleAllowMixedLocalizations ?? true,
+      };
+    }
 
     fs.mkdirSync(path.dirname(filePath), {
       recursive: true,

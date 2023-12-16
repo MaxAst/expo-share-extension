@@ -9,6 +9,10 @@ export const withAppEntitlements: ConfigPlugin = (config) => {
     config.modResults["com.apple.security.application-groups"] =
       getAppGroups(bundleIdentifier);
 
+    if (config.ios?.usesAppleSignIn) {
+      config.modResults["com.apple.developer.applesignin"] = ["Default"];
+    }
+
     return config;
   });
 };
