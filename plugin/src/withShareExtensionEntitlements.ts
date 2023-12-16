@@ -21,9 +21,16 @@ export const withShareExtensionEntitlements: ConfigPlugin = (config) => {
 
     const bundleIdentifier = getAppBundleIdentifier(config);
 
-    const shareExtensionEntitlements = {
+    let shareExtensionEntitlements: Record<string, string | string[]> = {
       "com.apple.security.application-groups": getAppGroups(bundleIdentifier),
     };
+
+    if (config.ios?.usesAppleSignIn) {
+      shareExtensionEntitlements = {
+        ...shareExtensionEntitlements,
+        "com.apple.developer.applesignin": ["Default"],
+      };
+    }
 
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     fs.writeFileSync(filePath, plist.build(shareExtensionEntitlements));
