@@ -41,7 +41,8 @@ const rgbaSchema = z.object({
 export type BackgroundColor = z.infer<typeof rgbaSchema>;
 
 const withShareExtension: ConfigPlugin<{
-  backgroundColor: BackgroundColor;
+  backgroundColor?: BackgroundColor;
+  excludedPackages?: string[];
 }> = (config, props) => {
   if (props?.backgroundColor) {
     rgbaSchema.parse(props.backgroundColor);
@@ -50,7 +51,7 @@ const withShareExtension: ConfigPlugin<{
   return withPlugins(config, [
     withExpoConfig,
     withAppEntitlements,
-    [withPodfile, { excludePackages: [] }],
+    [withPodfile, { excludedPackages: props?.excludedPackages ?? [] }],
     [
       withShareExtensionInfoPlist,
       {
