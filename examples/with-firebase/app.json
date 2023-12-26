@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.shareextension.withfirebase",
@@ -31,7 +29,17 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      [
       "../../app.plugin.js",
+        {
+          "excludedPackages": [
+            "expo-dev-client",
+            "expo-splash-screen",
+            "expo-status-bar"
+          ],
+          "googleServicesFile": "./firebase-credentials/share-extension/GoogleService-Info.plist"
+        }
+      ],
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       [

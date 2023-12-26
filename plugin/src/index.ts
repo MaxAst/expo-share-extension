@@ -43,6 +43,7 @@ export type BackgroundColor = z.infer<typeof rgbaSchema>;
 const withShareExtension: ConfigPlugin<{
   backgroundColor?: BackgroundColor;
   excludedPackages?: string[];
+  googleServicesFile?: string;
 }> = (config, props) => {
   if (props?.backgroundColor) {
     rgbaSchema.parse(props.backgroundColor);
@@ -59,7 +60,12 @@ const withShareExtension: ConfigPlugin<{
       },
     ],
     withShareExtensionEntitlements,
-    withShareExtensionTarget,
+    [
+      withShareExtensionTarget,
+      {
+        googleServicesFile: props?.googleServicesFile,
+      },
+    ],
   ]);
 };
 

@@ -14,7 +14,9 @@ import { addToPbxNativeTargetSection } from "./xcode/addToPbxNativeTargetSection
 import { addToPbxProjectSection } from "./xcode/addToPbxProjectSection";
 import { addXCConfigurationList } from "./xcode/addToXCConfigurationList";
 
-export const withShareExtensionTarget: ConfigPlugin = (config) => {
+export const withShareExtensionTarget: ConfigPlugin<{
+  googleServicesFile?: string;
+}> = (config, { googleServicesFile }) => {
   return withXcodeProject(config, async (config) => {
     const xcodeProject = config.modResults;
 
@@ -26,8 +28,14 @@ export const withShareExtensionTarget: ConfigPlugin = (config) => {
     const groupName = "Embed Foundation Extensions";
     const { platformProjectRoot, projectRoot } = config.modRequest;
 
-    const googleServicesFilePath = config.ios?.googleServicesFile
-      ? path.resolve(projectRoot, config.ios.googleServicesFile)
+    if (config.ios?.googleServicesFile && !googleServicesFile) {
+      console.log(
+        "Warning: No Google Services file specified for Share Extension"
+      );
+    }
+
+    const googleServicesFilePath = googleServicesFile
+      ? path.resolve(projectRoot, googleServicesFile)
       : undefined;
 
     const xCConfigurationList = addXCConfigurationList(xcodeProject, {
