@@ -15,7 +15,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.shareextension.withfirebase",
-      "googleServicesFile": "./firebase-credentials/GoogleService-Info.plist"
+      "googleServicesFile": "./firebase-credentials/GoogleService-Info.plist",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +31,7 @@
     },
     "plugins": [
       [
-      "../../app.plugin.js",
+        "../../app.plugin.js",
         {
           "excludedPackages": [
             "expo-dev-client",
@@ -40,6 +41,7 @@
           "googleServicesFile": "./firebase-credentials/share-extension/GoogleService-Info.plist"
         }
       ],
+      "expo-apple-authentication",
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       [

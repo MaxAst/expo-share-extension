@@ -2,6 +2,8 @@ import auth, { type FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useEffect, useState } from "react";
 import { Alert, Button, Text, View, StyleSheet } from "react-native";
 
+import { AppleAuthLoginButton } from "./components/AppleAuthLogin";
+
 export default function ShareExtension({ url }: { url: string }) {
   const [session, setSession] = useState<FirebaseAuthTypes.User | null>(null);
 
@@ -57,16 +59,7 @@ export default function ShareExtension({ url }: { url: string }) {
           />
         </View>
       ) : (
-        <Button
-          title="Sign In"
-          onPress={() =>
-            auth()
-              .signInAnonymously()
-              .catch((error) =>
-                Alert.alert("Authentication Error", error.message)
-              )
-          }
-        />
+        <AppleAuthLoginButton />
       )}
     </View>
   );

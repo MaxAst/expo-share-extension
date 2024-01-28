@@ -4,6 +4,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 
+import { AppleAuthLoginButton } from "./components/AppleAuthLogin";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -73,16 +75,7 @@ export default function App() {
           />
         </View>
       ) : (
-        <Button
-          title="Sign In"
-          onPress={() =>
-            auth()
-              .signInAnonymously()
-              .catch((error) =>
-                Alert.alert("Authentication Error", error.message)
-              )
-          }
-        />
+        <AppleAuthLoginButton />
       )}
     </View>
   );
