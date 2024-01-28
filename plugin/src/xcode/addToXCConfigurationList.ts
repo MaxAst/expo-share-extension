@@ -18,7 +18,7 @@ export function addXCConfigurationList(
     CLANG_ENABLE_MODULES: "YES",
     CURRENT_PROJECT_VERSION: `"${currentProjectVersion}"`,
     INFOPLIST_FILE: `${targetName}/Info.plist`,
-    IPHONEOS_DEPLOYMENT_TARGET: `"13.0"`,
+    IPHONEOS_DEPLOYMENT_TARGET: `"13.4"`,
     LD_RUNPATH_SEARCH_PATHS: `"$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"`,
     PRODUCT_BUNDLE_IDENTIFIER: `"${bundleIdentifier}"`,
     PRODUCT_NAME: `"${targetName}"`,
