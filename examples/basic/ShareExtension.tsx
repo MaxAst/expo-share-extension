@@ -11,7 +11,6 @@ export default function ShareExtension({ url }: { url: string }) {
       }}
     >
       <Text style={{ fontSize: 30 }}>{url}</Text>
-      <Text style={{ fontSize: 20 }}>Platform Default</Text>
     </View>
   );
 }
