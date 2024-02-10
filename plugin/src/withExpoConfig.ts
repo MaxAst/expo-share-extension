@@ -51,6 +51,9 @@ export const withExpoConfig: ConfigPlugin = (config) => {
                     "com.apple.security.application-groups": getAppGroups(
                       config.ios?.bundleIdentifier
                     ),
+                    ...(config.ios.usesAppleSignIn && {
+                      "com.apple.developer.applesignin": ["Default"],
+                    }),
                   },
                 },
                 ...(iosExtensions?.filter(
