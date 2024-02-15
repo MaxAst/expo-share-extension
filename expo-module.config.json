@@ -1,9 +1,6 @@
 {
-  "platforms": ["ios", "android", "web"],
+  "platforms": ["ios"],
   "ios": {
     "modules": ["ExpoShareExtensionModule"]
-  },
-  "android": {
-    "modules": ["expo.modules.shareextension.ExpoShareExtensionModule"]
   }
 }
