@@ -13,7 +13,7 @@ class ShareExtensionViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupLoadingIndicator()
-    Firebase.configure()
+    FirebaseApp.configure()
     initializeReactNativeBridgeIfNeeded()
     loadReactNativeContent()
     setupNotificationCenterObserver()
