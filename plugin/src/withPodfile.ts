@@ -35,7 +35,7 @@ export const withPodfile: ConfigPlugin<{
 
       const useExpoModules = excludedPackages?.length
         ? `exclude = ["${excludedPackages.join(`", "`)}"]
-      use_expo_modules!(exclude: exclude)`
+  use_expo_modules!(exclude: exclude)`
         : `use_expo_modules!`;
 
       const shareExtensionTarget = `target '${targetName}' do     

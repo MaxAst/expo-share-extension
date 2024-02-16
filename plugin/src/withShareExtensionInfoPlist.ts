@@ -3,11 +3,16 @@ import { ConfigPlugin, InfoPlist, withInfoPlist } from "expo/config-plugins";
 import fs from "fs";
 import path from "path";
 
-import { type BackgroundColor, getShareExtensionName } from "./index";
+import {
+  type BackgroundColor,
+  type Height,
+  getShareExtensionName,
+} from "./index";
 
 export const withShareExtensionInfoPlist: ConfigPlugin<{
   backgroundColor?: BackgroundColor;
-}> = (config, { backgroundColor }) => {
+  height?: Height;
+}> = (config, { backgroundColor, height }) => {
   return withInfoPlist(config, (config) => {
     const targetName = getShareExtensionName(config);
 
@@ -60,6 +65,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
         NSExtensionPointIdentifier: "com.apple.share-services",
       },
       ShareExtensionBackgroundColor: backgroundColor,
+      ShareExtensionHeight: height,
     };
 
     // see https://github.com/expo/expo/blob/main/packages/expo-apple-authentication/plugin/src/withAppleAuthIOS.ts#L3-L17

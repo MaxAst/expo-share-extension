@@ -40,8 +40,13 @@ const rgbaSchema = z.object({
 
 export type BackgroundColor = z.infer<typeof rgbaSchema>;
 
+const heightSchema = z.number().int().min(50).max(1000);
+
+export type Height = z.infer<typeof heightSchema>;
+
 const withShareExtension: ConfigPlugin<{
   backgroundColor?: BackgroundColor;
+  height?: Height;
   excludedPackages?: string[];
   googleServicesFile?: string;
 }> = (config, props) => {
