@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { close } from "expo-share-extension"
+import { Button, Text, View } from "react-native";
 
 export default function ShareExtension({ url }: { url: string }) {
   return (
@@ -7,10 +8,10 @@ export default function ShareExtension({ url }: { url: string }) {
         backgroundColor: "transparent",
         flex: 1,
         alignItems: "center",
-        justifyContent: "center",
       }}
     >
       <Text style={{ fontSize: 30 }}>{url}</Text>
+      <Button title="Close" onPress={close} />
     </View>
   );
 }

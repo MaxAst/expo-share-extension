@@ -2,4 +2,4 @@ import { AppRegistry } from "react-native";
 
 import ShareExtension from "./ShareExtension";
 
-AppRegistry.registerComponent("extension", () => ShareExtension);
+AppRegistry.registerComponent("shareExtension", () => ShareExtension);

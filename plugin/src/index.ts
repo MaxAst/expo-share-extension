@@ -62,6 +62,7 @@ const withShareExtension: ConfigPlugin<{
       withShareExtensionInfoPlist,
       {
         backgroundColor: props?.backgroundColor,
+        height: props?.height,
       },
     ],
     withShareExtensionEntitlements,

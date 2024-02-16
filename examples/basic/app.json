@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.shareextension.basic"
@@ -36,8 +34,9 @@
             "red": 255,
             "green": 255,
             "blue": 255,
-            "alpha": 0.8
-          }
+            "alpha": 0.9
+          },
+          "height": 500
         }
       ]
     ],

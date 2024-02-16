@@ -13,11 +13,11 @@
   },
   "dependencies": {
     "expo": "~50.0.6",
+    "expo-dev-client": "~3.3.8",
     "expo-splash-screen": "~0.26.4",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
-    "react-native": "0.73.4",
-    "expo-dev-client": "~3.3.8"
+    "react-native": "0.73.4"
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
