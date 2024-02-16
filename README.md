@@ -5,19 +5,19 @@
 ![Downloads](https://img.shields.io/npm/dm/expo-share-extension.svg)
 ![GitHub stars](https://img.shields.io/github/stars/MaxAst/expo-share-extension.svg)
 
-Create an iOS share extension with a custom view (similar to e.g. Pinterest).
+Create an [iOS share extension](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Share.html) with a custom view (similar to e.g. Pinterest). The extension currently only supports sharing URLs from Safari, where a `url` prop is passed to the extension's root component as an initial prop. Contributions to support more [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) are welcome! Supports Apple Sign In, React Native Firebase, custom backgrounds (including transparent), and custom heights.
 
 ## Installation
 
-1. Install the package
+Install the package
 
-```
+```sh
 npx expo install expo-share-extension
 ```
 
-2. Update app.json/app.config.js
+Update app.json/app.config.js
 
-```
+```json
 "expo": {
   ...
   "plugins": ["expo-share-extension"],
@@ -25,9 +25,9 @@ npx expo install expo-share-extension
 }
 ```
 
-3. Update package.json
+Update package.json
 
-```
+```json
 {
   ...
   "main": "index.js",
@@ -35,19 +35,115 @@ npx expo install expo-share-extension
 }
 ```
 
-4. Create an `index.js` in the root of your project
+Create an `index.js` in the root of your project
 
-```
+```ts
 import { registerRootComponent } from "expo";
-import { AppRegistry } from "react-native";
 
 import App from "./App";
-import ShareExtension from "./ShareExtension";
 
 registerRootComponent(App);
+```
 
-AppRegistry.registerComponent("extension", () => ShareExtension);
+or if you're using expo-router:
 
+```ts
+import "expo-router/entry";
+```
+
+Create an `index.share.js` in the root of your project
+
+```ts
+import { AppRegistry } from "react-native";
+
+// could be any component you want to use as the root component of your share extension's bundle
+import ShareExtension from "./ShareExtension";
+
+// IMPORTANT: the first argument to registerComponent, must be "shareExtension"
+AppRegistry.registerComponent("shareExtension", () => ShareExtension);
+```
+
+Need a way to close the share extension? Use the `close` method from `expo-share-extension`:
+
+```ts
+import { close } from "expo-share-extension"
+import { Button, Text, View } from "react-native";
+
+// if ShareExtension is your root component, url is available as an initial prop
+export default function ShareExtension({ url }: { url: string }) {
+  return (
+    <View style={{ flex: 1 }}>
+      <Text>{url}</Text>
+      <Button title="Close" onPress={close} />
+    </View>
+  );
+}
+```
+
+## Options
+
+### Exlude Expo Modules
+
+Exclude unneeded expo modules to reduce the share extension's bundle size by adding the following to your `app.json`/`app.config.(j|t)s`:
+
+```json
+[
+  "expo-share-extension",
+    {
+      "excludedPackages": [
+        "expo-dev-client",
+        "expo-splash-screen",
+        "expo-updates",
+        "expo-font",
+      ],
+    },
+],
+```
+
+### React Native Firebase
+
+Using [React Native Firebase](https://rnfirebase.io/)? Given that share extensions are separate iOS targets, they have their own bundle IDs, so we need to create a _dedicated_ GoogleService-Info.plist in the Firebase console, just for the share extension target. The bundle ID of your share extension is your existing bundle ID with `.ShareExtension` as the suffix, e.g. `com.example.app.ShareExtension`.
+
+```json
+[
+  "expo-share-extension",
+    {
+      "googleServicesFile": "./path-to-your-separate/GoogleService-Info.plist",
+    },
+],
+```
+
+### Custom Background Color
+
+You can share a firebase auth session between your main app and the share extension by using the [`useUserAccessGroup` hook](https://rnfirebase.io/reference/auth#useUserAccessGroup). The value for `userAccessGroup` is your main app's bundle ID with the `group.` prefix, e.g. `group.com.example.app`.
+
+Want to customize the share extension's background color? Add the following to your `app.json`/`app.config.(j|t)s`:
+
+```json
+[
+  "expo-share-extension",
+    {
+      "backgroundColor": {
+        "red": 255,
+        "green": 255,
+        "blue": 255,
+        "alpha": 0.8 // if 0, the background will be transparent
+      },
+    },
+],
+```
+
+### Custom Height
+
+Want to customize the share extension's height? Do this in your `app.json`/`app.config.(j|t)s`:
+
+```json
+[
+  "expo-share-extension",
+    {
+      "height": 500
+    },
+],
 ```
 
 ## Development
@@ -56,7 +152,7 @@ If you want to contribute to this project, you can use the example app to test y
 
 1. Start the expo module build in watch mode: `npm run build`
 2. Start the config plugin build in watch mode: `npm run build plugin`
-3. `cd /example` and generate the iOS project: `npx expo prebuild -p ios`
+3. `cd /example` and generate the iOS project: `npm run prebuild`
 4. Run the app from the /example folder: `npm run ios`
 
 ### Troubleshooting
@@ -96,6 +192,8 @@ If you want to contribute to this project, you can use the example app to test y
 This project would not be possible without existing work in the react native ecosystem. I'd like to give credit to the following projects and their authors:
 
 - https://github.com/Expensify/react-native-share-menu
+- https://github.com/andrewsardone/react-native-ios-share-extension
+- https://github.com/alinz/react-native-share-extension
 - https://github.com/ajith-ab/react-native-receive-sharing-intent
 - https://github.com/timedtext/expo-config-plugin-ios-share-extension
 - https://github.com/achorein/expo-share-intent-demo
