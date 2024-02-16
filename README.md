@@ -5,7 +5,9 @@
 ![Downloads](https://img.shields.io/npm/dm/expo-share-extension.svg)
 ![GitHub stars](https://img.shields.io/github/stars/MaxAst/expo-share-extension.svg)
 
-Create an [iOS share extension](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Share.html) with a custom view (similar to e.g. Pinterest). The extension currently only supports sharing URLs from Safari, where a `url` prop is passed to the extension's root component as an initial prop. Contributions to support more [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) are welcome! Supports Apple Sign In, React Native Firebase, custom backgrounds (including transparent), and custom heights.
+Create an [iOS share extension](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Share.html) with a custom view (similar to e.g. Pinterest). Supports Apple Sign-In, [React Native Firebase](https://rnfirebase.io/) (including shared auth session via access groups), custom background, and custom heights.
+
+The extension currently only works for Safari's share menu, where a `url` prop is passed to the extension's root component as an initial prop. Contributions to support more [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) are welcome!
 
 ## Installation
 
