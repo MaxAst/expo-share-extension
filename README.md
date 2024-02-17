@@ -117,9 +117,9 @@ Using [React Native Firebase](https://rnfirebase.io/)? Given that share extensio
 ],
 ```
 
-### Custom Background Color
-
 You can share a firebase auth session between your main app and the share extension by using the [`useUserAccessGroup` hook](https://rnfirebase.io/reference/auth#useUserAccessGroup). The value for `userAccessGroup` is your main app's bundle ID with the `group.` prefix, e.g. `group.com.example.app`.
+
+### Custom Background Color
 
 Want to customize the share extension's background color? Add the following to your `app.json`/`app.config.(j|t)s`:
 
