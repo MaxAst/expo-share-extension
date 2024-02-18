@@ -28,13 +28,19 @@
     },
     "plugins": [
       [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/Inter-Black.otf"]
+        }
+      ],
+      [
         "../../app.plugin.js",
         {
           "backgroundColor": {
             "red": 255,
             "green": 255,
             "blue": 255,
-            "alpha": 0.9
+            "alpha": 0 // make the background transparent
           },
           "height": 500
         }

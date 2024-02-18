@@ -54,6 +54,12 @@ const withShareExtension: ConfigPlugin<{
     rgbaSchema.parse(props.backgroundColor);
   }
 
+  const expoFontPlugin = config.plugins?.find(
+    (p) => Array.isArray(p) && p.length && p.at(0) === "expo-font"
+  );
+
+  const fonts = expoFontPlugin?.at(1).fonts ?? [];
+
   return withPlugins(config, [
     withExpoConfig,
     withAppEntitlements,
@@ -63,6 +69,7 @@ const withShareExtension: ConfigPlugin<{
       {
         backgroundColor: props?.backgroundColor,
         height: props?.height,
+        fonts,
       },
     ],
     withShareExtensionEntitlements,
@@ -70,6 +77,7 @@ const withShareExtension: ConfigPlugin<{
       withShareExtensionTarget,
       {
         googleServicesFile: props?.googleServicesFile,
+        fonts,
       },
     ],
   ]);

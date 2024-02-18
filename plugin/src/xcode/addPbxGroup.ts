@@ -8,10 +8,12 @@ export function addPbxGroup(
     targetName,
     platformProjectRoot,
     googleServicesFilePath,
+    fonts = [],
   }: {
     targetName: string;
     platformProjectRoot: string;
     googleServicesFilePath?: string;
+    fonts: string[];
   }
 ) {
   const targetPath = path.join(platformProjectRoot, targetName);
@@ -35,6 +37,10 @@ export function addPbxGroup(
     copyFileSync(googleServicesFilePath, targetPath);
   }
 
+  for (const font of fonts) {
+    copyFileSync(font, targetPath);
+  }
+
   // Add PBX group
   const { uuid: pbxGroupUuid } = xcodeProject.addPbxGroup(
     googleServicesFilePath
@@ -43,11 +49,13 @@ export function addPbxGroup(
           "Info.plist",
           `${targetName}.entitlements`,
           "GoogleService-Info.plist",
+          ...fonts.map((font: string) => path.basename(font)),
         ]
       : [
           "ShareExtensionViewController.swift",
           "Info.plist",
           `${targetName}.entitlements`,
+          ...fonts.map((font: string) => path.basename(font)),
         ],
     targetName,
     targetName
