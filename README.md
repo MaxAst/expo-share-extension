@@ -5,7 +5,7 @@
 ![Downloads](https://img.shields.io/npm/dm/expo-share-extension.svg)
 ![GitHub stars](https://img.shields.io/github/stars/MaxAst/expo-share-extension.svg)
 
-Create an [iOS share extension](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Share.html) with a custom view (similar to e.g. Pinterest). Supports Apple Sign-In, [React Native Firebase](https://rnfirebase.io/) (including shared auth session via access groups), custom background, and custom heights.
+Create an [iOS share extension](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Share.html) with a custom view (similar to e.g. Pinterest). Supports Apple Sign-In, [React Native Firebase](https://rnfirebase.io/) (including shared auth session via access groups), custom background, custom height, and custom fonts.
 
 **Note**: The extension currently only works for Safari's share menu, where a `url` prop is passed to the extension's root component as an initial prop. Contributions to support more [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) are welcome!
 
@@ -149,6 +149,12 @@ Want to customize the share extension's height? Do this in your `app.json`/`app.
     },
 ],
 ```
+
+### Custom Fonts
+
+This plugin automatically adds custom fonts to the share extension target if they are [embedded in the native project](https://docs.expo.dev/develop/user-interface/fonts/#embed-font-in-a-native-project) via the `expo-font` config plugin.
+
+It currently does not support custom fonts that are [loaded at runtime](https://docs.expo.dev/develop/user-interface/fonts/#load-font-at-runtime), due to an `NSURLSesssion` [eror](https://stackoverflow.com/questions/26172783/upload-nsurlsesssion-becomes-invalidated-in-sharing-extension-in-ios8-with-error). To fix this, Expo would need to support defining a [`sharedContainerIdentifier`](https://developer.apple.com/documentation/foundation/nsurlsessionconfiguration/1409450-sharedcontaineridentifier) for `NSURLSessionConfiguration` instances, where the value would be set to the main app's and share extension's app group identifier (e.g. `group.com.example.app`).
 
 ## Development
 

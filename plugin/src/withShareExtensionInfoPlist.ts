@@ -12,7 +12,8 @@ import {
 export const withShareExtensionInfoPlist: ConfigPlugin<{
   backgroundColor?: BackgroundColor;
   height?: Height;
-}> = (config, { backgroundColor, height }) => {
+  fonts: string[];
+}> = (config, { backgroundColor, height, fonts }) => {
   return withInfoPlist(config, (config) => {
     const targetName = getShareExtensionName(config);
 
@@ -53,6 +54,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
         UIApplicationSupportsMultipleScenes: true,
         UISceneConfigurations: {},
       },
+      UIAppFonts: fonts.map((font) => path.basename(font)) ?? [],
       NSExtension: {
         NSExtensionAttributes: {
           NSExtensionActivationRule: {

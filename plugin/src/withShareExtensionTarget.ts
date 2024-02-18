@@ -16,7 +16,8 @@ import { addXCConfigurationList } from "./xcode/addToXCConfigurationList";
 
 export const withShareExtensionTarget: ConfigPlugin<{
   googleServicesFile?: string;
-}> = (config, { googleServicesFile }) => {
+  fonts: string[];
+}> = (config, { googleServicesFile, fonts = [] }) => {
   return withXcodeProject(config, async (config) => {
     const xcodeProject = config.modResults;
 
@@ -29,7 +30,7 @@ export const withShareExtensionTarget: ConfigPlugin<{
     const { platformProjectRoot, projectRoot } = config.modRequest;
 
     if (config.ios?.googleServicesFile && !googleServicesFile) {
-      console.log(
+      console.warn(
         "Warning: No Google Services file specified for Share Extension"
       );
     }
@@ -65,13 +66,19 @@ export const withShareExtensionTarget: ConfigPlugin<{
       targetName,
       platformProjectRoot,
       googleServicesFilePath,
+      fonts,
     });
 
     addBuildPhases(xcodeProject, {
       targetUuid,
       groupName,
       productFile,
-      resources: googleServicesFilePath ? ["GoogleService-Info.plist"] : [],
+      resources: googleServicesFilePath
+        ? [
+            "GoogleService-Info.plist",
+            ...fonts.map((font: string) => path.basename(font)),
+          ]
+        : fonts.map((font: string) => path.basename(font)),
     });
 
     return config;
