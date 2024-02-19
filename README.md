@@ -67,6 +67,38 @@ import ShareExtension from "./ShareExtension";
 AppRegistry.registerComponent("shareExtension", () => ShareExtension);
 ```
 
+Update metro.config.js so that it resolves index.share.js as the entry point for the share extension
+
+```js
+// Learn more https://docs.expo.io/guides/customizing-metro
+const { getDefaultConfig } = require("expo/metro-config");
+
+/**
+ * Add support for share.js as a recognized extension to the Metro config.
+ * This allows creating an index.share.js entry point for our iOS share extension
+ *
+ * @param {import('expo/metro-config').MetroConfig} config
+ * @returns {import('expo/metro-config').MetroConfig}
+ */
+function withShareExtension(config) {
+  config.transformer.getTransformOptions = async () => ({
+    transform: {
+      experimentalImportSupport: false,
+      inlineRequires: true,
+    },
+    resolver: {
+      sourceExts: [...config.resolver.sourceExts, "share.js"], // Add 'share.js' as a recognized extension
+    },
+  });
+  return config;
+}
+
+module.exports = withShareExtension(getDefaultConfig(__dirname), {
+  // [Web-only]: Enables CSS support in Metro.
+  isCSSEnabled: true,
+});
+```
+
 Need a way to close the share extension? Use the `close` method from `expo-share-extension`:
 
 ```ts
@@ -154,7 +186,7 @@ Want to customize the share extension's height? Do this in your `app.json`/`app.
 
 This plugin automatically adds custom fonts to the share extension target if they are [embedded in the native project](https://docs.expo.dev/develop/user-interface/fonts/#embed-font-in-a-native-project) via the `expo-font` config plugin.
 
-It currently does not support custom fonts that are [loaded at runtime](https://docs.expo.dev/develop/user-interface/fonts/#load-font-at-runtime), due to an `NSURLSesssion` [eror](https://stackoverflow.com/questions/26172783/upload-nsurlsesssion-becomes-invalidated-in-sharing-extension-in-ios8-with-error). To fix this, Expo would need to support defining a [`sharedContainerIdentifier`](https://developer.apple.com/documentation/foundation/nsurlsessionconfiguration/1409450-sharedcontaineridentifier) for `NSURLSessionConfiguration` instances, where the value would be set to the main app's and share extension's app group identifier (e.g. `group.com.example.app`).
+It currently does not support custom fonts that are [loaded at runtime](https://docs.expo.dev/develop/user-interface/fonts/#load-font-at-runtime), due to an `NSURLSesssion` [error](https://stackoverflow.com/questions/26172783/upload-nsurlsesssion-becomes-invalidated-in-sharing-extension-in-ios8-with-error). To fix this, Expo would need to support defining a [`sharedContainerIdentifier`](https://developer.apple.com/documentation/foundation/nsurlsessionconfiguration/1409450-sharedcontaineridentifier) for `NSURLSessionConfiguration` instances, where the value would be set to the main app's and share extension's app group identifier (e.g. `group.com.example.app`).
 
 ## Development
 
