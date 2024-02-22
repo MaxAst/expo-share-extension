@@ -76,9 +76,13 @@ export const withShareExtensionTarget: ConfigPlugin<{
       resources: googleServicesFilePath
         ? [
             "GoogleService-Info.plist",
+            "preprocessor.js",
             ...fonts.map((font: string) => path.basename(font)),
           ]
-        : fonts.map((font: string) => path.basename(font)),
+        : [
+            "preprocessor.js",
+            ...fonts.map((font: string) => path.basename(font)),
+          ],
     });
 
     return config;

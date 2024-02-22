@@ -61,6 +61,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
             NSExtensionActivationSupportsWebURLWithMaxCount: 1,
             NSExtensionActivationSupportsWebPageWithMaxCount: 1,
           },
+          NSExtensionJavaScriptPreprocessingFile: "preprocessor",
         },
         NSExtensionPrincipalClass:
           "$(PRODUCT_MODULE_NAME).ShareExtensionViewController",
