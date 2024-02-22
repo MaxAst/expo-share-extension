@@ -1,5 +1,6 @@
 import UIKit
 import React
+// switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
 import MobileCoreServices
 
 class ShareExtensionViewController: UIViewController {
@@ -86,11 +87,11 @@ class ShareExtensionViewController: UIViewController {
     rootView.backgroundColor = backgroundColor(from: dict)
     let y: CGFloat
     if let withHeight = withHeight {
-        // If withHeight is set, calculate y so the view is at the bottom
-        y = self.view.bounds.height - withHeight
+      // If withHeight is set, calculate y so the view is at the bottom
+      y = self.view.bounds.height - withHeight
     } else {
-        // If withHeight is nil, use the full height (or adjust as needed)
-        y = 0 // This would make the view cover the entire screen
+      // If withHeight is nil, use the full height (or adjust as needed)
+      y = 0 // This would make the view cover the entire screen
     }
     rootView.frame = CGRect(
       x: self.view.bounds.minX,
@@ -137,6 +138,18 @@ class ShareExtensionViewController: UIViewController {
             DispatchQueue.main.async {
               if let sharedURL = urlItem as? URL {
                 sharedItems["url"] = sharedURL.absoluteString
+              }
+              group.leave()
+            }
+          }
+        } else if provider.hasItemConformingToTypeIdentifier(kUTTypePropertyList as String) {
+          group.enter()
+          provider.loadItem(forTypeIdentifier: kUTTypePropertyList as String, options: nil) { (item, error) in
+            DispatchQueue.main.async {
+              if let itemDict = item as? NSDictionary,
+                 let results = itemDict[NSExtensionJavaScriptPreprocessingResultsKey] as? NSDictionary {
+                sharedItems["url"] = results["url"]
+                sharedItems["jsonLd"] = results["jsonLd"]
               }
               group.leave()
             }

@@ -33,6 +33,12 @@ export function addPbxGroup(
     "ShareExtensionViewController.swift"
   );
 
+  copyFileSync(
+    path.join(__dirname, "../../js/preprocessor.js"),
+    targetPath,
+    "preprocessor.js"
+  );
+
   if (googleServicesFilePath?.length) {
     copyFileSync(googleServicesFilePath, targetPath);
   }
@@ -48,6 +54,7 @@ export function addPbxGroup(
           "ShareExtensionViewController.swift",
           "Info.plist",
           `${targetName}.entitlements`,
+          "preprocessor.js",
           "GoogleService-Info.plist",
           ...fonts.map((font: string) => path.basename(font)),
         ]
@@ -55,6 +62,7 @@ export function addPbxGroup(
           "ShareExtensionViewController.swift",
           "Info.plist",
           `${targetName}.entitlements`,
+          "preprocessor.js",
           ...fonts.map((font: string) => path.basename(font)),
         ],
     targetName,

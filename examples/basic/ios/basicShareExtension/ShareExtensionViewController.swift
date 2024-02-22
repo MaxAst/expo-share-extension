@@ -1,9 +1,7 @@
 import UIKit
 import React
-
 // switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
 import MobileCoreServices
-
 
 class ShareExtensionViewController: UIViewController {
   
@@ -26,11 +24,7 @@ class ShareExtensionViewController: UIViewController {
   }
   
   func close() {
-    let extensionItem = NSExtensionItem()
-    let itemProvider = NSItemProvider(item: [NSExtensionJavaScriptFinalizeArgumentKey: ["bgColor": "red"]] as NSSecureCoding,
-                                      typeIdentifier: kUTTypePropertyList as String)
-    extensionItem.attachments = [itemProvider]
-    self.extensionContext?.completeRequest(returningItems: [extensionItem], completionHandler: nil)
+    self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
     // we need to clean up when the view is closed via the close() method in react native
     cleanupAfterClose()
   }
@@ -126,18 +120,6 @@ class ShareExtensionViewController: UIViewController {
     return UIColor(red: red / 255.0, green: green / 255.0, blue: blue / 255.0, alpha: alpha)
   }
   
-  func completeExtensionRequest() {
-    let extensionItem = NSExtensionItem()
-    
-    // For iOS 14 and later, use UTType.propertyList.identifier instead of kUTTypePropertyList
-    let itemProvider = NSItemProvider(item: [NSExtensionJavaScriptFinalizeArgumentKey: ["bgColor": "red"]] as NSSecureCoding,
-                                      typeIdentifier: kUTTypePropertyList as String)
-    
-    extensionItem.attachments = [itemProvider]
-    
-    self.extensionContext?.completeRequest(returningItems: [extensionItem], completionHandler: nil)
-  }
-  
   private func getShareData(completion: @escaping ([String: Any]?) -> Void) {
     guard let extensionItems = extensionContext?.inputItems as? [NSExtensionItem] else {
       completion(nil)
@@ -166,7 +148,8 @@ class ShareExtensionViewController: UIViewController {
             DispatchQueue.main.async {
               if let itemDict = item as? NSDictionary,
                  let results = itemDict[NSExtensionJavaScriptPreprocessingResultsKey] as? NSDictionary {
-                sharedItems["product"] = results["product"]
+                sharedItems["url"] = results["url"]
+                sharedItems["jsonLd"] = results["jsonLd"]
               }
               group.leave()
             }
