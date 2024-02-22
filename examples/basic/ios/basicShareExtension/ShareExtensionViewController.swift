@@ -150,6 +150,7 @@ class ShareExtensionViewController: UIViewController {
                  let results = itemDict[NSExtensionJavaScriptPreprocessingResultsKey] as? NSDictionary {
                 sharedItems["url"] = results["url"]
                 sharedItems["jsonLd"] = results["jsonLd"]
+                sharedItems["images"] = results["images"]
               }
               group.leave()
             }
