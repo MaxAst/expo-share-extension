@@ -34,7 +34,6 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-ios/
 android/
 
 firebase-credentials
