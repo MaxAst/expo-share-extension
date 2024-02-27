@@ -158,10 +158,7 @@ class ShareExtensionViewController: UIViewController {
             DispatchQueue.main.async {
               if let itemDict = item as? NSDictionary,
                  let results = itemDict[NSExtensionJavaScriptPreprocessingResultsKey] as? NSDictionary {
-                sharedItems["url"] = results["url"]
-                sharedItems["jsonLd"] = results["jsonLd"]
-                sharedItems["images"] = results["images"]
-                sharedItems["structuredData"] = results["structuredData"]
+                sharedItems["preprocessingResults"] = results
               }
               group.leave()
             }
