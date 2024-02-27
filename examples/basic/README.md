@@ -1,28 +1,20 @@
 # Basic Example
 
-This example demonstrates the `backgroundColor` and `height` options that you can provide in app.json to customize the look of the native view. It's configured in app.json like so:
+This example demonstrates the `backgroundColor` and `height` options that you can provide in app.json to customize the look of the native view. It'd be configured in app.json like so:
 
 ```json
-    "plugins": [
-      [
-        "expo-font",
-        {
-          "fonts": ["./assets/fonts/Inter-Black.otf"]
-        }
-      ],
-      [
-        "../../app.plugin.js", // should be "expo-share-extension" in a real app
-        {
-          "backgroundColor": {
-            "red": 255,
-            "green": 255,
-            "blue": 255,
-            "alpha": 0 // make the background transparent
-          },
-          "height": 500
-        }
-      ]
-    ],
+[
+  "expo-share-extension",
+  {
+    "backgroundColor": {
+      "red": 255,
+      "green": 255,
+      "blue": 255,
+      "alpha": 0 // make the background transparent
+    },
+    "height": 500
+  }
+]
 ```
 
 ## Usage
