@@ -81,11 +81,7 @@ const { getDefaultConfig } = require("expo/metro-config");
  * @returns {import('expo/metro-config').MetroConfig}
  */
 function withShareExtension(config) {
-  config.transformer.getTransformOptions = async () => ({
-    transform: {
-      experimentalImportSupport: false,
-      inlineRequires: true,
-    },
+  config.transformer.getTransformOptions = () => ({
     resolver: {
       sourceExts: [...config.resolver.sourceExts, "share.js"], // Add 'share.js' as a recognized extension
     },
@@ -149,7 +145,7 @@ Using [React Native Firebase](https://rnfirebase.io/)? Given that share extensio
 ],
 ```
 
-You can share a firebase auth session between your main app and the share extension by using the [`useUserAccessGroup` hook](https://rnfirebase.io/reference/auth#useUserAccessGroup). The value for `userAccessGroup` is your main app's bundle ID with the `group.` prefix, e.g. `group.com.example.app`.
+You can share a firebase auth session between your main app and the share extension by using the [`useUserAccessGroup` hook](https://rnfirebase.io/reference/auth#useUserAccessGroup). The value for `userAccessGroup` is your main app's bundle ID with the `group.` prefix, e.g. `group.com.example.app`. For a full example, check [this](examples/with-firebase/README.md).
 
 ### Custom Background Color
 
@@ -187,6 +183,54 @@ Want to customize the share extension's height? Do this in your `app.json`/`app.
 This plugin automatically adds custom fonts to the share extension target if they are [embedded in the native project](https://docs.expo.dev/develop/user-interface/fonts/#embed-font-in-a-native-project) via the `expo-font` config plugin.
 
 It currently does not support custom fonts that are [loaded at runtime](https://docs.expo.dev/develop/user-interface/fonts/#load-font-at-runtime), due to an `NSURLSesssion` [error](https://stackoverflow.com/questions/26172783/upload-nsurlsesssion-becomes-invalidated-in-sharing-extension-in-ios8-with-error). To fix this, Expo would need to support defining a [`sharedContainerIdentifier`](https://developer.apple.com/documentation/foundation/nsurlsessionconfiguration/1409450-sharedcontaineridentifier) for `NSURLSessionConfiguration` instances, where the value would be set to the main app's and share extension's app group identifier (e.g. `group.com.example.app`).
+
+### Preprocessing JavaScript
+
+As explained in [Accessing a Webpage](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/ExtensionScenarios.html#//apple_ref/doc/uid/TP40014214-CH21-SW12), we can use a JavaScript file to preprocess the webpage before the share extension is activated. This is useful if you want to extract the title and URL of the webpage, for example. To use this feature, add the following to your `app.json`/`app.config.(j|t)s`:
+
+```json
+[
+  "expo-share-extension",
+    {
+      "preprocessingFile": "./preprocessing.js"
+    },
+],
+```
+
+The `preprocessingFile` option adds [`NSExtensionActivationSupportsWebPageWithMaxCount: 1`](https://developer.apple.com/documentation/bundleresources/information_property_list/nsextension/nsextensionattributes/nsextensionactivationrule/nsextensionactivationsupportswebpagewithmaxcount) as an `NSExtensionActivationRule`. Your preprocessing file must adhere to some rules:
+
+1. You must create a class with a `run` method, which receives an object with a `completionFunction` method as its argument. This `completionFunction` method must be invoked at the end of your `run` method. The argument you pass to it, is what you will receive as the `preprocessingResults` object as part of initial props.
+
+```javascript
+class ShareExtensionPreprocessor {
+  run(args) {
+    args.completionFunction({
+      title: document.title,
+    });
+  }
+}
+```
+
+2. Your file must create an instance of a class using `var`, so that it is globally accessible.
+
+```javascript
+var ExtensionPreprocessingJS = new ShareExtensionPreprocessor();
+```
+
+For a full example, check [this](examples/with-preprocessing/README.md).
+
+**WARNING:** Using this option enbales [`NSExtensionActivationSupportsWebPageWithMaxCount: 1`](https://developer.apple.com/documentation/bundleresources/information_property_list/nsextension/nsextensionattributes/nsextensionactivationrule/nsextensionactivationsupportswebpagewithmaxcount) and this is mutually exclusive with [`NSExtensionActivationSupportsWebURLWithMaxCount: 1`](https://developer.apple.com/documentation/bundleresources/information_property_list/nsextension/nsextensionattributes/nsextensionactivationrule/nsextensionactivationsupportsweburlwithmaxcount), which `expo-share-extension` enables by default. This means that once you set the `preprocessingFile` option, you will no longer receive `url` as part of initial props. However, you can still get the URL via `preprocessingResults` by using `window.location.href` in your preprocessing file:
+
+```javascript
+class ShareExtensionPreprocessor {
+  run(args) {
+    args.completionFunction({
+      url: window.location.href,
+      title: document.title,
+    });
+  }
+}
+```
 
 ## Development
 
