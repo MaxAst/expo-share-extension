@@ -19,11 +19,7 @@ config.resolver.nodeModulesPaths = [
 
 config.watchFolders = [path.resolve(__dirname, "../..")];
 
-config.transformer.getTransformOptions = async () => ({
-  transform: {
-    experimentalImportSupport: false,
-    inlineRequires: true,
-  },
+config.transformer.getTransformOptions = () => ({
   resolver: {
     sourceExts: [...config.resolver.sourceExts, "share.js"], // Add 'share.js' as a recognized extension
   },
