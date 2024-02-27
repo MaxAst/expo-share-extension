@@ -3,22 +3,22 @@ PODS:
   - DoubleConversion (1.1.6)
   - EXConstants (15.4.5):
     - ExpoModulesCore
-  - EXFont (11.10.2):
+  - EXFont (11.10.3):
     - ExpoModulesCore
   - EXJSONUtils (0.12.3)
   - EXManifests (0.13.2):
     - ExpoModulesCore
-  - Expo (50.0.6):
+  - Expo (50.0.8):
     - ExpoModulesCore
-  - expo-dev-client (3.3.8):
+  - expo-dev-client (3.3.9):
     - EXManifests
     - expo-dev-launcher
     - expo-dev-menu
     - expo-dev-menu-interface
     - EXUpdatesInterface
-  - expo-dev-launcher (3.6.6):
+  - expo-dev-launcher (3.6.7):
     - EXManifests
-    - expo-dev-launcher/Main (= 3.6.6)
+    - expo-dev-launcher/Main (= 3.6.7)
     - expo-dev-menu
     - expo-dev-menu-interface
     - ExpoModulesCore
@@ -27,7 +27,7 @@ PODS:
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - React-RCTAppDelegate
-  - expo-dev-launcher/Main (3.6.6):
+  - expo-dev-launcher/Main (3.6.7):
     - EXManifests
     - expo-dev-launcher/Unsafe
     - expo-dev-menu
@@ -38,7 +38,7 @@ PODS:
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - React-RCTAppDelegate
-  - expo-dev-launcher/Unsafe (3.6.6):
+  - expo-dev-launcher/Unsafe (3.6.7):
     - EXManifests
     - expo-dev-menu
     - expo-dev-menu-interface
@@ -48,14 +48,14 @@ PODS:
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - React-RCTAppDelegate
-  - expo-dev-menu (4.5.5):
-    - expo-dev-menu/Main (= 4.5.5)
-    - expo-dev-menu/ReactNativeCompatibles (= 4.5.5)
+  - expo-dev-menu (4.5.6):
+    - expo-dev-menu/Main (= 4.5.6)
+    - expo-dev-menu/ReactNativeCompatibles (= 4.5.6)
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
   - expo-dev-menu-interface (1.7.2)
-  - expo-dev-menu/Main (4.5.5):
+  - expo-dev-menu/Main (4.5.6):
     - EXManifests
     - expo-dev-menu-interface
     - expo-dev-menu/Vendored
@@ -63,32 +63,32 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - expo-dev-menu/ReactNativeCompatibles (4.5.5):
+  - expo-dev-menu/ReactNativeCompatibles (4.5.6):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - expo-dev-menu/SafeAreaView (4.5.5):
+  - expo-dev-menu/SafeAreaView (4.5.6):
     - ExpoModulesCore
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - expo-dev-menu/Vendored (4.5.5):
+  - expo-dev-menu/Vendored (4.5.6):
     - expo-dev-menu/SafeAreaView
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - ExpoFileSystem (16.0.6):
+  - ExpoFileSystem (16.0.7):
     - ExpoModulesCore
   - ExpoKeepAwake (12.8.2):
     - ExpoModulesCore
-  - ExpoModulesCore (1.11.8):
+  - ExpoModulesCore (1.11.9):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - React-NativeModulesApple
     - React-RCTAppDelegate
     - ReactCommon/turbomodule/core
-  - ExpoShareExtension (1.2.0):
+  - ExpoShareExtension (1.3.1):
     - ExpoModulesCore
   - EXSplashScreen (0.26.4):
     - ExpoModulesCore
@@ -1358,18 +1358,18 @@ SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   EXConstants: 988aa430ca0f76b43cd46b66e7fae3287f9cc2fc
-  EXFont: 21b9c760abd593ce8f0d5386b558ced76018506f
+  EXFont: f20669cb266ef48b004f1eb1f2b20db96cd1df9f
   EXJSONUtils: 5c42959e87be238b045ef37cc5268b16a6c0ad4a
   EXManifests: 5e8c29f36c716af768a4ea47ec05e1b89ab93091
-  Expo: fb745b3074989670b6641f9f20463e8ee56a69ca
-  expo-dev-client: 025dce84f48b04c60c3891547732f001f6aad777
-  expo-dev-launcher: 3cddfcd8e54748d0046af07dc8e4f58dbb045e93
-  expo-dev-menu: 8088833c320b616a312ffe438fbea5df276c010e
+  Expo: c2d3edc1b1e833e26d837b03aa46d9137ca63302
+  expo-dev-client: dbc8e8a81d17a9d92e083a2856d056ba9a58984d
+  expo-dev-launcher: 3f2a78d97842a3fdc2f0116f775d8dbc32396cbd
+  expo-dev-menu: b964921baa1bda2a7ff42a407d1d7698ce215faf
   expo-dev-menu-interface: 7ba029c9d1a82ac22b9b584c00514860b060553e
-  ExpoFileSystem: a9273932e69a9a1e1a8d01b6ba895bb8294bbea2
+  ExpoFileSystem: c7488590959bf85ebc114909eb8186cbd62e3a25
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
-  ExpoModulesCore: 96d1751929ad10622773bb729ab28a8423f0dd0c
-  ExpoShareExtension: a45fb588a19e322dd0ff6b3aee82e2ae06b7ad9a
+  ExpoModulesCore: 1391529545de72f7f64ecabc7adb912306ab4d34
+  ExpoShareExtension: 878bc9b4c76a352574d07078b736be1d12d7dab7
   EXSplashScreen: 39244885abfb1b12765aae89edb90f8c88db6bbd
   EXUpdatesInterface: 3e444e2093e25b7ca0999a7d8c16e8392dee70c3
   FBLazyVector: 84f6edbe225f38aebd9deaf1540a4160b1f087d7

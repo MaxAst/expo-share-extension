@@ -67,11 +67,7 @@
         <dict>
           <key>NSExtensionActivationSupportsWebURLWithMaxCount</key>
           <integer>1</integer>
-          <key>NSExtensionActivationSupportsWebPageWithMaxCount</key>
-          <integer>1</integer>
         </dict>
-        <key>NSExtensionJavaScriptPreprocessingFile</key>
-        <string>preprocessor</string>
       </dict>
       <key>NSExtensionPrincipalClass</key>
       <string>$(PRODUCT_MODULE_NAME).ShareExtensionViewController</string>

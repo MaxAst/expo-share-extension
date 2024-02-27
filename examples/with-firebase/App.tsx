@@ -1,25 +1,15 @@
 import auth, { type FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 
 import { AppleAuthLoginButton } from "./components/AppleAuthLogin";
 
-SplashScreen.preventAutoHideAsync();
-
 export default function App() {
   const [session, setSession] = useState<FirebaseAuthTypes.User | null>(null);
-  const [fontsLoaded, fontError] = useFonts({
-    "Inter-Black": require("./assets/fonts/Inter-Black.otf"),
-  });
 
   useEffect(() => {
     auth()
       .useUserAccessGroup("group.expo.modules.shareextension.withfirebase")
-      .then(() => {
-        console.log("set up user access group on main app");
-      })
       .catch((error) => {
         console.log(error);
       });
@@ -27,7 +17,6 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(async (user) => {
-      console.log("I ran on main app");
       if (user) {
         try {
           setSession(user);
@@ -43,40 +32,46 @@ export default function App() {
     };
   }, [setSession]);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded || fontError) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
-  if (!fontsLoaded && !fontError) {
-    return null;
-  }
-
   return (
-    <View onLayout={onLayoutRootView} style={styles.container}>
-      <Text style={{ color: "#313639", fontFamily: "Inter-Black" }}>
-        Firebase Demo
+    <View style={styles.container}>
+      <Text
+        style={{ fontFamily: "Inter-Black", fontSize: 24, marginBottom: 10 }}
+      >
+        Basic Example
       </Text>
-      {session ? (
-        <View>
-          <Text style={{ color: "#313639", fontFamily: "Inter-Black" }}>
-            Firebase User ID: {session.uid}
-          </Text>
-          <Button
-            title="Sign Out"
-            onPress={() =>
-              auth()
-                .signOut()
-                .catch((error) =>
-                  Alert.alert("Authentication Error", error.message)
-                )
-            }
-          />
-        </View>
-      ) : (
-        <AppleAuthLoginButton />
-      )}
+      <Text
+        style={{
+          textAlign: "center",
+          color: "#313639",
+          fontSize: 16,
+        }}
+      >
+        After logging in, go to Safari and open the share menu to trigger this
+        app's share extension. You should see that you are still logged in,
+        because we are using the useUserAccessGroup hook with our app group
+        name.
+      </Text>
+      <View style={{ paddingTop: 30 }}>
+        {session ? (
+          <View>
+            <Text style={{ color: "#313639", fontFamily: "Inter-Black" }}>
+              Firebase User ID: {session.uid}
+            </Text>
+            <Button
+              title="Sign Out"
+              onPress={() =>
+                auth()
+                  .signOut()
+                  .catch((error) =>
+                    Alert.alert("Authentication Error", error.message)
+                  )
+              }
+            />
+          </View>
+        ) : (
+          <AppleAuthLoginButton />
+        )}
+      </View>
     </View>
   );
 }
@@ -87,5 +82,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAF8F5",
     alignItems: "center",
     justifyContent: "center",
+    padding: 30,
   },
 });

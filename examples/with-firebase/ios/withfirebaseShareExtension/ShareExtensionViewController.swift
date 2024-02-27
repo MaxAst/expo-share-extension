@@ -2,8 +2,13 @@ import UIKit
 import React
 // switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
 import MobileCoreServices
+// if react native firebase is installed, we import and configure it
+#if canImport(FirebaseCore)
 import FirebaseCore
+#endif
+#if canImport(FirebaseAuth)
 import FirebaseAuth
+#endif
 
 class ShareExtensionViewController: UIViewController {
   
@@ -14,7 +19,9 @@ class ShareExtensionViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupLoadingIndicator()
+    #if canImport(FirebaseCore)
     FirebaseApp.configure()
+    #endif
     initializeReactNativeBridgeIfNeeded()
     loadReactNativeContent()
     setupNotificationCenterObserver()
@@ -154,6 +161,7 @@ class ShareExtensionViewController: UIViewController {
                 sharedItems["url"] = results["url"]
                 sharedItems["jsonLd"] = results["jsonLd"]
                 sharedItems["images"] = results["images"]
+                sharedItems["structuredData"] = results["structuredData"]
               }
               group.leave()
             }

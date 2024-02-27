@@ -15,9 +15,10 @@ import { addToPbxProjectSection } from "./xcode/addToPbxProjectSection";
 import { addXCConfigurationList } from "./xcode/addToXCConfigurationList";
 
 export const withShareExtensionTarget: ConfigPlugin<{
-  googleServicesFile?: string;
   fonts: string[];
-}> = (config, { googleServicesFile, fonts = [] }) => {
+  googleServicesFile?: string;
+  preprocessingFile?: string;
+}> = (config, { fonts = [], googleServicesFile, preprocessingFile }) => {
   return withXcodeProject(config, async (config) => {
     const xcodeProject = config.modResults;
 
@@ -35,9 +36,23 @@ export const withShareExtensionTarget: ConfigPlugin<{
       );
     }
 
+    const resources = fonts.map((font: string) => path.basename(font));
+
     const googleServicesFilePath = googleServicesFile
       ? path.resolve(projectRoot, googleServicesFile)
       : undefined;
+
+    if (googleServicesFile) {
+      resources.push(path.basename(googleServicesFile));
+    }
+
+    const preprocessingFilePath = preprocessingFile
+      ? path.resolve(projectRoot, preprocessingFile)
+      : undefined;
+
+    if (preprocessingFile) {
+      resources.push(path.basename(preprocessingFile));
+    }
 
     const xCConfigurationList = addXCConfigurationList(xcodeProject, {
       targetName,
@@ -65,24 +80,16 @@ export const withShareExtensionTarget: ConfigPlugin<{
     addPbxGroup(xcodeProject, {
       targetName,
       platformProjectRoot,
-      googleServicesFilePath,
       fonts,
+      googleServicesFilePath,
+      preprocessingFilePath,
     });
 
     addBuildPhases(xcodeProject, {
       targetUuid,
       groupName,
       productFile,
-      resources: googleServicesFilePath
-        ? [
-            "GoogleService-Info.plist",
-            "preprocessor.js",
-            ...fonts.map((font: string) => path.basename(font)),
-          ]
-        : [
-            "preprocessor.js",
-            ...fonts.map((font: string) => path.basename(font)),
-          ],
+      resources,
     });
 
     return config;

@@ -1,4 +1,5 @@
 import auth, { type FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { close } from "expo-share-extension";
 import { useEffect, useState } from "react";
 import { Alert, Button, Text, View, StyleSheet } from "react-native";
 
@@ -10,9 +11,6 @@ export default function ShareExtension({ url }: { url: string }) {
   useEffect(() => {
     auth()
       .useUserAccessGroup("group.expo.modules.shareextension.withfirebase")
-      .then(() => {
-        console.log("set up user access group on share extension");
-      })
       .catch((error) => {
         console.log(error);
       });
@@ -20,7 +18,6 @@ export default function ShareExtension({ url }: { url: string }) {
 
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(async (user) => {
-      console.log("I ran on share extension");
       if (user) {
         try {
           setSession(user);
@@ -38,29 +35,48 @@ export default function ShareExtension({ url }: { url: string }) {
 
   return (
     <View style={styles.container}>
-      {url && <Text style={{ fontSize: 30 }}>{url}</Text>}
-      <Text style={{ color: "#313639", fontFamily: "Inter-Black" }}>
-        Firebase Demo
+      <Text
+        style={{ fontFamily: "Inter-Black", fontSize: 24, marginBottom: 10 }}
+      >
+        Firebase Example
       </Text>
-      {session ? (
-        <View>
-          <Text style={{ color: "#313639", fontFamily: "Inter-Black" }}>
-            Firebase User ID: {session.uid}
-          </Text>
-          <Button
-            title="Sign Out"
-            onPress={() =>
-              auth()
-                .signOut()
-                .catch((error) =>
-                  Alert.alert("Authentication Error", error.message)
-                )
-            }
-          />
-        </View>
-      ) : (
-        <AppleAuthLoginButton />
-      )}
+      <Text
+        style={{
+          textAlign: "center",
+          color: "#313639",
+          fontSize: 16,
+        }}
+      >
+        URL: {url}
+      </Text>
+      <Button title="Close" onPress={close} />
+      <View style={{ paddingTop: 30 }}>
+        {session ? (
+          <View>
+            <Text
+              style={{
+                textAlign: "center",
+                color: "#313639",
+                fontSize: 16,
+              }}
+            >
+              Firebase User ID: {session.uid}
+            </Text>
+            <Button
+              title="Sign Out"
+              onPress={() =>
+                auth()
+                  .signOut()
+                  .catch((error) =>
+                    Alert.alert("Authentication Error", error.message)
+                  )
+              }
+            />
+          </View>
+        ) : (
+          <AppleAuthLoginButton />
+        )}
+      </View>
     </View>
   );
 }
@@ -68,8 +84,10 @@ export default function ShareExtension({ url }: { url: string }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    borderRadius: 20,
     backgroundColor: "#FAF8F5",
     alignItems: "center",
     justifyContent: "center",
+    padding: 30,
   },
 });

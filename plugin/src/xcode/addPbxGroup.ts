@@ -7,13 +7,15 @@ export function addPbxGroup(
   {
     targetName,
     platformProjectRoot,
-    googleServicesFilePath,
     fonts = [],
+    googleServicesFilePath,
+    preprocessingFilePath,
   }: {
     targetName: string;
     platformProjectRoot: string;
-    googleServicesFilePath?: string;
     fonts: string[];
+    googleServicesFilePath?: string;
+    preprocessingFilePath?: string;
   }
 ) {
   const targetPath = path.join(platformProjectRoot, targetName);
@@ -23,48 +25,35 @@ export function addPbxGroup(
   }
 
   copyFileSync(
-    path.join(
-      __dirname,
-      `../../swift/ShareExtensionViewController${
-        googleServicesFilePath ? "WithFirebase" : ""
-      }.swift`
-    ),
+    path.join(__dirname, "../../swift/ShareExtensionViewController.swift"),
     targetPath,
     "ShareExtensionViewController.swift"
   );
-
-  copyFileSync(
-    path.join(__dirname, "../../js/preprocessor.js"),
-    targetPath,
-    "preprocessor.js"
-  );
-
-  if (googleServicesFilePath?.length) {
-    copyFileSync(googleServicesFilePath, targetPath);
-  }
 
   for (const font of fonts) {
     copyFileSync(font, targetPath);
   }
 
+  const files = [
+    "ShareExtensionViewController.swift",
+    "Info.plist",
+    `${targetName}.entitlements`,
+    ...fonts.map((font: string) => path.basename(font)),
+  ];
+
+  if (googleServicesFilePath?.length) {
+    copyFileSync(googleServicesFilePath, targetPath);
+    files.push(path.basename(googleServicesFilePath));
+  }
+
+  if (preprocessingFilePath?.length) {
+    copyFileSync(preprocessingFilePath, targetPath);
+    files.push(path.basename(preprocessingFilePath));
+  }
+
   // Add PBX group
   const { uuid: pbxGroupUuid } = xcodeProject.addPbxGroup(
-    googleServicesFilePath
-      ? [
-          "ShareExtensionViewController.swift",
-          "Info.plist",
-          `${targetName}.entitlements`,
-          "preprocessor.js",
-          "GoogleService-Info.plist",
-          ...fonts.map((font: string) => path.basename(font)),
-        ]
-      : [
-          "ShareExtensionViewController.swift",
-          "Info.plist",
-          `${targetName}.entitlements`,
-          "preprocessor.js",
-          ...fonts.map((font: string) => path.basename(font)),
-        ],
+    files,
     targetName,
     targetName
   );
