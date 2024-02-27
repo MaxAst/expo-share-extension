@@ -10,10 +10,11 @@ import {
 } from "./index";
 
 export const withShareExtensionInfoPlist: ConfigPlugin<{
+  fonts: string[];
   backgroundColor?: BackgroundColor;
   height?: Height;
-  fonts: string[];
-}> = (config, { backgroundColor, height, fonts }) => {
+  preprocessingFile?: string;
+}> = (config, { fonts = [], backgroundColor, height, preprocessingFile }) => {
   return withInfoPlist(config, (config) => {
     const targetName = getShareExtensionName(config);
 
@@ -59,9 +60,16 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
         NSExtensionAttributes: {
           NSExtensionActivationRule: {
             NSExtensionActivationSupportsWebURLWithMaxCount: 1,
-            NSExtensionActivationSupportsWebPageWithMaxCount: 1,
+            ...(preprocessingFile && {
+              NSExtensionActivationSupportsWebPageWithMaxCount: 1,
+            }),
           },
-          NSExtensionJavaScriptPreprocessingFile: "preprocessor",
+          ...(preprocessingFile && {
+            NSExtensionJavaScriptPreprocessingFile: path.basename(
+              preprocessingFile,
+              path.extname(preprocessingFile)
+            ),
+          }),
         },
         NSExtensionPrincipalClass:
           "$(PRODUCT_MODULE_NAME).ShareExtensionViewController",

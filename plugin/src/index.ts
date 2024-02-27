@@ -49,6 +49,7 @@ const withShareExtension: ConfigPlugin<{
   height?: Height;
   excludedPackages?: string[];
   googleServicesFile?: string;
+  preprocessingFile?: string;
 }> = (config, props) => {
   if (props?.backgroundColor) {
     rgbaSchema.parse(props.backgroundColor);
@@ -67,17 +68,19 @@ const withShareExtension: ConfigPlugin<{
     [
       withShareExtensionInfoPlist,
       {
+        fonts,
         backgroundColor: props?.backgroundColor,
         height: props?.height,
-        fonts,
+        preprocessingFile: props.preprocessingFile,
       },
     ],
     withShareExtensionEntitlements,
     [
       withShareExtensionTarget,
       {
-        googleServicesFile: props?.googleServicesFile,
         fonts,
+        googleServicesFile: props?.googleServicesFile,
+        preprocessingFile: props.preprocessingFile,
       },
     ],
   ]);
