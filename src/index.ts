@@ -12,5 +12,5 @@ export interface IExtensionPreprocessingJS {
 export type InitialProps = {
   url?: string;
   text?: string;
-  preprocessingResults: unknown;
+  preprocessingResults?: unknown;
 };
