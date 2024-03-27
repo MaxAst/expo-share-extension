@@ -16,8 +16,10 @@
     "expo-dev-client": "~3.3.11",
     "expo-splash-screen": "~0.26.4",
     "expo-status-bar": "~1.11.1",
+    "expo-updates": "^0.24.12",
     "react": "18.2.0",
-    "react-native": "0.73.6"
+    "react-native": "0.73.6",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@babel/core": "^7.24.3",

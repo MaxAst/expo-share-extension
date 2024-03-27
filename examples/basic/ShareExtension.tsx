@@ -1,7 +1,7 @@
-import { close } from "expo-share-extension";
+import { close, type InitialProps } from "expo-share-extension";
 import { Button, StyleSheet, Text, View } from "react-native";
 
-export default function ShareExtension({ url }: { url: string }) {
+export default function ShareExtension({ url, text }: InitialProps) {
   return (
     <View style={styles.container}>
       <Text
@@ -9,15 +9,28 @@ export default function ShareExtension({ url }: { url: string }) {
       >
         Basic Example
       </Text>
-      <Text
-        style={{
-          textAlign: "center",
-          color: "#313639",
-          fontSize: 16,
-        }}
-      >
-        URL: {url}
-      </Text>
+      {url && (
+        <Text
+          style={{
+            textAlign: "center",
+            color: "#313639",
+            fontSize: 16,
+          }}
+        >
+          URL: {url}
+        </Text>
+      )}
+      {text && (
+        <Text
+          style={{
+            textAlign: "center",
+            color: "#313639",
+            fontSize: 16,
+          }}
+        >
+          Text: {text}
+        </Text>
+      )}
       <Button title="Close" onPress={close} />
     </View>
   );

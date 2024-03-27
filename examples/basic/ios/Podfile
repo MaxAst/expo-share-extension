@@ -88,9 +88,10 @@ target 'basic' do
   end
 end
 
-# @generated begin share-extension-target - expo prebuild (DO NOT MODIFY) sync-884a1ad28e268193da37f3194cf65a49671a5855
+# @generated begin share-extension-target - expo prebuild (DO NOT MODIFY) sync-561f1eb778a8e19d0c7546df16c43c685c5fe309
 target 'basicShareExtension' do     
-  use_expo_modules!     
+  exclude = ["expo-updates"]
+  use_expo_modules!(exclude: exclude)     
   config = use_native_modules!
           
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
