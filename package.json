@@ -15,7 +15,7 @@
     "open:ios": "open -a \"Xcode\" example/ios",
     "open:android": "open -a \"Android Studio\" example/android",
     "release": "release-it",
-    "ncu": "npx npm-check-updates"
+    "ncu": "npx npm-check-updates --deep -u"
   },
   "keywords": [
     "react-native",
@@ -37,9 +37,9 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/react": "^18.2.60",
+    "@types/react": "^18.2.72",
     "expo-module-scripts": "^3.4.1",
-    "expo-modules-core": "^1.11.9",
+    "expo-modules-core": "^1.11.12",
     "release-it": "^17.1.1"
   },
   "peerDependencies": {
