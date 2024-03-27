@@ -158,10 +158,17 @@ class ShareExtensionViewController: UIViewController {
             DispatchQueue.main.async {
               if let itemDict = item as? NSDictionary,
                  let results = itemDict[NSExtensionJavaScriptPreprocessingResultsKey] as? NSDictionary {
-                sharedItems["url"] = results["url"]
-                sharedItems["jsonLd"] = results["jsonLd"]
-                sharedItems["images"] = results["images"]
-                sharedItems["structuredData"] = results["structuredData"]
+                sharedItems["preprocessingResults"] = results
+              }
+              group.leave()
+            }
+          }
+        } else if provider.hasItemConformingToTypeIdentifier(kUTTypeText as String) {
+          group.enter()
+          provider.loadItem(forTypeIdentifier: kUTTypeText as String, options: nil) { (textItem, error) in
+            DispatchQueue.main.async {
+              if let text = textItem as? String {
+                sharedItems["text"] = text
               }
               group.leave()
             }

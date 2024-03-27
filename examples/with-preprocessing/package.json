@@ -9,21 +9,22 @@
     "web": "expo start --web",
     "eas-build-pre-install": "cd ../.. && npm install && npm run build && npm run build plugin",
     "postinstall": "npx patch-package",
-    "prebuild": "expo prebuild -p ios --clean",
-    "ncu": "npx npm-check-updates"
+    "prebuild": "expo prebuild -p ios --clean"
   },
   "dependencies": {
-    "expo": "~50.0.8",
-    "expo-dev-client": "~3.3.9",
+    "expo": "~50.0.14",
+    "expo-dev-client": "~3.3.11",
     "expo-splash-screen": "~0.26.4",
     "expo-status-bar": "~1.11.1",
+    "expo-updates": "^0.24.12",
     "react": "18.2.0",
-    "react-native": "0.73.4"
+    "react-native": "0.73.6",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.23.9",
-    "@types/react": "~18.2.60",
-    "typescript": "^5.3.3"
+    "@babel/core": "^7.24.3",
+    "@types/react": "~18.2.72",
+    "typescript": "^5.4.3"
   },
   "private": true,
   "expo": {

@@ -88,9 +88,9 @@ target 'withfirebase' do
   end
 end
 
-# @generated begin share-extension-target - expo prebuild (DO NOT MODIFY) sync-265d6d0144eab6299dac62ae9d0d716e888bb24c
+# @generated begin share-extension-target - expo prebuild (DO NOT MODIFY) sync-3bc279a818535dde649bd3666e2cfd6a4e8e493f
 target 'withfirebaseShareExtension' do     
-  exclude = ["expo-dev-client", "expo-splash-screen", "expo-status-bar"]
+  exclude = ["expo-updates", "expo-dev-client", "expo-splash-screen", "expo-status-bar"]
   use_expo_modules!(exclude: exclude)     
   config = use_native_modules!
           
