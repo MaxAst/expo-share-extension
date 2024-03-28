@@ -3,7 +3,7 @@ import { type InitialProps, close } from "expo-share-extension";
 import { useEffect, useState } from "react";
 import { Alert, Button, Text, View, StyleSheet } from "react-native";
 
-import { AppleAuthLoginButton } from "./components/AppleAuthLogin";
+import { Login } from "./components/Login";
 
 export default function ShareExtension({ url, text }: InitialProps) {
   const [session, setSession] = useState<FirebaseAuthTypes.User | null>(null);
@@ -35,35 +35,42 @@ export default function ShareExtension({ url, text }: InitialProps) {
 
   return (
     <View style={styles.container}>
-      <Text
-        style={{ fontFamily: "Inter-Black", fontSize: 24, marginBottom: 10 }}
-      >
-        Firebase Example
-      </Text>
-      {url && (
+      <View style={{ flex: 1 }}>
         <Text
           style={{
+            fontFamily: "Inter-Black",
+            fontSize: 24,
+            marginBottom: 10,
             textAlign: "center",
-            color: "#313639",
-            fontSize: 16,
           }}
         >
-          URL: {url}
+          Firebase Example
         </Text>
-      )}
-      {text && (
-        <Text
-          style={{
-            textAlign: "center",
-            color: "#313639",
-            fontSize: 16,
-          }}
-        >
-          Text: {text}
-        </Text>
-      )}
-      <Button title="Close" onPress={close} />
-      <View style={{ paddingTop: 30 }}>
+        {url && (
+          <Text
+            style={{
+              textAlign: "center",
+              color: "#313639",
+              fontSize: 16,
+            }}
+          >
+            URL: {url}
+          </Text>
+        )}
+        {text && (
+          <Text
+            style={{
+              textAlign: "center",
+              color: "#313639",
+              fontSize: 16,
+            }}
+          >
+            Text: {text}
+          </Text>
+        )}
+        <Button title="Close" onPress={close} />
+      </View>
+      <View style={{ flex: 1, paddingTop: 30 }}>
         {session ? (
           <View>
             <Text
@@ -81,13 +88,13 @@ export default function ShareExtension({ url, text }: InitialProps) {
                 auth()
                   .signOut()
                   .catch((error) =>
-                    Alert.alert("Authentication Error", error.message)
+                    Alert.alert("Authentication Error", error.message),
                   )
               }
             />
           </View>
         ) : (
-          <AppleAuthLoginButton />
+          <Login />
         )}
       </View>
     </View>
@@ -99,8 +106,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 20,
     backgroundColor: "#FAF8F5",
-    alignItems: "center",
-    justifyContent: "center",
     padding: 30,
   },
 });
