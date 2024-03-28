@@ -2,7 +2,7 @@ import { XcodeProject } from "expo/config-plugins";
 
 export function addTargetDependency(
   xcodeProject: XcodeProject,
-  target: { uuid: string }
+  target: { uuid: string },
 ) {
   if (!xcodeProject.hash.project.objects["PBXTargetDependency"]) {
     xcodeProject.hash.project.objects["PBXTargetDependency"] = {};

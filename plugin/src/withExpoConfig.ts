@@ -25,7 +25,7 @@ export const withExpoConfig: ConfigPlugin = (config) => {
     config.extra?.eas?.build?.experimental?.ios?.appExtensions;
 
   const shareExtensionConfig = iosExtensions?.find(
-    (extension) => extension.targetName === extensionName
+    (extension) => extension.targetName === extensionName,
   );
 
   return {
@@ -49,7 +49,7 @@ export const withExpoConfig: ConfigPlugin = (config) => {
                   entitlements: {
                     ...shareExtensionConfig?.entitlements,
                     "com.apple.security.application-groups": getAppGroups(
-                      config.ios?.bundleIdentifier
+                      config.ios?.bundleIdentifier,
                     ),
                     ...(config.ios.usesAppleSignIn && {
                       "com.apple.developer.applesignin": ["Default"],
@@ -57,7 +57,7 @@ export const withExpoConfig: ConfigPlugin = (config) => {
                   },
                 },
                 ...(iosExtensions?.filter(
-                  (extension) => extension.targetName !== extensionName
+                  (extension) => extension.targetName !== extensionName,
                 ) ?? []),
               ],
             },

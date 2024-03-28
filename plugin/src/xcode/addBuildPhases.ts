@@ -17,7 +17,7 @@ export function addBuildPhases(
       group: string;
     };
     resources: string[];
-  }
+  },
 ) {
   const buildPath = `"$(CONTENTS_FOLDER_PATH)/ShareExtensions"`;
   const targetType = "app_extension";
@@ -33,7 +33,7 @@ export function addBuildPhases(
       shellScript:
         'export RCT_METRO_PORT="${RCT_METRO_PORT:=8081}"\necho "export RCT_METRO_PORT=${RCT_METRO_PORT}" > "${SRCROOT}/../node_modules/react-native/scripts/.packager.env"\nif [ -z "${RCT_NO_LAUNCH_PACKAGER+xxx}" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s "http://localhost:${RCT_METRO_PORT}/status" | grep -q "packager-status:running" ; then\n      echo "Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly"\n      exit 2\n    fi\n  else\n    open "$SRCROOT/../node_modules/react-native/scripts/launchPackager.command" || echo "Can\'t start packager automatically"\n  fi\nfi\n',
     },
-    buildPath
+    buildPath,
   );
 
   // Sources build phase
@@ -43,7 +43,7 @@ export function addBuildPhases(
     groupName,
     targetUuid,
     targetType,
-    buildPath
+    buildPath,
   );
 
   // Copy files build phase
@@ -52,7 +52,7 @@ export function addBuildPhases(
     "PBXCopyFilesBuildPhase",
     groupName,
     xcodeProject.getFirstTarget().uuid,
-    targetType
+    targetType,
   );
 
   xcodeProject.addBuildPhase(
@@ -60,7 +60,7 @@ export function addBuildPhases(
     "PBXCopyFilesBuildPhase",
     "Copy Files",
     xcodeProject.getFirstTarget().uuid,
-    targetType
+    targetType,
   );
   xcodeProject.addToPbxCopyfilesBuildPhase(productFile);
 
@@ -71,7 +71,7 @@ export function addBuildPhases(
     groupName,
     targetUuid,
     targetType,
-    buildPath
+    buildPath,
   );
 
   // Resources build phase
@@ -81,7 +81,7 @@ export function addBuildPhases(
     groupName,
     targetUuid,
     targetType,
-    buildPath
+    buildPath,
   );
 
   // Add shell script build phase
@@ -95,6 +95,6 @@ export function addBuildPhases(
       shellScript:
         'set -e; NODE_BINARY=${NODE_BINARY:-node}; REACT_NATIVE_SCRIPTS_PATH=$("$NODE_BINARY" --print "require(\'path\').dirname(require.resolve(\'react-native/package.json\')) + \'/scripts\'"); WITH_ENVIRONMENT="$REACT_NATIVE_SCRIPTS_PATH/xcode/with-environment.sh"; REACT_NATIVE_XCODE="$REACT_NATIVE_SCRIPTS_PATH/react-native-xcode.sh"; export ENTRY_FILE=index.share.js; /bin/sh -c "$WITH_ENVIRONMENT $REACT_NATIVE_XCODE";',
     },
-    buildPath
+    buildPath,
   );
 }

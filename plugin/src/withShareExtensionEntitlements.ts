@@ -15,7 +15,7 @@ export const withShareExtensionEntitlements: ConfigPlugin = (config) => {
 
     const targetPath = path.join(
       config.modRequest.platformProjectRoot,
-      targetName
+      targetName,
     );
     const filePath = path.join(targetPath, `${targetName}.entitlements`);
 

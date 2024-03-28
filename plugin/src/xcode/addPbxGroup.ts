@@ -16,7 +16,7 @@ export function addPbxGroup(
     fonts: string[];
     googleServicesFilePath?: string;
     preprocessingFilePath?: string;
-  }
+  },
 ) {
   const targetPath = path.join(platformProjectRoot, targetName);
 
@@ -27,7 +27,7 @@ export function addPbxGroup(
   copyFileSync(
     path.join(__dirname, "../../swift/ShareExtensionViewController.swift"),
     targetPath,
-    "ShareExtensionViewController.swift"
+    "ShareExtensionViewController.swift",
   );
 
   for (const font of fonts) {
@@ -55,7 +55,7 @@ export function addPbxGroup(
   const { uuid: pbxGroupUuid } = xcodeProject.addPbxGroup(
     files,
     targetName,
-    targetName
+    targetName,
   );
 
   // Add PBXGroup to top level group

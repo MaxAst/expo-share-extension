@@ -12,7 +12,7 @@ export function addToPbxNativeTargetSection(
     targetUuid: string;
     productFile: { fileRef: string };
     xCConfigurationList: { uuid: string };
-  }
+  },
 ) {
   const target = {
     uuid: targetUuid,

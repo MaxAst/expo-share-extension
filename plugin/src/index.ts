@@ -56,7 +56,7 @@ const withShareExtension: ConfigPlugin<{
   }
 
   const expoFontPlugin = config.plugins?.find(
-    (p) => Array.isArray(p) && p.length && p.at(0) === "expo-font"
+    (p) => Array.isArray(p) && p.length && p.at(0) === "expo-font",
   );
 
   const fonts = expoFontPlugin?.at(1).fonts ?? [];
@@ -72,6 +72,7 @@ const withShareExtension: ConfigPlugin<{
         backgroundColor: props?.backgroundColor,
         height: props?.height,
         preprocessingFile: props.preprocessingFile,
+        googleServicesFile: props?.googleServicesFile,
       },
     ],
     withShareExtensionEntitlements,

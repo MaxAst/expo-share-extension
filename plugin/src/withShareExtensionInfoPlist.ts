@@ -9,18 +9,53 @@ import {
   getShareExtensionName,
 } from "./index";
 
+const getReversedClientId = (googleServiceFile: string): string => {
+  try {
+    const googleServicePlist = fs.readFileSync(googleServiceFile, "utf8");
+
+    const googleServiceJson = plist.parse(googleServicePlist);
+    const REVERSED_CLIENT_ID = googleServiceJson.REVERSED_CLIENT_ID;
+
+    if (!REVERSED_CLIENT_ID) {
+      throw new TypeError("REVERSED_CLIENT_ID missing");
+    }
+
+    return REVERSED_CLIENT_ID;
+  } catch {
+    throw new Error(
+      "[expo-share-extension] Failed to parse your share extension's GoogleService-Info.plist. Are you sure it is a valid Info.Plist file with a REVERSE_CLIENT_ID field?",
+    );
+  }
+};
+
 export const withShareExtensionInfoPlist: ConfigPlugin<{
   fonts: string[];
   backgroundColor?: BackgroundColor;
   height?: Height;
   preprocessingFile?: string;
-}> = (config, { fonts = [], backgroundColor, height, preprocessingFile }) => {
+  googleServicesFile?: string;
+}> = (
+  config,
+  {
+    fonts = [],
+    backgroundColor,
+    height,
+    preprocessingFile,
+    googleServicesFile,
+  },
+) => {
   return withInfoPlist(config, (config) => {
     const targetName = getShareExtensionName(config);
 
+    let reversedClientId: string | undefined;
+
+    if (googleServicesFile) {
+      reversedClientId = getReversedClientId(googleServicesFile);
+    }
+
     const targetPath = path.join(
       config.modRequest.platformProjectRoot,
-      targetName
+      targetName,
     );
 
     const filePath = path.join(targetPath, "Info.plist");
@@ -35,6 +70,13 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
       CFBundlePackageType: "$(PRODUCT_BUNDLE_PACKAGE_TYPE)",
       CFBundleShortVersionString: "$(MARKETING_VERSION)",
       CFBundleVersion: "$(CURRENT_PROJECT_VERSION)",
+      ...(reversedClientId && {
+        CFBundleURLTypes: [
+          {
+            CFBundleURLSchemes: [reversedClientId],
+          },
+        ],
+      }),
       LSRequiresIPhoneOS: true,
       NSAppTransportSecurity: {
         NSExceptionDomains: {
@@ -68,7 +110,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
           ...(preprocessingFile && {
             NSExtensionJavaScriptPreprocessingFile: path.basename(
               preprocessingFile,
-              path.extname(preprocessingFile)
+              path.extname(preprocessingFile),
             ),
           }),
         },

@@ -32,7 +32,7 @@ export const withShareExtensionTarget: ConfigPlugin<{
 
     if (config.ios?.googleServicesFile && !googleServicesFile) {
       console.warn(
-        "Warning: No Google Services file specified for Share Extension"
+        "Warning: No Google Services file specified for Share Extension",
       );
     }
 
