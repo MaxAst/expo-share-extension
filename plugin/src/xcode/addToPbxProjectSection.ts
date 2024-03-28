@@ -2,7 +2,7 @@ import { XcodeProject } from "expo/config-plugins";
 
 export function addToPbxProjectSection(
   xcodeProject: XcodeProject,
-  target: { uuid: string }
+  target: { uuid: string },
 ) {
   xcodeProject.addToPbxProjectSection(target);
 
