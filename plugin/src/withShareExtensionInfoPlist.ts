@@ -60,7 +60,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
         NSExtensionAttributes: {
           NSExtensionActivationRule: {
             NSExtensionActivationSupportsWebURLWithMaxCount: 1,
-            NSExtensionActivationSupportsText: 1,
+            NSExtensionActivationSupportsText: true,
             ...(preprocessingFile && {
               NSExtensionActivationSupportsWebPageWithMaxCount: 1,
             }),
