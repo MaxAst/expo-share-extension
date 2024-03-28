@@ -4,6 +4,9 @@
 
 # VSCode
 .vscode/
+
+# But don't ignore the settings.json file
+!.vscode/settings.json
 jsconfig.json
 
 # Xcode
