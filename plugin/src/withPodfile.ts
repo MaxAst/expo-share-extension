@@ -14,7 +14,7 @@ export const withPodfile: ConfigPlugin<{
     (config) => {
       const podFilePath = path.join(
         config.modRequest.platformProjectRoot,
-        "Podfile"
+        "Podfile",
       );
       let podfileContent = fs.readFileSync(podFilePath).toString();
 

@@ -12,7 +12,7 @@ export function addXCConfigurationList(
     currentProjectVersion: string;
     bundleIdentifier: string;
     marketingVersion?: string;
-  }
+  },
 ) {
   const commonBuildSettings = {
     CLANG_ENABLE_MODULES: "YES",
@@ -51,7 +51,7 @@ export function addXCConfigurationList(
   const xCConfigurationList = xcodeProject.addXCConfigurationList(
     buildConfigurationsList,
     "Release",
-    `Build configuration list for PBXNativeTarget "${targetName}"`
+    `Build configuration list for PBXNativeTarget "${targetName}"`,
   );
 
   return xCConfigurationList;

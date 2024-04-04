@@ -2,7 +2,7 @@ import auth, { type FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { useEffect, useState } from "react";
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 
-import { AppleAuthLoginButton } from "./components/AppleAuthLogin";
+import { Login } from "./components/Login";
 
 export default function App() {
   const [session, setSession] = useState<FirebaseAuthTypes.User | null>(null);
@@ -37,7 +37,7 @@ export default function App() {
       <Text
         style={{ fontFamily: "Inter-Black", fontSize: 24, marginBottom: 10 }}
       >
-        Basic Example
+        Firebase Auth Example
       </Text>
       <Text
         style={{
@@ -63,13 +63,13 @@ export default function App() {
                 auth()
                   .signOut()
                   .catch((error) =>
-                    Alert.alert("Authentication Error", error.message)
+                    Alert.alert("Authentication Error", error.message),
                   )
               }
             />
           </View>
         ) : (
-          <AppleAuthLoginButton />
+          <Login />
         )}
       </View>
     </View>
