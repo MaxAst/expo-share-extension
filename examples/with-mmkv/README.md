@@ -1,21 +1,6 @@
 # MMKV Example
 
-This example demonstrates the `backgroundColor` and `height` options that you can provide in app.json to customize the look of the native view. It'd be configured in app.json like so:
-
-```json
-[
-  "expo-share-extension",
-  {
-    "backgroundColor": {
-      "red": 255,
-      "green": 255,
-      "blue": 255,
-      "alpha": 0 // make the background transparent
-    },
-    "height": 500
-  }
-]
-```
+This example demonstrates that [`react-native-mmkv`](https://github.com/mrousavy/react-native-mmkv) can be used in `expo-share-extension` for persisting data that is shared between the main app and the share extension.
 
 ## Usage
 
