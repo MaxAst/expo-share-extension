@@ -7,6 +7,8 @@ import {
   type BackgroundColor,
   type Height,
   getShareExtensionName,
+  getAppBundleIdentifier,
+  getAppGroup,
 } from "./index";
 
 export const withShareExtensionInfoPlist: ConfigPlugin<{
@@ -24,6 +26,9 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
     );
 
     const filePath = path.join(targetPath, "Info.plist");
+
+    const bundleIdentifier = getAppBundleIdentifier(config);
+    const appGroup = getAppGroup(bundleIdentifier);
 
     let infoPlist: InfoPlist = {
       CFBundleDevelopmentRegion: "$(DEVELOPMENT_LANGUAGE)",
@@ -56,6 +61,8 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
         UISceneConfigurations: {},
       },
       UIAppFonts: fonts.map((font) => path.basename(font)) ?? [],
+      // we need to add an AppGroup key for compatibility with react-native-mmkv https://github.com/mrousavy/react-native-mmkv
+      AppGroup: appGroup,
       NSExtension: {
         NSExtensionAttributes: {
           NSExtensionActivationRule: {
