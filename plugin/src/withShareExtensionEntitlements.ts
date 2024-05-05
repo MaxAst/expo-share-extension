@@ -5,7 +5,7 @@ import path from "path";
 
 import {
   getAppBundleIdentifier,
-  getAppGroups,
+  getAppGroup,
   getShareExtensionName,
 } from "./index";
 
@@ -22,7 +22,7 @@ export const withShareExtensionEntitlements: ConfigPlugin = (config) => {
     const bundleIdentifier = getAppBundleIdentifier(config);
 
     let shareExtensionEntitlements: Record<string, string | string[]> = {
-      "com.apple.security.application-groups": getAppGroups(bundleIdentifier),
+      "com.apple.security.application-groups": [getAppGroup(bundleIdentifier)],
     };
 
     if (config.ios?.usesAppleSignIn) {

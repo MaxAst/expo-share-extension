@@ -3,13 +3,14 @@ import { ConfigPlugin, IOSConfig, withPlugins } from "expo/config-plugins";
 import { z } from "zod";
 
 import { withAppEntitlements } from "./withAppEntitlements";
+import { withAppInfoPlist } from "./withAppInfoPlist";
 import { withExpoConfig } from "./withExpoConfig";
 import { withPodfile } from "./withPodfile";
 import { withShareExtensionEntitlements } from "./withShareExtensionEntitlements";
 import { withShareExtensionInfoPlist } from "./withShareExtensionInfoPlist";
 import { withShareExtensionTarget } from "./withShareExtensionTarget";
 
-export const getAppGroups = (identifier: string) => [`group.${identifier}`];
+export const getAppGroup = (identifier: string) => `group.${identifier}`;
 
 export const getAppBundleIdentifier = (config: ExpoConfig) => {
   if (!config.ios?.bundleIdentifier) {
@@ -64,6 +65,7 @@ const withShareExtension: ConfigPlugin<{
   return withPlugins(config, [
     withExpoConfig,
     withAppEntitlements,
+    withAppInfoPlist,
     [withPodfile, { excludedPackages: props?.excludedPackages ?? [] }],
     [
       withShareExtensionInfoPlist,
