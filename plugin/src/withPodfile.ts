@@ -19,8 +19,10 @@ export const withPodfile: ConfigPlugin<{
       let podfileContent = fs.readFileSync(podFilePath).toString();
 
       const postInstallBuildSettings = `    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'NO'
+      unless target.name == 'Sentry'
+        target.build_configurations.each do |config|
+          config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
+        end
       end
     end`;
 
