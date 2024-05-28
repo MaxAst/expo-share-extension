@@ -2,6 +2,7 @@ import { mergeContents } from "@expo/config-plugins/build/utils/generateCode";
 import { ConfigPlugin, withDangerousMod } from "expo/config-plugins";
 import fs from "fs";
 import path from "path";
+import semver from "semver";
 
 import { getShareExtensionName } from "./index";
 
@@ -44,6 +45,9 @@ export const withPodfile: ConfigPlugin<{
       const useExpoModules = `exclude = ["${exclude.join(`", "`)}"]
   use_expo_modules!(exclude: exclude)`;
 
+      const expoVersion = semver.parse(config.sdkVersion);
+      const majorVersion = expoVersion?.major ?? 0;
+
       const shareExtensionTarget = `target '${targetName}' do     
   ${useExpoModules}     
   config = use_native_modules!
@@ -55,10 +59,14 @@ export const withPodfile: ConfigPlugin<{
     :path => config[:reactNativePath],
     :hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
     # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    :app_path => "#{Pod::Config.instance.installation_root}/..",${
+      majorVersion >= 51
+        ? `
     # Temporarily disable privacy file aggregation by default, until React
     # Native 0.74.2 is released with fixes.
-    :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] == 'true',
+    :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] == 'true',`
+        : ""
+    }
   )
 end`;
 
