@@ -73,7 +73,7 @@ const withShareExtension: ConfigPlugin<{
         fonts,
         backgroundColor: props?.backgroundColor,
         height: props?.height,
-        preprocessingFile: props.preprocessingFile,
+        preprocessingFile: props?.preprocessingFile,
       },
     ],
     withShareExtensionEntitlements,
@@ -82,7 +82,7 @@ const withShareExtension: ConfigPlugin<{
       {
         fonts,
         googleServicesFile: props?.googleServicesFile,
-        preprocessingFile: props.preprocessingFile,
+        preprocessingFile: props?.preprocessingFile,
       },
     ],
   ]);
