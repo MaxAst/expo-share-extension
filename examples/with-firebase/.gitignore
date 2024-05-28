@@ -35,5 +35,6 @@ yarn-error.*
 *.tsbuildinfo
 
 android/
+ios/
 
 firebase-credentials
