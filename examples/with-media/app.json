@@ -33,12 +33,7 @@
           "fonts": ["./assets/fonts/Inter-Black.otf"]
         }
       ],
-      [
-        "../../app.plugin.js",
-        {
-          "preprocessingFile": "./preprocessing.js"
-        }
-      ]
+      ["../../app.plugin.js"]
     ]
   }
 }
