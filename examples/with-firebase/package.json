@@ -13,24 +13,24 @@
     "prebuild": "expo prebuild -p ios --clean"
   },
   "dependencies": {
-    "@react-native-firebase/app": "^19.1.1",
-    "@react-native-firebase/auth": "^19.1.1",
-    "@react-native-firebase/firestore": "^19.1.1",
-    "expo": "~50.0.14",
-    "expo-build-properties": "~0.11.1",
-    "expo-dev-client": "~3.3.11",
-    "expo-splash-screen": "~0.26.4",
-    "expo-status-bar": "~1.11.1",
+    "@react-native-firebase/app": "^20.0.0",
+    "@react-native-firebase/auth": "^20.0.0",
+    "@react-native-firebase/firestore": "^20.0.0",
+    "expo": "~51.0.8",
+    "expo-build-properties": "~0.12.1",
+    "expo-dev-client": "~4.0.14",
+    "expo-splash-screen": "~0.27.4",
+    "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
-    "react-native": "0.73.6",
-    "zod": "^3.22.4",
-    "expo-apple-authentication": "~6.3.0",
-    "expo-constants": "~15.4.5"
+    "react-native": "0.74.1",
+    "zod": "^3.23.8",
+    "expo-apple-authentication": "~6.4.1",
+    "expo-constants": "~16.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.3",
-    "@types/react": "~18.2.72",
-    "typescript": "^5.4.3"
+    "@babel/core": "^7.24.6",
+    "@types/react": "~18.2.79",
+    "typescript": "~5.3.3"
   },
   "private": true,
   "expo": {
