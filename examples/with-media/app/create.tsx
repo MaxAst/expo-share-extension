@@ -1,12 +1,15 @@
+import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function App() {
+export default function Create() {
+  const { extra } = useLocalSearchParams();
+
   return (
     <View style={styles.container}>
       <Text
         style={{ fontFamily: "Inter-Black", fontSize: 24, marginBottom: 10 }}
       >
-        Media Example
+        Create Media
       </Text>
       <Text
         style={{
@@ -15,8 +18,7 @@ export default function App() {
           fontSize: 16,
         }}
       >
-        Go to Photo Library and open the share menu on a photo to trigger this
-        app's share extension.
+        {extra ? `Extra: ${extra}` : "No extra data"}
       </Text>
     </View>
   );

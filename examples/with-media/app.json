@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "with-preprocessing",
-    "slug": "with-preprocessing",
+    "name": "with-media",
+    "slug": "with-media",
+    "scheme": "withmedia",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,17 +12,19 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "expo.modules.shareextension.withpreprocessing"
+      "bundleIdentifier": "expo.modules.shareextension.withmedia"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "expo.modules.shareextension.withpreprocessing"
+      "package": "expo.modules.shareextension.withmedia"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,10 +33,25 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/Inter-Black.otf"]
+          "fonts": [
+            "./assets/fonts/Inter-Black.otf"
+          ]
         }
       ],
-      ["../../app.plugin.js"]
+      [
+        "../../app.plugin.js",
+        {
+          "activationRules": [
+            {
+              "type": "image"
+            },
+            {
+              "type": "video"
+            }
+          ]
+        }
+      ],
+      "expo-router"
     ]
   }
 }

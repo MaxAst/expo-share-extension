@@ -1,33 +1,34 @@
+import * as Linking from "expo-linking";
 import { type InitialProps, close } from "expo-share-extension";
-import { useEffect, useState } from "react";
+import { useCallback } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
-import { z } from "zod";
 
-const preprocessingResultsSchema = z.object({
-  title: z.string(),
-});
-
-export default function ShareExtension({
-  preprocessingResults,
-  text,
-}: InitialProps) {
-  const [title, setTitle] = useState<string>();
-
-  useEffect(() => {
-    const result = preprocessingResultsSchema.safeParse(preprocessingResults);
-    if (result.success) {
-      setTitle(result.data.title);
+export default function ShareExtension({ images, videos }: InitialProps) {
+  // TODO: Figure out how to redirect to host app
+  const openHostApp = useCallback(() => {
+    try {
+      Linking.canOpenURL("withmedia://create").then((supported) => {
+        if (supported) {
+          Linking.openURL("withmedia://create");
+        } else {
+          console.log("Don't know how to open URI: withmedia://create");
+        }
+      });
+    } catch (error) {
+      console.error(error);
     }
-  }, [preprocessingResults]);
+  }, []);
+
+  console.log(JSON.stringify(videos));
 
   return (
     <View style={styles.container}>
       <Text
         style={{ fontFamily: "Inter-Black", fontSize: 24, marginBottom: 10 }}
       >
-        Preprocessing Example
+        Media Example
       </Text>
-      {title && (
+      {images?.length ? (
         <Text
           style={{
             textAlign: "center",
@@ -35,10 +36,10 @@ export default function ShareExtension({
             fontSize: 16,
           }}
         >
-          Document title: {title}
+          Images: {JSON.stringify(images)}
         </Text>
-      )}
-      {text && (
+      ) : null}
+      {videos?.length ? (
         <Text
           style={{
             textAlign: "center",
@@ -46,9 +47,10 @@ export default function ShareExtension({
             fontSize: 16,
           }}
         >
-          Text: {text}
+          Videos:{JSON.stringify(videos)}
         </Text>
-      )}
+      ) : null}
+      <Button title="Open Host App" onPress={openHostApp} />
       <Button title="Close" onPress={close} />
     </View>
   );
