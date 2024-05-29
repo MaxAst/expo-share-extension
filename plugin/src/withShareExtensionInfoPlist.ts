@@ -78,20 +78,6 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
         NSExtensionAttributes: {
           NSExtensionActivationRule: activationRules.reduce((acc, current) => {
             switch (current.type) {
-              case "attachments":
-                return {
-                  ...acc,
-                  NSExtensionActivationSupportsAttachmentsWithMaxCount:
-                    current.max ?? 1,
-                  NSExtensionActivationSupportsAttachmentsWithMinCount:
-                    current.min ?? 0,
-                };
-              case "file":
-                return {
-                  ...acc,
-                  NSExtensionActivationSupportsFileWithMaxCount:
-                    current.max ?? 1,
-                };
               case "image":
                 return {
                   ...acc,
