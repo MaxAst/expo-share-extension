@@ -8,20 +8,11 @@ This example demonstrates how to share media. It'd be configured in app.json lik
   {
     "activationRules": [
       {
-        "type": "attachments",
-        "min": 1,
-        "max": 2
-      },
-      {
-        "type": "file",
-        "max": 2
-      },
-      {
         "type": "image",
         "max": 2
       },
       {
-        "type": "movie",
+        "type": "video",
         "max": 1
       },
       {
