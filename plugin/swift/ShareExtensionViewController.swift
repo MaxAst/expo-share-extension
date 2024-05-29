@@ -57,6 +57,7 @@ class ShareExtensionViewController: UIViewController {
     }
   }
   
+  // TODO: figure out how to redirect to host app
   private func redirectToHost(item: String) {
     guard let scheme = Bundle.main.object(forInfoDictionaryKey: "HostAppScheme") as? String else { return }
     var urlComponents = URLComponents()
