@@ -1,5 +1,6 @@
 import UIKit
 import React
+import AVFoundation
 // switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
 import MobileCoreServices
 // if react native firebase is installed, we import and configure it
@@ -19,9 +20,9 @@ class ShareExtensionViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupLoadingIndicator()
-    #if canImport(FirebaseCore)
+#if canImport(FirebaseCore)
     FirebaseApp.configure()
-    #endif
+#endif
     initializeReactNativeBridgeIfNeeded()
     loadReactNativeContent()
     setupNotificationCenterObserver()
@@ -54,6 +55,28 @@ class ShareExtensionViewController: UIViewController {
       let jsCodeLocation = self.jsCodeLocation()
       ShareExtensionViewController.sharedBridge = RCTBridge(bundleURL: jsCodeLocation, moduleProvider: nil, launchOptions: nil)
     }
+  }
+  
+  private func redirectToHost(item: String) {
+    guard let scheme = Bundle.main.object(forInfoDictionaryKey: "HostAppScheme") as? String else { return }
+    var urlComponents = URLComponents()
+    urlComponents.scheme = scheme
+    urlComponents.host = "share"
+    urlComponents.path = "/"
+    urlComponents.queryItems = [
+      URLQueryItem(name: "item", value: item)
+    ]
+    let url = urlComponents.url!
+    print(url)
+    var responder = self as UIResponder?
+    while responder != nil {
+      if let application = responder as? UIApplication {
+        application.open(url, options: [:], completionHandler: nil)
+        break
+      }
+      responder = responder?.next
+    }
+    self.close()
   }
   
   private func loadReactNativeContent() {
@@ -169,6 +192,95 @@ class ShareExtensionViewController: UIViewController {
             DispatchQueue.main.async {
               if let text = textItem as? String {
                 sharedItems["text"] = text
+              }
+              group.leave()
+            }
+          }
+        } else if provider.hasItemConformingToTypeIdentifier(kUTTypeImage as String) {
+          group.enter()
+          provider.loadItem(forTypeIdentifier: kUTTypeImage as String, options: nil) { (imageItem, error) in
+            DispatchQueue.main.async {
+              
+              // Ensure the array exists
+              if sharedItems["images"] == nil {
+                sharedItems["images"] = [String]()
+              }
+              
+              if let imageUri = imageItem as? NSURL {
+                if var imageArray = sharedItems["images"] as? [String] {
+                  imageArray.append(imageUri.absoluteString ?? "")
+                  sharedItems["images"] = imageArray
+                }
+              } else if let image = imageItem as? UIImage {
+                // Handle UIImage if needed (e.g., save to disk and get the file path)
+                if let imageData = image.jpegData(compressionQuality: 1.0) {
+                  let tempDirectory = NSTemporaryDirectory()
+                  let tempFile = URL(fileURLWithPath: tempDirectory).appendingPathComponent(UUID().uuidString).appendingPathExtension("jpg")
+                  try? imageData.write(to: tempFile)
+                  sharedItems["images"] = tempFile.absoluteString
+                }
+              } else {
+                print("imageItem is not a recognized type")
+              }
+              group.leave()
+            }
+          }
+        } else if provider.hasItemConformingToTypeIdentifier(kUTTypeMovie as String) {
+          group.enter()
+          provider.loadItem(forTypeIdentifier: kUTTypeMovie as String, options: nil) { (videoItem, error) in
+            DispatchQueue.main.async {
+              print("videoItem type: \(type(of: videoItem))")
+              
+              // Ensure the array exists
+              if sharedItems["videos"] == nil {
+                sharedItems["videos"] = [String]()
+              }
+              
+              // Check if videoItem is NSURL
+              if let videoUri = videoItem as? NSURL {
+                if var videoArray = sharedItems["videos"] as? [String] {
+                  videoArray.append(videoUri.absoluteString ?? "")
+                  sharedItems["videos"] = videoArray
+                }
+              }
+              // Check if videoItem is NSData
+              else if let videoData = videoItem as? NSData {
+                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                let fileName = UUID().uuidString + ".mov"
+                let fileURL = documentsDirectory.appendingPathComponent(fileName)
+                do {
+                  try videoData.write(to: fileURL)
+                  if var videoArray = sharedItems["videos"] as? [String] {
+                    videoArray.append(fileURL.absoluteString)
+                    sharedItems["videos"] = videoArray
+                  }
+                } catch {
+                  print("Failed to save video: \(error)")
+                }
+              }
+              // Check if videoItem is AVAsset
+              else if let asset = videoItem as? AVAsset {
+                let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetPassthrough)
+                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                let fileName = UUID().uuidString + ".mov"
+                let fileURL = documentsDirectory.appendingPathComponent(fileName)
+                exportSession?.outputURL = fileURL
+                exportSession?.outputFileType = .mov
+                exportSession?.exportAsynchronously {
+                  switch exportSession?.status {
+                  case .completed:
+                    if var videoArray = sharedItems["videos"] as? [String] {
+                      videoArray.append(fileURL.absoluteString)
+                      sharedItems["videos"] = videoArray
+                    }
+                  case .failed:
+                    print("Failed to export video: \(String(describing: exportSession?.error))")
+                  default:
+                    break
+                  }
+                }
+              } else {
+                print("videoItem is not a recognized type")
               }
               group.leave()
             }

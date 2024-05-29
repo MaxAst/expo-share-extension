@@ -11,21 +11,56 @@ The shared data is passed to the share extension's root component as an initial 
 
 ```ts
 export type InitialProps = {
-  url?: string;
+  images?: string[];
+  videos?: string[];
   text?: string;
-  preprocessingResults: unknown;
+  url?: string;
+  preprocessingResults?: unknown;
 };
 ```
 
 You can import `InitialProps` from `expo-share-extension` to use it as a type for your root component's props.
 
-The config plugin does not support all [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) yet. It currently supports:
+The config plugin supports almost all [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10). It currently supports.
 
 - `NSExtensionActivationSupportsText`, which is triggered e.g. when sharing a WhatsApp message's contents or when selecting a text on a webpage and sharing it via the iOS tooltip menu. The result is passed as the `text` field in the initial props
 - `NSExtensionActivationSupportsWebURLWithMaxCount: 1`, which is triggered when using the share button in Safari. The result is passed as the `url` field in the initial props
 - `NSExtensionActivationSupportsWebPageWithMaxCount: 1`, which is triggered when using the share button in Safari. The result is passed as the `preprocessingResults` field in the initial props. When using this rule, you will no longer receive `url` as part of initial props, unless you extract it in your preprocessing JavaScript file. You can learn more about this in the [Preprocessing JavaScript](#preprocessing-javascript) section.
+- `NSExtensionActivationSupportsImageWithMaxCount: 1`, which is triggered when using the share button on an image. The result is passed as part of the `images` array in the initial props.
+- `NSExtensionActivationSupportsMovieWithMaxCount: 1`, which is triggered when using the share button on a video. The result is passed as part of the `videos` array in the initial props.
 
-Contributions to support more [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) are welcome!
+You need to list the activation rules you want to use in your `app.json`/`app.config.(j|t)s` file like so:
+
+```json
+[
+  "expo-share-extension",
+  {
+    "activationRules": [
+      {
+        "type": "image",
+        "max": 2
+      },
+      {
+        "type": "video",
+        "max": 1
+      },
+      {
+        "type": "text"
+      },
+      {
+        "type": "url",
+        "max": 1
+      }
+    ]
+  }
+]
+```
+
+If no values for `max` are provided, the default value is `1`. The `type` field can be one of the following: `image`, `video`, `text`, `url`.
+
+If you do not specify the `activationRules` option, `expo-share-extension` enables the url rules by default, for backwards compatibility.
+
+Contributions to support the remaining [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) (files and attachaments) are welcome!
 
 **Note**: The share extension does not support `expo-updates` as it causes the share extension to crash. Since version `1.5.0`, `expo-updates` is excluded from the share extension's bundle by default. If you're using an older version, you must exclude it by adding it to the `excludedPackages` option in your `app.json`/`app.config.(j|t)s`. See the [Exlude Expo Modules](#exlude-expo-modules) section for more information.
 

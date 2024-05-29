@@ -45,7 +45,16 @@ const heightSchema = z.number().int().min(50).max(1000);
 
 export type Height = z.infer<typeof heightSchema>;
 
+type ActivationType = "image" | "video" | "text" | "url";
+
+export type ActivationRule = {
+  type: ActivationType;
+  min?: number;
+  max?: number;
+};
+
 const withShareExtension: ConfigPlugin<{
+  activationRules?: ActivationRule[];
   backgroundColor?: BackgroundColor;
   height?: Height;
   excludedPackages?: string[];
@@ -71,6 +80,7 @@ const withShareExtension: ConfigPlugin<{
       withShareExtensionInfoPlist,
       {
         fonts,
+        activationRules: props?.activationRules,
         backgroundColor: props?.backgroundColor,
         height: props?.height,
         preprocessingFile: props?.preprocessingFile,
