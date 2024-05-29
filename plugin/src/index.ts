@@ -49,7 +49,6 @@ type ActivationType = "image" | "video" | "text" | "url";
 
 export type ActivationRule = {
   type: ActivationType;
-  min?: number;
   max?: number;
 };
 
