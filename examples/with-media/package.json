@@ -1,5 +1,5 @@
 {
-  "name": "with-firebase",
+  "name": "with-media",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,23 +8,22 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "eas-build-pre-install": "cd ../.. && npm install && npm run build && npm run build plugin",
-    "eas:dev": "eas build -e development -p ios",
     "postinstall": "npx patch-package",
     "prebuild": "expo prebuild -p ios --clean"
   },
   "dependencies": {
-    "@react-native-firebase/app": "^20.0.0",
-    "@react-native-firebase/auth": "^20.0.0",
-    "@react-native-firebase/firestore": "^20.0.0",
     "expo": "~51.0.8",
-    "expo-build-properties": "~0.12.1",
     "expo-dev-client": "~4.0.14",
     "expo-splash-screen": "~0.27.4",
     "expo-status-bar": "~1.12.1",
+    "expo-updates": "^0.25.14",
     "react": "18.2.0",
     "react-native": "0.74.1",
     "zod": "^3.23.8",
-    "expo-apple-authentication": "~6.4.1",
+    "expo-router": "~3.5.14",
+    "react-native-safe-area-context": "4.10.1",
+    "react-native-screens": "3.31.1",
+    "expo-linking": "~6.3.1",
     "expo-constants": "~16.0.1"
   },
   "devDependencies": {

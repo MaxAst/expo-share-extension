@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 
 import {
+  type ActivationRule,
   type BackgroundColor,
   type Height,
   getShareExtensionName,
@@ -13,10 +14,20 @@ import {
 
 export const withShareExtensionInfoPlist: ConfigPlugin<{
   fonts: string[];
+  activationRules?: ActivationRule[];
   backgroundColor?: BackgroundColor;
   height?: Height;
   preprocessingFile?: string;
-}> = (config, { fonts = [], backgroundColor, height, preprocessingFile }) => {
+}> = (
+  config,
+  {
+    fonts = [],
+    activationRules = [{ type: "text" }, { type: "url" }],
+    backgroundColor,
+    height,
+    preprocessingFile,
+  }
+) => {
   return withInfoPlist(config, (config) => {
     const targetName = getShareExtensionName(config);
 
@@ -65,13 +76,55 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
       AppGroup: appGroup,
       NSExtension: {
         NSExtensionAttributes: {
-          NSExtensionActivationRule: {
-            NSExtensionActivationSupportsWebURLWithMaxCount: 1,
-            NSExtensionActivationSupportsText: true,
-            ...(preprocessingFile && {
-              NSExtensionActivationSupportsWebPageWithMaxCount: 1,
-            }),
-          },
+          NSExtensionActivationRule: activationRules.reduce((acc, current) => {
+            switch (current.type) {
+              case "attachments":
+                return {
+                  ...acc,
+                  NSExtensionActivationSupportsAttachmentsWithMaxCount:
+                    current.max ?? 1,
+                  NSExtensionActivationSupportsAttachmentsWithMinCount:
+                    current.min ?? 0,
+                };
+              case "file":
+                return {
+                  ...acc,
+                  NSExtensionActivationSupportsFileWithMaxCount:
+                    current.max ?? 1,
+                };
+              case "image":
+                return {
+                  ...acc,
+                  NSExtensionActivationSupportsImageWithMaxCount:
+                    current.max ?? 1,
+                };
+              case "video":
+                return {
+                  ...acc,
+                  NSExtensionActivationSupportsMovieWithMaxCount:
+                    current.max ?? 1,
+                };
+              case "text":
+                return {
+                  ...acc,
+                  NSExtensionActivationSupportsText: true,
+                };
+              case "url":
+                return preprocessingFile
+                  ? {
+                      ...acc,
+                      NSExtensionActivationSupportsWebPageWithMaxCount:
+                        current.max ?? 1,
+                    }
+                  : {
+                      ...acc,
+                      NSExtensionActivationSupportsWebURLWithMaxCount:
+                        current.max ?? 1,
+                    };
+              default:
+                return acc;
+            }
+          }, {}),
           ...(preprocessingFile && {
             NSExtensionJavaScriptPreprocessingFile: path.basename(
               preprocessingFile,
@@ -85,6 +138,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
       },
       ShareExtensionBackgroundColor: backgroundColor,
       ShareExtensionHeight: height,
+      HostAppScheme: config.scheme,
     };
 
     // see https://github.com/expo/expo/blob/main/packages/expo-apple-authentication/plugin/src/withAppleAuthIOS.ts#L3-L17

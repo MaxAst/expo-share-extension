@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "with-media",
+    "slug": "with-media",
+    "scheme": "withmedia",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "expo.modules.shareextension.withmedia"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "expo.modules.shareextension.withmedia"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Inter-Black.otf"
+          ]
+        }
+      ],
+      [
+        "../../app.plugin.js",
+        {
+          "activationRules": [
+            {
+              "type": "image"
+            },
+            {
+              "type": "video"
+            }
+          ]
+        }
+      ],
+      "expo-router"
+    ]
+  }
+}
