@@ -1,26 +1,7 @@
-import * as Linking from "expo-linking";
-import { type InitialProps, close } from "expo-share-extension";
-import { useCallback } from "react";
+import { type InitialProps, close, redirect } from "expo-share-extension";
 import { Button, StyleSheet, Text, View } from "react-native";
 
 export default function ShareExtension({ images, videos }: InitialProps) {
-  // TODO: Figure out how to redirect to host app
-  const openHostApp = useCallback(() => {
-    try {
-      Linking.canOpenURL("withmedia://create").then((supported) => {
-        if (supported) {
-          Linking.openURL("withmedia://create");
-        } else {
-          console.log("Don't know how to open URI: withmedia://create");
-        }
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
-  console.log(JSON.stringify(videos));
-
   return (
     <View style={styles.container}>
       <Text
@@ -50,7 +31,7 @@ export default function ShareExtension({ images, videos }: InitialProps) {
           Videos:{JSON.stringify(videos)}
         </Text>
       ) : null}
-      <Button title="Open Host App" onPress={openHostApp} />
+      <Button title="Open Host App" onPress={redirect} />
       <Button title="Close" onPress={close} />
     </View>
   );
