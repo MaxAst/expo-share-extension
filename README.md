@@ -58,7 +58,7 @@ You need to list the activation rules you want to use in your `app.json`/`app.co
 
 If no values for `max` are provided, the default value is `1`. The `type` field can be one of the following: `image`, `video`, `text`, `url`.
 
-If you do not specify the `activationRules` option, `expo-share-extension` enables the url rules by default, for backwards compatibility.
+If you do not specify the `activationRules` option, `expo-share-extension` enables the `url` and `text` rules by default, for backwards compatibility.
 
 Contributions to support the remaining [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) (files and attachaments) are welcome!
 
