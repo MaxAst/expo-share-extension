@@ -18,6 +18,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
   backgroundColor?: BackgroundColor;
   height?: Height;
   preprocessingFile?: string;
+  googleServicesFile?: string;
 }> = (
   config,
   {
@@ -26,6 +27,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
     backgroundColor,
     height,
     preprocessingFile,
+    googleServicesFile,
   }
 ) => {
   return withInfoPlist(config, (config) => {
@@ -125,6 +127,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
       ShareExtensionBackgroundColor: backgroundColor,
       ShareExtensionHeight: height,
       HostAppScheme: config.scheme,
+      WithFirebase: !!googleServicesFile,
     };
 
     // see https://github.com/expo/expo/blob/main/packages/expo-apple-authentication/plugin/src/withAppleAuthIOS.ts#L3-L17

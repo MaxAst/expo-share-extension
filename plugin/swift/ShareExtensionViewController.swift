@@ -21,7 +21,9 @@ class ShareExtensionViewController: UIViewController {
     super.viewDidLoad()
     setupLoadingIndicator()
 #if canImport(FirebaseCore)
-    FirebaseApp.configure()
+    if let withFirebase = Bundle.main.object(forInfoDictionaryKey: "WithFirebase") {
+      FirebaseApp.configure()
+    }
 #endif
     initializeReactNativeBridgeIfNeeded()
     loadReactNativeContent()
