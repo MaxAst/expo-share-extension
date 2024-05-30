@@ -4,6 +4,10 @@ export function close(): void {
   return ExpoShareExtensionModule.close();
 }
 
+export function redirect(path: string): void {
+  return ExpoShareExtensionModule.redirect(path);
+}
+
 export interface IExtensionPreprocessingJS {
   run: (args: { completionFunction: (data: unknown) => void }) => void;
   finalize: (args: unknown) => void;

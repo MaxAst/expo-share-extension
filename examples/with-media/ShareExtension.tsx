@@ -1,7 +1,12 @@
 import { type InitialProps, close, redirect } from "expo-share-extension";
+import { useCallback } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 
 export default function ShareExtension({ images, videos }: InitialProps) {
+  const handleRedirect = useCallback(() => {
+    redirect("/create");
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text
@@ -31,7 +36,7 @@ export default function ShareExtension({ images, videos }: InitialProps) {
           Videos:{JSON.stringify(videos)}
         </Text>
       ) : null}
-      <Button title="Open Host App" onPress={redirect} />
+      <Button title="Open Host App" onPress={handleRedirect} />
       <Button title="Close" onPress={close} />
     </View>
   );
