@@ -21,7 +21,7 @@ class ShareExtensionViewController: UIViewController {
     super.viewDidLoad()
     setupLoadingIndicator()
 #if canImport(FirebaseCore)
-    if let withFirebase = Bundle.main.object(forInfoDictionaryKey: "WithFirebase") {
+    if let withFirebase = Bundle.main.object(forInfoDictionaryKey: "WithFirebase") as? String, withFirebase != "NO" {
       FirebaseApp.configure()
     }
 #endif
