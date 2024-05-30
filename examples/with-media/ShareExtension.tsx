@@ -1,10 +1,10 @@
-import { type InitialProps, close, redirect } from "expo-share-extension";
+import { type InitialProps, close, openHostApp } from "expo-share-extension";
 import { useCallback } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 
 export default function ShareExtension({ images, videos }: InitialProps) {
-  const handleRedirect = useCallback(() => {
-    redirect("/create");
+  const handleOpenHostApp = useCallback(() => {
+    openHostApp("/create");
   }, []);
 
   return (
@@ -36,7 +36,7 @@ export default function ShareExtension({ images, videos }: InitialProps) {
           Videos:{JSON.stringify(videos)}
         </Text>
       ) : null}
-      <Button title="Open Host App" onPress={handleRedirect} />
+      <Button title="Open Host App" onPress={handleOpenHostApp} />
       <Button title="Close" onPress={close} />
     </View>
   );

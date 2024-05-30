@@ -167,31 +167,28 @@ export default function ShareExtension({ url }: { url: string }) {
 }
 ```
 
-## Options
+If you want to open the host app from the share extension, use the `openHostApp` method from `expo-share-extension` with a valid path:
 
-### Redirects to App
+```ts
+import { openHostApp } from "expo-share-extension"
+import { Button, Text, View } from "react-native";
 
-If you want to redirect the user to your main app instead of opening a custom view when the share extension is triggered, you can use the `redirect` field in any of the rules you specifiy in the `activationRules` option. One common example would be to redirect the user to the main app if they share media like images or videos, which consume too much memory to display them in a custom view of a share extension, which have a memory limit of 100MB. To do this with e.g. expo-router, add the following to your `app.json`/`app.config.(j|t)s`:
-
-```json
-[
-  "expo-share-extension",
-  {
-    "activationRules": [
-      {
-        "type": "image",
-        "max": 2,
-        "redirect": "/(tabs)/post"
-      },
-      {
-        "type": "video",
-        "max": 1,
-        "redirect": "/(tabs)/post"
-      }
-    ]
+// if ShareExtension is your root component, url is available as an initial prop
+export default function ShareExtension({ url }: { url: string }) {
+  const handleOpenHostApp = () => {
+    openHostApp(`create?url=${url}`)
   }
-]
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Text>{url}</Text>
+      <Button title="Open Host App" onPress={handleOpenHostApp} />
+    </View>
+  );
+}
 ```
+
+## Options
 
 ### Exlude Expo Modules
 

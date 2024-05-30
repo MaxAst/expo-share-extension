@@ -59,7 +59,7 @@ class ShareExtensionViewController: UIViewController {
     }
   }
   
-  private func redirectToHost(path: String) {
+  private func openHostApp(path: String) {
     guard let scheme = Bundle.main.object(forInfoDictionaryKey: "HostAppScheme") as? String else { return }
     var urlComponents = URLComponents()
     urlComponents.scheme = scheme
@@ -106,11 +106,11 @@ class ShareExtensionViewController: UIViewController {
       }
     }
 
-    NotificationCenter.default.addObserver(forName: NSNotification.Name("redirect"), object: nil, queue: nil) { [weak self] notification in
+    NotificationCenter.default.addObserver(forName: NSNotification.Name("openHostApp"), object: nil, queue: nil) { [weak self] notification in
       DispatchQueue.main.async {
         if let userInfo = notification.userInfo {
             if let path = userInfo["path"] as? String {
-              self?.redirectToHost(path: path)
+              self?.openHostApp(path: path)
             }
         }
       }

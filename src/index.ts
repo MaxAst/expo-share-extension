@@ -4,8 +4,8 @@ export function close(): void {
   return ExpoShareExtensionModule.close();
 }
 
-export function redirect(path: string): void {
-  return ExpoShareExtensionModule.redirect(path);
+export function openHostApp(path: string): void {
+  return ExpoShareExtensionModule.openHostApp(path);
 }
 
 export interface IExtensionPreprocessingJS {
