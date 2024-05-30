@@ -167,6 +167,27 @@ export default function ShareExtension({ url }: { url: string }) {
 }
 ```
 
+If you want to open the host app from the share extension, use the `openHostApp` method from `expo-share-extension` with a valid path:
+
+```ts
+import { openHostApp } from "expo-share-extension"
+import { Button, Text, View } from "react-native";
+
+// if ShareExtension is your root component, url is available as an initial prop
+export default function ShareExtension({ url }: { url: string }) {
+  const handleOpenHostApp = () => {
+    openHostApp(`create?url=${url}`)
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Text>{url}</Text>
+      <Button title="Open Host App" onPress={handleOpenHostApp} />
+    </View>
+  );
+}
+```
+
 ## Options
 
 ### Exlude Expo Modules

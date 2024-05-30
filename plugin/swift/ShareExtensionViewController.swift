@@ -21,7 +21,9 @@ class ShareExtensionViewController: UIViewController {
     super.viewDidLoad()
     setupLoadingIndicator()
 #if canImport(FirebaseCore)
-    FirebaseApp.configure()
+    if let withFirebase = Bundle.main.object(forInfoDictionaryKey: "WithFirebase") {
+      FirebaseApp.configure()
+    }
 #endif
     initializeReactNativeBridgeIfNeeded()
     loadReactNativeContent()
@@ -57,25 +59,21 @@ class ShareExtensionViewController: UIViewController {
     }
   }
   
-  // TODO: figure out how to redirect to host app
-  private func redirectToHost(item: String) {
+  private func openHostApp(path: String) {
     guard let scheme = Bundle.main.object(forInfoDictionaryKey: "HostAppScheme") as? String else { return }
     var urlComponents = URLComponents()
     urlComponents.scheme = scheme
-    urlComponents.host = "share"
-    urlComponents.path = "/"
-    urlComponents.queryItems = [
-      URLQueryItem(name: "item", value: item)
-    ]
-    let url = urlComponents.url!
-    print(url)
-    var responder = self as UIResponder?
+    urlComponents.host = ""
+    urlComponents.path = path
+    guard let url = urlComponents.url else { return }
+    let selectorOpenURL = sel_registerName("openURL:")
+    var responder: UIResponder? = self
     while responder != nil {
-      if let application = responder as? UIApplication {
-        application.open(url, options: [:], completionHandler: nil)
-        break
+      if responder?.responds(to: selectorOpenURL) == true {
+        responder?.perform(selectorOpenURL, with: url)
+        break // Exit the loop once the URL is opened
       }
-      responder = responder?.next
+      responder = responder!.next
     }
     self.close()
   }
@@ -105,6 +103,16 @@ class ShareExtensionViewController: UIViewController {
     NotificationCenter.default.addObserver(forName: NSNotification.Name("close"), object: nil, queue: nil) { [weak self] _ in
       DispatchQueue.main.async {
         self?.close()
+      }
+    }
+
+    NotificationCenter.default.addObserver(forName: NSNotification.Name("openHostApp"), object: nil, queue: nil) { [weak self] notification in
+      DispatchQueue.main.async {
+        if let userInfo = notification.userInfo {
+            if let path = userInfo["path"] as? String {
+              self?.openHostApp(path: path)
+            }
+        }
       }
     }
   }
