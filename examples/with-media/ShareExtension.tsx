@@ -4,8 +4,10 @@ import { Button, StyleSheet, Text, View } from "react-native";
 
 export default function ShareExtension({ images, videos }: InitialProps) {
   const handleOpenHostApp = useCallback(() => {
-    openHostApp("/create");
-  }, []);
+    if (videos?.length) {
+      openHostApp(`/create?videoUrl=${videos[0]}`);
+    }
+  }, [videos]);
 
   return (
     <View style={styles.container}>

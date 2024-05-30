@@ -2,7 +2,7 @@ import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Create() {
-  const { extra } = useLocalSearchParams();
+  const { videoUrl } = useLocalSearchParams();
 
   return (
     <View style={styles.container}>
@@ -18,7 +18,7 @@ export default function Create() {
           fontSize: 16,
         }}
       >
-        {extra ? `Extra: ${extra}` : "No extra data"}
+        {videoUrl ? `Video URL: ${videoUrl}` : "No video url"}
       </Text>
     </View>
   );
