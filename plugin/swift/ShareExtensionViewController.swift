@@ -65,12 +65,12 @@ class ShareExtensionViewController: UIViewController {
     urlComponents.scheme = scheme
     urlComponents.host = ""
     // TODO: handle query params
-
+    
     let pathComponents = path.split(separator: "?", maxSplits: 1)
     let pathWithoutQuery = String(pathComponents[0])
     let queryString = pathComponents.count > 1 ? String(pathComponents[1]) : nil
-
-      // Parse and set query items
+    
+    // Parse and set query items
     if let queryString = queryString {
       let queryItems = queryString.split(separator: "&").map { queryParam -> URLQueryItem in
         let paramComponents = queryParam.split(separator: "=", maxSplits: 1)
@@ -80,7 +80,7 @@ class ShareExtensionViewController: UIViewController {
       }
       urlComponents.queryItems = queryItems
     }
-
+    
     let pathWithSlashEnsured = pathWithoutQuery.hasPrefix("/") ? pathWithoutQuery : "/\(pathWithoutQuery)"
     urlComponents.path = pathWithSlashEnsured
     guard let url = urlComponents.url else { return }
@@ -123,13 +123,13 @@ class ShareExtensionViewController: UIViewController {
         self?.close()
       }
     }
-
+    
     NotificationCenter.default.addObserver(forName: NSNotification.Name("openHostApp"), object: nil, queue: nil) { [weak self] notification in
       DispatchQueue.main.async {
         if let userInfo = notification.userInfo {
-            if let path = userInfo["path"] as? String {
-              self?.openHostApp(path: path)
-            }
+          if let path = userInfo["path"] as? String {
+            self?.openHostApp(path: path)
+          }
         }
       }
     }
@@ -190,6 +190,8 @@ class ShareExtensionViewController: UIViewController {
     
     let group = DispatchGroup()
     
+    let fileManager = FileManager.default
+    
     for item in extensionItems {
       for provider in item.attachments ?? [] {
         if provider.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
@@ -233,18 +235,47 @@ class ShareExtensionViewController: UIViewController {
                 sharedItems["images"] = [String]()
               }
               
+              guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
+                print("Could not find AppGroup in info.plist")
+                return
+              }
+              
+              guard let containerUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
+                print("Could not set up file manager container URL for app group")
+                return
+              }
+              
               if let imageUri = imageItem as? NSURL {
-                if var imageArray = sharedItems["images"] as? [String] {
-                  imageArray.append(imageUri.absoluteString ?? "")
-                  sharedItems["images"] = imageArray
+                if let tempFilePath = imageUri.path {
+                  let fileExtension = imageUri.pathExtension ?? "jpg"
+                  let fileName = UUID().uuidString + "." + fileExtension
+                  let persistentURL = containerUrl.appendingPathComponent(fileName)
+                  
+                  do {
+                    try fileManager.copyItem(atPath: tempFilePath, toPath: persistentURL.path)
+                    if var videoArray = sharedItems["images"] as? [String] {
+                      videoArray.append(persistentURL.absoluteString)
+                      sharedItems["images"] = videoArray
+                    }
+                  } catch {
+                    print("Failed to copy image: \(error)")
+                  }
                 }
               } else if let image = imageItem as? UIImage {
                 // Handle UIImage if needed (e.g., save to disk and get the file path)
                 if let imageData = image.jpegData(compressionQuality: 1.0) {
-                  let tempDirectory = NSTemporaryDirectory()
-                  let tempFile = URL(fileURLWithPath: tempDirectory).appendingPathComponent(UUID().uuidString).appendingPathExtension("jpg")
-                  try? imageData.write(to: tempFile)
-                  sharedItems["images"] = tempFile.absoluteString
+                  let fileName = UUID().uuidString + ".jpg"
+                  let persistentURL = containerUrl.appendingPathComponent(fileName)
+                  
+                  do {
+                    try imageData.write(to: persistentURL)
+                    if var imageArray = sharedItems["images"] as? [String] {
+                      imageArray.append(persistentURL.absoluteString)
+                      sharedItems["images"] = imageArray
+                    }
+                  } catch {
+                    print("Failed to save image: \(error)")
+                  }
                 }
               } else {
                 print("imageItem is not a recognized type")
@@ -263,22 +294,44 @@ class ShareExtensionViewController: UIViewController {
                 sharedItems["videos"] = [String]()
               }
               
+              guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
+                print("Could not find AppGroup in info.plist")
+                return
+              }
+              
+              guard let containerUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
+                print("Could not set up file manager container URL for app group")
+                return
+              }
+              
               // Check if videoItem is NSURL
               if let videoUri = videoItem as? NSURL {
-                if var videoArray = sharedItems["videos"] as? [String] {
-                  videoArray.append(videoUri.absoluteString ?? "")
-                  sharedItems["videos"] = videoArray
+                if let tempFilePath = videoUri.path {
+                  let fileExtension = videoUri.pathExtension ?? "mov"
+                  let fileName = UUID().uuidString + "." + fileExtension
+                  let persistentURL = containerUrl.appendingPathComponent(fileName)
+                  
+                  do {
+                    try fileManager.copyItem(atPath: tempFilePath, toPath: persistentURL.path)
+                    if var videoArray = sharedItems["videos"] as? [String] {
+                      videoArray.append(persistentURL.absoluteString)
+                      sharedItems["videos"] = videoArray
+                    }
+                  } catch {
+                    print("Failed to copy video: \(error)")
+                  }
                 }
               }
               // Check if videoItem is NSData
               else if let videoData = videoItem as? NSData {
-                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                let fileName = UUID().uuidString + ".mov"
-                let fileURL = documentsDirectory.appendingPathComponent(fileName)
+                let fileExtension = "mov" // Using mov as default type extension
+                let fileName = UUID().uuidString + "." + fileExtension
+                let persistentURL = containerUrl.appendingPathComponent(fileName)
+                
                 do {
-                  try videoData.write(to: fileURL)
+                  try videoData.write(to: persistentURL)
                   if var videoArray = sharedItems["videos"] as? [String] {
-                    videoArray.append(fileURL.absoluteString)
+                    videoArray.append(persistentURL.absoluteString)
                     sharedItems["videos"] = videoArray
                   }
                 } catch {
@@ -288,16 +341,18 @@ class ShareExtensionViewController: UIViewController {
               // Check if videoItem is AVAsset
               else if let asset = videoItem as? AVAsset {
                 let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetPassthrough)
-                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                let fileName = UUID().uuidString + ".mov"
-                let fileURL = documentsDirectory.appendingPathComponent(fileName)
-                exportSession?.outputURL = fileURL
+                
+                let fileExtension = "mov" // Using mov as default type extension
+                let fileName = UUID().uuidString + "." + fileExtension
+                let persistentURL = containerUrl.appendingPathComponent(fileName)
+                
+                exportSession?.outputURL = persistentURL
                 exportSession?.outputFileType = .mov
                 exportSession?.exportAsynchronously {
                   switch exportSession?.status {
                   case .completed:
                     if var videoArray = sharedItems["videos"] as? [String] {
-                      videoArray.append(fileURL.absoluteString)
+                      videoArray.append(persistentURL.absoluteString)
                       sharedItems["videos"] = videoArray
                     }
                   case .failed:
