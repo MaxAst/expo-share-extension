@@ -1,0 +1,19 @@
+{
+  "cli": {
+    "version": ">= 5.3.0",
+    "promptToConfigurePushNotifications": false
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {}
+  },
+  "submit": {
+    "production": {}
+  }
+}
