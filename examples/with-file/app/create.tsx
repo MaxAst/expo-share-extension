@@ -9,7 +9,7 @@ export default function Create() {
       <Text
         style={{ fontFamily: "Inter-Black", fontSize: 24, marginBottom: 10 }}
       >
-        Create Media
+        Create File
       </Text>
       <Text
         style={{
