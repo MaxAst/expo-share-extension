@@ -377,66 +377,6 @@ class ShareExtensionViewController: UIViewController {
               group.leave()
             }
           }
-        } else if provider.hasItemConformingToTypeIdentifier(kUTTypeFileURL as String) {
-            group.enter()
-            provider.loadItem(forTypeIdentifier: kUTTypeFileURL as String, options: nil) { (fileItem, error) in
-              DispatchQueue.main.async {
-                print("fileItem type: \(type(of: fileItem))")
-                    
-                // Ensure the array exists
-                if sharedItems["files"] == nil {
-                  sharedItems["files"] = [String]()
-                }
-                
-                guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
-                  print("Could not find AppGroup in info.plist")
-                  return
-                }
-                    
-                guard let containerUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
-                  print("Could not set up file manager container URL for app group")
-                  return
-                }
-                
-                // Check if fileItem is NSURL
-                if let fileUri = fileItem as? NSURL {
-                  if let tempFilePath = fileUri.path {
-                    let fileExtension = fileUri.pathExtension ?? "dat"
-                    let fileName = UUID().uuidString + "." + fileExtension
-                    let persistentURL = containerUrl.appendingPathComponent(fileName)
-                      
-                    do {
-                      try fileManager.copyItem(atPath: tempFilePath, toPath: persistentURL.path)
-                      if var fileArray = sharedItems["files"] as? [String] {
-                        fileArray.append(persistentURL.absoluteString)
-                        sharedItems["files"] = fileArray
-                      }
-                    } catch {
-                      print("Failed to copy file: \(error)")
-                    }
-                  }
-                }
-                // Check if fileItem is NSData
-                else if let fileData = fileItem as? NSData {
-                  let fileExtension = "dat" // Using dat as default type extension
-                  let fileName = UUID().uuidString + "." + fileExtension
-                  let persistentURL = containerUrl.appendingPathComponent(fileName)
-                    
-                  do {
-                    try fileData.write(to: persistentURL)
-                    if var fileArray = sharedItems["files"] as? [String] {
-                      fileArray.append(persistentURL.absoluteString)
-                      sharedItems["files"] = fileArray
-                    }
-                  } catch {
-                    print("Failed to save file: \(error)")
-                  }
-                } else {
-                  print("fileItem is not a recognized type")
-                }
-                group.leave()
-              }
-            }
         }
       }
     }

@@ -1,5 +1,9 @@
 import plist from "@expo/plist";
-import { ConfigPlugin, InfoPlist, withInfoPlist } from "expo/config-plugins";
+import {
+  type ConfigPlugin,
+  type InfoPlist,
+  withInfoPlist,
+} from "expo/config-plugins";
 import fs from "fs";
 import path from "path";
 
@@ -7,9 +11,9 @@ import {
   type ActivationRule,
   type BackgroundColor,
   type Height,
-  getShareExtensionName,
   getAppBundleIdentifier,
   getAppGroup,
+  getShareExtensionName,
 } from "./index";
 
 export const withShareExtensionInfoPlist: ConfigPlugin<{

@@ -2,7 +2,7 @@ import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Create() {
-  const { fileUrl } = useLocalSearchParams();
+  const { fileURL } = useLocalSearchParams();
 
   return (
     <View style={styles.container}>
@@ -18,7 +18,7 @@ export default function Create() {
           fontSize: 16,
         }}
       >
-        {fileUrl ? `File URL: ${fileUrl}` : "No file url"}
+        {fileURL ? `File URL: ${fileURL}` : "No file url"}
       </Text>
     </View>
   );
