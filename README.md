@@ -11,6 +11,7 @@ The shared data is passed to the share extension's root component as an initial 
 
 ```ts
 export type InitialProps = {
+  files?: string[];
   images?: string[];
   videos?: string[];
   text?: string;
@@ -37,6 +38,10 @@ You need to list the activation rules you want to use in your `app.json`/`app.co
   {
     "activationRules": [
       {
+        "type": "file",
+        "max": 3
+      },
+      {
         "type": "image",
         "max": 2
       },
@@ -56,11 +61,11 @@ You need to list the activation rules you want to use in your `app.json`/`app.co
 ]
 ```
 
-If no values for `max` are provided, the default value is `1`. The `type` field can be one of the following: `image`, `video`, `text`, `url`.
+If no values for `max` are provided, the default value is `1`. The `type` field can be one of the following: `file`, `image`, `video`, `text`, `url`.
 
 If you do not specify the `activationRules` option, `expo-share-extension` enables the `url` and `text` rules by default, for backwards compatibility.
 
-Contributions to support the remaining [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) (files and attachaments) are welcome!
+Contributions to support the remaining [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) (`NSExtensionActivationSupportsAttachmentsWithMaxCount` and `NSExtensionActivationSupportsAttachmentsWithMinCount`) are welcome!
 
 **Note**: The share extension does not support `expo-updates` as it causes the share extension to crash. Since version `1.5.0`, `expo-updates` is excluded from the share extension's bundle by default. If you're using an older version, you must exclude it by adding it to the `excludedPackages` option in your `app.json`/`app.config.(j|t)s`. See the [Exlude Expo Modules](#exlude-expo-modules) section for more information.
 
