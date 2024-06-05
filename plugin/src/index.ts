@@ -45,7 +45,7 @@ const heightSchema = z.number().int().min(50).max(1000);
 
 export type Height = z.infer<typeof heightSchema>;
 
-type ActivationType = "image" | "video" | "text" | "url";
+type ActivationType = "image" | "video" | "text" | "url" | "file";
 
 export type ActivationRule = {
   type: ActivationType;
@@ -65,7 +65,7 @@ const withShareExtension: ConfigPlugin<{
   }
 
   const expoFontPlugin = config.plugins?.find(
-    (p) => Array.isArray(p) && p.length && p.at(0) === "expo-font"
+    (p) => Array.isArray(p) && p.length && p.at(0) === "expo-font",
   );
 
   const fonts = expoFontPlugin?.at(1).fonts ?? [];

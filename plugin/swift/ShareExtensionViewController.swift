@@ -199,7 +199,17 @@ class ShareExtensionViewController: UIViewController {
           provider.loadItem(forTypeIdentifier: kUTTypeURL as String, options: nil) { (urlItem, error) in
             DispatchQueue.main.async {
               if let sharedURL = urlItem as? URL {
-                sharedItems["url"] = sharedURL.absoluteString
+                if sharedURL.isFileURL {
+                  if sharedItems["files"] == nil {
+                    sharedItems["files"] = [String]()
+                  }
+                  if var fileArray = sharedItems["files"] as? [String] {
+                    fileArray.append(sharedURL.absoluteString)
+                    sharedItems["files"] = fileArray
+                  }
+                } else {
+                  sharedItems["url"] = sharedURL.absoluteString
+                }
               }
               group.leave()
             }

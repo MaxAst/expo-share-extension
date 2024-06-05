@@ -1,5 +1,9 @@
 import plist from "@expo/plist";
-import { ConfigPlugin, InfoPlist, withInfoPlist } from "expo/config-plugins";
+import {
+  type ConfigPlugin,
+  type InfoPlist,
+  withInfoPlist,
+} from "expo/config-plugins";
 import fs from "fs";
 import path from "path";
 
@@ -7,9 +11,9 @@ import {
   type ActivationRule,
   type BackgroundColor,
   type Height,
-  getShareExtensionName,
   getAppBundleIdentifier,
   getAppGroup,
+  getShareExtensionName,
 } from "./index";
 
 export const withShareExtensionInfoPlist: ConfigPlugin<{
@@ -28,14 +32,14 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
     height,
     preprocessingFile,
     googleServicesFile,
-  }
+  },
 ) => {
   return withInfoPlist(config, (config) => {
     const targetName = getShareExtensionName(config);
 
     const targetPath = path.join(
       config.modRequest.platformProjectRoot,
-      targetName
+      targetName,
     );
 
     const filePath = path.join(targetPath, "Info.plist");
@@ -109,6 +113,12 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
                       NSExtensionActivationSupportsWebURLWithMaxCount:
                         current.max ?? 1,
                     };
+              case "file":
+                return {
+                  ...acc,
+                  NSExtensionActivationSupportsFileWithMaxCount:
+                    current.max ?? 1,
+                };
               default:
                 return acc;
             }
@@ -116,7 +126,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
           ...(preprocessingFile && {
             NSExtensionJavaScriptPreprocessingFile: path.basename(
               preprocessingFile,
-              path.extname(preprocessingFile)
+              path.extname(preprocessingFile),
             ),
           }),
         },

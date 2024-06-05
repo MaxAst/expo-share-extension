@@ -14,6 +14,7 @@ export interface IExtensionPreprocessingJS {
 }
 
 export type InitialProps = {
+  files?: string[];
   images?: string[];
   videos?: string[];
   text?: string;
