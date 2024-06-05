@@ -29,6 +29,7 @@ The config plugin supports almost all [NSExtensionActivationRules](https://devel
 - `NSExtensionActivationSupportsWebPageWithMaxCount: 1`, which is triggered when using the share button in Safari. The result is passed as the `preprocessingResults` field in the initial props. When using this rule, you will no longer receive `url` as part of initial props, unless you extract it in your preprocessing JavaScript file. You can learn more about this in the [Preprocessing JavaScript](#preprocessing-javascript) section.
 - `NSExtensionActivationSupportsImageWithMaxCount: 1`, which is triggered when using the share button on an image. The result is passed as part of the `images` array in the initial props.
 - `NSExtensionActivationSupportsMovieWithMaxCount: 1`, which is triggered when using the share button on a video. The result is passed as part of the `videos` array in the initial props.
+- `NSExtensionActivationSupportsFileWithMaxCount: 1`, which is triggered when using the share button on a file. The result is passed as part of the `files` array in the initial props.
 
 You need to list the activation rules you want to use in your `app.json`/`app.config.(j|t)s` file like so:
 
