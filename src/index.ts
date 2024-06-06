@@ -8,8 +8,8 @@ export function openHostApp(path: string): void {
   return ExpoShareExtensionModule.openHostApp(path);
 }
 
-export function clearMedia(): void {
-  return ExpoShareExtensionModule.clearMedia();
+export async function clearAppGroupContainer(): Promise<void> {
+  return await ExpoShareExtensionModule.clearAppGroupContainer();
 }
 
 export interface IExtensionPreprocessingJS {
