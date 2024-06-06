@@ -8,6 +8,10 @@ export function openHostApp(path: string): void {
   return ExpoShareExtensionModule.openHostApp(path);
 }
 
+export function clearMedia(): void {
+  return ExpoShareExtensionModule.clearMedia();
+}
+
 export interface IExtensionPreprocessingJS {
   run: (args: { completionFunction: (data: unknown) => void }) => void;
   finalize: (args: unknown) => void;
