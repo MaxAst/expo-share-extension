@@ -259,7 +259,18 @@ class ShareExtensionViewController: UIViewController {
                 if let tempFilePath = imageUri.path {
                   let fileExtension = imageUri.pathExtension ?? "jpg"
                   let fileName = UUID().uuidString + "." + fileExtension
-                  let persistentURL = containerUrl.appendingPathComponent(fileName)
+                  
+                  let mediaDirectory = containerUrl.appendingPathComponent("media")
+                  
+                  if !fileManager.fileExists(atPath: mediaDirectory.absoluteString) {
+                    do {
+                      try fileManager.createDirectory(at: containerUrl.appendingPathComponent("media"), withIntermediateDirectories: true)
+                    } catch {
+                      print("Failed to create media directory: \(error)")
+                    }
+                  }
+                  
+                  let persistentURL = mediaDirectory.appendingPathComponent(fileName)
                   
                   do {
                     try fileManager.copyItem(atPath: tempFilePath, toPath: persistentURL.path)
@@ -275,7 +286,18 @@ class ShareExtensionViewController: UIViewController {
                 // Handle UIImage if needed (e.g., save to disk and get the file path)
                 if let imageData = image.jpegData(compressionQuality: 1.0) {
                   let fileName = UUID().uuidString + ".jpg"
-                  let persistentURL = containerUrl.appendingPathComponent(fileName)
+
+                  let mediaDirectory = containerUrl.appendingPathComponent("media")
+                  
+                  if !fileManager.fileExists(atPath: mediaDirectory.absoluteString) {
+                    do {
+                      try fileManager.createDirectory(at: containerUrl.appendingPathComponent("media"), withIntermediateDirectories: true)
+                    } catch {
+                      print("Failed to create media directory: \(error)")
+                    }
+                  }
+                  
+                  let persistentURL = mediaDirectory.appendingPathComponent(fileName)
                   
                   do {
                     try imageData.write(to: persistentURL)
@@ -319,7 +341,18 @@ class ShareExtensionViewController: UIViewController {
                 if let tempFilePath = videoUri.path {
                   let fileExtension = videoUri.pathExtension ?? "mov"
                   let fileName = UUID().uuidString + "." + fileExtension
-                  let persistentURL = containerUrl.appendingPathComponent(fileName)
+
+                  let mediaDirectory = containerUrl.appendingPathComponent("media")
+                  
+                  if !fileManager.fileExists(atPath: mediaDirectory.absoluteString) {
+                    do {
+                      try fileManager.createDirectory(at: containerUrl.appendingPathComponent("media"), withIntermediateDirectories: true)
+                    } catch {
+                      print("Failed to create media directory: \(error)")
+                    }
+                  }
+                  
+                  let persistentURL = mediaDirectory.appendingPathComponent(fileName)
                   
                   do {
                     try fileManager.copyItem(atPath: tempFilePath, toPath: persistentURL.path)
@@ -354,7 +387,18 @@ class ShareExtensionViewController: UIViewController {
                 
                 let fileExtension = "mov" // Using mov as default type extension
                 let fileName = UUID().uuidString + "." + fileExtension
-                let persistentURL = containerUrl.appendingPathComponent(fileName)
+
+                let mediaDirectory = containerUrl.appendingPathComponent("media")
+                
+                if !fileManager.fileExists(atPath: mediaDirectory.absoluteString) {
+                  do {
+                    try fileManager.createDirectory(at: containerUrl.appendingPathComponent("media"), withIntermediateDirectories: true)
+                  } catch {
+                    print("Failed to create media directory: \(error)")
+                  }
+                }
+                
+                let persistentURL = mediaDirectory.appendingPathComponent(fileName)
                 
                 exportSession?.outputURL = persistentURL
                 exportSession?.outputFileType = .mov
