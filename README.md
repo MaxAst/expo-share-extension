@@ -194,6 +194,28 @@ export default function ShareExtension({ url }: { url: string }) {
 }
 ```
 
+When you share images and videos, `expo-share-extension` stores them in a `sharedData` directory in your app group's container.
+These files are not automatically cleaned up, so you should delete them when you're done with them. You can use the `clearAppGroupContainer` method from `expo-share-extension` to delete them:
+
+```ts
+import { clearAppGroupContainer } from "expo-share-extension"
+import { Button, Text, View } from "react-native";
+
+// if ShareExtension is your root component, url is available as an initial prop
+export default function ShareExtension({ url }: { url: string }) {
+  const handleCleanUp = async () => {
+    await clearAppGroupContainer()
+  }
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Text>I have finished processing all shared images and videos</Text>
+      <Button title="Clear App Group Container" onPress={handleOpenHostApp} />
+    </View>
+  );
+}
+```
+
 ## Options
 
 ### Exlude Expo Modules
