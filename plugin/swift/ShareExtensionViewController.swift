@@ -262,9 +262,9 @@ class ShareExtensionViewController: UIViewController {
                   
                   let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
                   
-                  if !fileManager.fileExists(atPath: sharedDataUrl.absoluteString) {
+                  if !fileManager.fileExists(atPath: sharedDataUrl.path) {
                     do {
-                      try fileManager.createDirectory(at: containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData"), withIntermediateDirectories: true)
+                      try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
                     } catch {
                       print("Failed to create sharedData directory: \(error)")
                     }
@@ -289,9 +289,9 @@ class ShareExtensionViewController: UIViewController {
                   
                   let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
                   
-                  if !fileManager.fileExists(atPath: sharedDataUrl.absoluteString) {
+                  if !fileManager.fileExists(atPath: sharedDataUrl.path) {
                     do {
-                      try fileManager.createDirectory(at: containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData"), withIntermediateDirectories: true)
+                      try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
                     } catch {
                       print("Failed to create sharedData directory: \(error)")
                     }
@@ -344,9 +344,9 @@ class ShareExtensionViewController: UIViewController {
                   
                   let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
                   
-                  if !fileManager.fileExists(atPath: sharedDataUrl.absoluteString) {
+                  if !fileManager.fileExists(atPath: sharedDataUrl.path) {
                     do {
-                      try fileManager.createDirectory(at: containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData"), withIntermediateDirectories: true)
+                      try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
                     } catch {
                       print("Failed to create sharedData directory: \(error)")
                     }
@@ -357,7 +357,7 @@ class ShareExtensionViewController: UIViewController {
                   do {
                     try fileManager.copyItem(atPath: tempFilePath, toPath: persistentURL.path)
                     if var videoArray = sharedItems["videos"] as? [String] {
-                      videoArray.append(persistentURL.absoluteString)
+                      videoArray.append(persistentURL.path)
                       sharedItems["videos"] = videoArray
                     }
                   } catch {
@@ -369,12 +369,23 @@ class ShareExtensionViewController: UIViewController {
               else if let videoData = videoItem as? NSData {
                 let fileExtension = "mov" // Using mov as default type extension
                 let fileName = UUID().uuidString + "." + fileExtension
-                let persistentURL = containerUrl.appendingPathComponent(fileName)
-                
+
+                let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
+
+                if !fileManager.fileExists(atPath: sharedDataUrl.path) {
+                  do {
+                    try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
+                  } catch {
+                    print("Failed to create sharedData directory: \(error)")
+                  }
+                }
+
+                let persistentURL = sharedDataUrl.appendingPathComponent(fileName)
+
                 do {
                   try videoData.write(to: persistentURL)
                   if var videoArray = sharedItems["videos"] as? [String] {
-                    videoArray.append(persistentURL.absoluteString)
+                    videoArray.append(persistentURL.path)
                     sharedItems["videos"] = videoArray
                   }
                 } catch {
@@ -390,9 +401,9 @@ class ShareExtensionViewController: UIViewController {
                 
                 let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
                 
-                if !fileManager.fileExists(atPath: sharedDataUrl.absoluteString) {
+                if !fileManager.fileExists(atPath: sharedDataUrl.path) {
                   do {
-                    try fileManager.createDirectory(at: containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData"), withIntermediateDirectories: true)
+                    try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
                   } catch {
                     print("Failed to create sharedData directory: \(error)")
                   }
