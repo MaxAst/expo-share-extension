@@ -1,4 +1,12 @@
+import dayjs from "dayjs";
+import { clearAppGroupContainer } from "expo-share-extension";
 import { StyleSheet, Text, View } from "react-native";
+
+const cleanUpBefore = dayjs().subtract(1, "day").toDate();
+
+clearAppGroupContainer(cleanUpBefore).catch((error) => {
+  console.error(error);
+});
 
 export default function Index() {
   return (
