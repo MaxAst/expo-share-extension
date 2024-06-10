@@ -8,9 +8,11 @@ export function openHostApp(path: string): void {
   return ExpoShareExtensionModule.openHostApp(path);
 }
 
-export async function clearAppGroupContainer(date?: Date): Promise<void> {
+export async function clearAppGroupContainer(args?: {
+  cleanUpBefore?: Date;
+}): Promise<void> {
   return await ExpoShareExtensionModule.clearAppGroupContainer(
-    date?.toISOString(),
+    args?.cleanUpBefore?.toISOString(),
   );
 }
 
