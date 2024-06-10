@@ -8,8 +8,12 @@ export function openHostApp(path: string): void {
   return ExpoShareExtensionModule.openHostApp(path);
 }
 
-export async function clearAppGroupContainer(): Promise<void> {
-  return await ExpoShareExtensionModule.clearAppGroupContainer();
+export async function clearAppGroupContainer(args?: {
+  cleanUpBefore?: Date;
+}): Promise<void> {
+  return await ExpoShareExtensionModule.clearAppGroupContainer(
+    args?.cleanUpBefore?.toISOString(),
+  );
 }
 
 export interface IExtensionPreprocessingJS {
