@@ -1,6 +1,7 @@
 import { ConfigPlugin } from "@expo/config-plugins";
 
 import {
+  getAppBundleIdentifier,
   getAppGroup,
   getShareExtensionBundleIdentifier,
   getShareExtensionName,
@@ -20,6 +21,7 @@ export const withExpoConfig: ConfigPlugin = (config) => {
 
   const extensionName = getShareExtensionName(config);
   const extensionBundleIdentifier = getShareExtensionBundleIdentifier(config);
+  const appBundleIdentifier = getAppBundleIdentifier(config);
 
   const iosExtensions: iOSExtensionConfig[] =
     config.extra?.eas?.build?.experimental?.ios?.appExtensions;
@@ -57,13 +59,14 @@ export const withExpoConfig: ConfigPlugin = (config) => {
                   },
                 },
                 ...(iosExtensions?.filter(
-                  (extension) => extension.targetName !== extensionName,
+                  (extension) => extension.targetName !== extensionName
                 ) ?? []),
               ],
             },
           },
         },
       },
+      appleApplicationGroup: getAppGroup(appBundleIdentifier),
     },
   };
 };

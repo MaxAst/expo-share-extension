@@ -12,9 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.shareextension.withmedia"
@@ -33,9 +31,7 @@
       [
         "expo-font",
         {
-          "fonts": [
-            "./assets/fonts/Inter-Black.otf"
-          ]
+          "fonts": ["./assets/fonts/Inter-Black.otf"]
         }
       ],
       [
