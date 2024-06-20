@@ -45,7 +45,7 @@ public class ExpoShareExtensionModule: Module {
         }
 
         let fileManager = FileManager.default
-        let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
+        let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
 
         if fileManager.fileExists(atPath: sharedDataUrl.path) {
           do {

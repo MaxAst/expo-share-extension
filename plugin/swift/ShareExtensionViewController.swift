@@ -260,7 +260,7 @@ class ShareExtensionViewController: UIViewController {
                   let fileExtension = imageUri.pathExtension ?? "jpg"
                   let fileName = UUID().uuidString + "." + fileExtension
                   
-                  let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
+                  let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
                   
                   if !fileManager.fileExists(atPath: sharedDataUrl.path) {
                     do {
@@ -287,7 +287,7 @@ class ShareExtensionViewController: UIViewController {
                 if let imageData = image.jpegData(compressionQuality: 1.0) {
                   let fileName = UUID().uuidString + ".jpg"
                   
-                  let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
+                  let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
                   
                   if !fileManager.fileExists(atPath: sharedDataUrl.path) {
                     do {
@@ -342,7 +342,7 @@ class ShareExtensionViewController: UIViewController {
                   let fileExtension = videoUri.pathExtension ?? "mov"
                   let fileName = UUID().uuidString + "." + fileExtension
                   
-                  let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
+                  let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
                   
                   if !fileManager.fileExists(atPath: sharedDataUrl.path) {
                     do {
@@ -370,7 +370,7 @@ class ShareExtensionViewController: UIViewController {
                 let fileExtension = "mov" // Using mov as default type extension
                 let fileName = UUID().uuidString + "." + fileExtension
 
-                let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
+                let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
 
                 if !fileManager.fileExists(atPath: sharedDataUrl.path) {
                   do {
@@ -399,7 +399,7 @@ class ShareExtensionViewController: UIViewController {
                 let fileExtension = "mov" // Using mov as default type extension
                 let fileName = UUID().uuidString + "." + fileExtension
                 
-                let sharedDataUrl = containerUrl.deletingLastPathComponent().appendingPathComponent("sharedData")
+                let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
                 
                 if !fileManager.fileExists(atPath: sharedDataUrl.path) {
                   do {
