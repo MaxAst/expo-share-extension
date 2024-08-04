@@ -21,7 +21,7 @@ class ShareExtensionViewController: UIViewController {
     super.viewDidLoad()
     setupLoadingIndicator()
 #if canImport(FirebaseCore)
-    if let withFirebase = Bundle.main.object(forInfoDictionaryKey: "WithFirebase") as? String, withFirebase != "NO" {
+    if Bundle.main.object(forInfoDictionaryKey: "WithFirebase") as? Bool ?? false {
       FirebaseApp.configure()
     }
 #endif
@@ -369,9 +369,9 @@ class ShareExtensionViewController: UIViewController {
               else if let videoData = videoItem as? NSData {
                 let fileExtension = "mov" // Using mov as default type extension
                 let fileName = UUID().uuidString + "." + fileExtension
-
+                
                 let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
-
+                
                 if !fileManager.fileExists(atPath: sharedDataUrl.path) {
                   do {
                     try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
@@ -379,9 +379,9 @@ class ShareExtensionViewController: UIViewController {
                     print("Failed to create sharedData directory: \(error)")
                   }
                 }
-
+                
                 let persistentURL = sharedDataUrl.appendingPathComponent(fileName)
-
+                
                 do {
                   try videoData.write(to: persistentURL)
                   if var videoArray = sharedItems["videos"] as? [String] {
