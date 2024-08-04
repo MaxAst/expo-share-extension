@@ -56,7 +56,7 @@ export const withShareExtensionTarget: ConfigPlugin<{
 
     const xCConfigurationList = addXCConfigurationList(xcodeProject, {
       targetName,
-      currentProjectVersion: config.ios!.buildNumber || "1",
+      currentProjectVersion: config.ios?.buildNumber || "1",
       bundleIdentifier,
       marketingVersion,
     });
