@@ -367,6 +367,10 @@ If you want to contribute to this project, you can use the example app to test y
 
 ### Troubleshooting
 
+#### Command PhaseScriptExecution failed with a nonzero exit code
+
+If you encounter this error when building your app in XCode and you use yarn as a package manager, it is most likely caused by XCode using the wrong node binary. To fix this, navigate into your project's ios directory and replace the contents in the `.xcode.env.local` file with the contents of the `.xcode.env` file.
+
 #### Clear XCode Cache
 
 1. navigate to `~/Library/Developer/Xcode/DerivedData/`
