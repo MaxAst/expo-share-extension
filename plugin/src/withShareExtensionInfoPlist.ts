@@ -32,14 +32,14 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
     height,
     preprocessingFile,
     googleServicesFile,
-  },
+  }
 ) => {
   return withInfoPlist(config, (config) => {
     const targetName = getShareExtensionName(config);
 
     const targetPath = path.join(
       config.modRequest.platformProjectRoot,
-      targetName,
+      targetName
     );
 
     const filePath = path.join(targetPath, "Info.plist");
@@ -107,6 +107,8 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
                       ...acc,
                       NSExtensionActivationSupportsWebPageWithMaxCount:
                         current.max ?? 1,
+                      NSExtensionActivationSupportsWebURLWithMaxCount:
+                        current.max ?? 1,
                     }
                   : {
                       ...acc,
@@ -126,7 +128,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
           ...(preprocessingFile && {
             NSExtensionJavaScriptPreprocessingFile: path.basename(
               preprocessingFile,
-              path.extname(preprocessingFile),
+              path.extname(preprocessingFile)
             ),
           }),
         },
