@@ -59,41 +59,51 @@ class ShareExtensionViewController: UIViewController {
     }
   }
   
-  private func openHostApp(path: String) {
+  private func openHostApp(path: String?) {
     guard let scheme = Bundle.main.object(forInfoDictionaryKey: "HostAppScheme") as? String else { return }
     var urlComponents = URLComponents()
     urlComponents.scheme = scheme
     urlComponents.host = ""
-    // TODO: handle query params
     
-    let pathComponents = path.split(separator: "?", maxSplits: 1)
-    let pathWithoutQuery = String(pathComponents[0])
-    let queryString = pathComponents.count > 1 ? String(pathComponents[1]) : nil
-    
-    // Parse and set query items
-    if let queryString = queryString {
-      let queryItems = queryString.split(separator: "&").map { queryParam -> URLQueryItem in
-        let paramComponents = queryParam.split(separator: "=", maxSplits: 1)
-        let name = String(paramComponents[0])
-        let value = paramComponents.count > 1 ? String(paramComponents[1]) : nil
-        return URLQueryItem(name: name, value: value)
+    if let path = path {
+      let pathComponents = path.split(separator: "?", maxSplits: 1)
+      let pathWithoutQuery = String(pathComponents[0])
+      let queryString = pathComponents.count > 1 ? String(pathComponents[1]) : nil
+      
+      // Parse and set query items
+      if let queryString = queryString {
+        let queryItems = queryString.split(separator: "&").map { queryParam -> URLQueryItem in
+          let paramComponents = queryParam.split(separator: "=", maxSplits: 1)
+          let name = String(paramComponents[0])
+          let value = paramComponents.count > 1 ? String(paramComponents[1]) : nil
+          return URLQueryItem(name: name, value: value)
+        }
+        urlComponents.queryItems = queryItems
       }
-      urlComponents.queryItems = queryItems
+      
+      let pathWithSlashEnsured = pathWithoutQuery.hasPrefix("/") ? pathWithoutQuery : "/\(pathWithoutQuery)"
+      urlComponents.path = pathWithSlashEnsured
     }
     
-    let pathWithSlashEnsured = pathWithoutQuery.hasPrefix("/") ? pathWithoutQuery : "/\(pathWithoutQuery)"
-    urlComponents.path = pathWithSlashEnsured
     guard let url = urlComponents.url else { return }
-    let selectorOpenURL = sel_registerName("openURL:")
+    openURL(url)
+    self.close()
+  }
+  
+  @objc @discardableResult private func openURL(_ url: URL) -> Bool {
     var responder: UIResponder? = self
     while responder != nil {
-      if responder?.responds(to: selectorOpenURL) == true {
-        responder?.perform(selectorOpenURL, with: url)
-        break // Exit the loop once the URL is opened
+      if let application = responder as? UIApplication {
+        if #available(iOS 18.0, *) {
+          application.open(url, options: [:], completionHandler: nil)
+          return true
+        } else {
+          return application.perform(#selector(UIApplication.open(_:options:completionHandler:)), with: url, with: [:]) != nil
+        }
       }
-      responder = responder!.next
+      responder = responder?.next
     }
-    self.close()
+    return false
   }
   
   private func loadReactNativeContent() {
