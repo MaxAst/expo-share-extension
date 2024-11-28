@@ -38,10 +38,10 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/react": "18.2.79",
+    "@types/react": "18.3.12",
     "@types/semver": "^7.5.8",
-    "expo-module-scripts": "^3.5.2",
-    "expo-modules-core": "^1.12.26",
+    "expo-module-scripts": "^4.0.2",
+    "expo-modules-core": "^2.0.6",
     "release-it": "^17.10.0"
   },
   "peerDependencies": {
