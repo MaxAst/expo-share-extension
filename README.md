@@ -7,6 +7,14 @@
 
 Create an [iOS share extension](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Share.html) with a custom view (similar to e.g. Pinterest). Supports Apple Sign-In, [React Native Firebase](https://rnfirebase.io/) (including shared auth session via access groups), custom background, custom height, and custom fonts.
 
+https://github.com/MaxAst/expo-share-extension/assets/13224092/e5a6fb3d-6c85-4571-99c8-4efe0f862266
+
+| Expo       | `expo-share-extension` |
+| ---------- | ---------------------- |
+| **SDK 52** | 2.0.0+                 |
+| **SDK 51** | 1.5.3+                 |
+| **SDK 50** | 1.0.0+                 |
+
 The shared data is passed to the share extension's root component as an initial prop based on this type:
 
 ```ts
@@ -89,8 +97,6 @@ If you do not specify the `activationRules` option, `expo-share-extension` enabl
 Contributions to support the remaining [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) (`NSExtensionActivationSupportsAttachmentsWithMaxCount` and `NSExtensionActivationSupportsAttachmentsWithMinCount`) are welcome!
 
 **Note**: The share extension does not support `expo-updates` as it causes the share extension to crash. Since version `1.5.0`, `expo-updates` is excluded from the share extension's bundle by default. If you're using an older version, you must exclude it by adding it to the `excludedPackages` option in your `app.json`/`app.config.(j|t)s`. See the [Exlude Expo Modules](#exlude-expo-modules) section for more information.
-
-https://github.com/MaxAst/expo-share-extension/assets/13224092/e5a6fb3d-6c85-4571-99c8-4efe0f862266
 
 ## Installation
 
