@@ -71,7 +71,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
         "UIInterfaceOrientationPortrait",
         "UIInterfaceOrientationPortraitUpsideDown",
       ],
-      UIUserInterfaceStyle: "Light",
+      UIUserInterfaceStyle: "Automatic",
       UIViewControllerBasedStatusBarAppearance: false,
       UIApplicationSceneManifest: {
         UIApplicationSupportsMultipleScenes: true,

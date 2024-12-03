@@ -15,7 +15,7 @@ export const withPodfile: ConfigPlugin<{
     (config) => {
       const podFilePath = path.join(
         config.modRequest.platformProjectRoot,
-        "Podfile"
+        "Podfile",
       );
       let podfileContent = fs.readFileSync(podFilePath).toString();
 
@@ -48,9 +48,27 @@ export const withPodfile: ConfigPlugin<{
       const expoVersion = semver.parse(config.sdkVersion);
       const majorVersion = expoVersion?.major ?? 0;
 
-      const shareExtensionTarget = `target '${targetName}' do     
-  ${useExpoModules}     
-  config = use_native_modules!
+      const shareExtensionTarget = `
+
+target '${targetName}' do     
+  ${useExpoModules}
+  
+  if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
+    config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];
+  else
+    config_command = [
+      'node',
+      '--no-warnings',
+      '--eval',
+      'require(require.resolve(\\'expo-modules-autolinking\\', { paths: [require.resolve(\\'expo/package.json\\')] }))(process.argv.slice(1))',
+      'react-native-config',
+      '--json',
+      '--platform',
+      'ios'
+    ]
+  end
+
+  config = use_native_modules!(config_command)
           
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
   use_frameworks! :linkage => ENV['USE_FRAMEWORKS'].to_sym if ENV['USE_FRAMEWORKS']
@@ -59,25 +77,27 @@ export const withPodfile: ConfigPlugin<{
     :path => config[:reactNativePath],
     :hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
     # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/..",${
-      majorVersion >= 51
-        ? `
+    :app_path => "#{Pod::Config.instance.installation_root}/..",${majorVersion >= 51
+          ? `
     # Temporarily disable privacy file aggregation by default, until React
     # Native 0.74.2 is released with fixes.
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] == 'true',`
-        : ""
-    }
+          : ""
+        }
   )
 end`;
 
-      podfileContent = mergeContents({
-        tag: "share-extension-target",
-        src: podfileContent,
-        newSrc: shareExtensionTarget,
-        anchor: `Pod::UI.warn e`,
-        offset: 5,
-        comment: "#",
-      }).contents;
+      // Find the very last 'end' in the file
+      const lastEndIndex = podfileContent.lastIndexOf("end");
+      if (lastEndIndex === -1) {
+        throw new Error("Could not find the last 'end' in Podfile");
+      }
+
+      // Insert the share extension target after the last 'end'
+      podfileContent =
+        podfileContent.slice(0, lastEndIndex + 3) + // +3 to include "end"
+        shareExtensionTarget +
+        podfileContent.slice(lastEndIndex + 3);
 
       fs.writeFileSync(podFilePath, podfileContent);
 

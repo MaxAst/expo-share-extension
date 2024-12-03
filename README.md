@@ -5,7 +5,115 @@
 ![Downloads](https://img.shields.io/npm/dm/expo-share-extension.svg)
 ![GitHub stars](https://img.shields.io/github/stars/MaxAst/expo-share-extension.svg)
 
+> **Note**: Support for the New Architecture is under active development. For the time being, you need to disable it in your `app.json`/`app.config.(j|t)s`:
+> ```json
+> {
+>   "expo": {
+>     "newArchEnabled": false
+>   }
+> }
+> ```
+
+## Overview
+
 Create an [iOS share extension](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Share.html) with a custom view (similar to e.g. Pinterest). Supports Apple Sign-In, [React Native Firebase](https://rnfirebase.io/) (including shared auth session via access groups), custom background, custom height, and custom fonts.
+
+https://github.com/MaxAst/expo-share-extension/assets/13224092/e5a6fb3d-6c85-4571-99c8-4efe0f862266
+
+## Compatibility
+
+| Expo       | `expo-share-extension` |
+| ---------- | ---------------------- |
+| **SDK 52** | 2.0.0+                 |
+| **SDK 51** | 1.5.3+                 |
+| **SDK 50** | 1.0.0+                 |
+
+## Quick Start
+
+### 1. Installation
+
+```sh
+npx expo install expo-share-extension
+```
+
+### 2. Basic Configuration
+
+1. Update your `app.json` or `app.config.js`:
+
+```json
+"expo": {
+  ...
+  "plugins": ["expo-share-extension"],
+  ...
+}
+```
+
+2. Ensure your `package.json` has the correct `main` entry:
+
+```json
+{
+  ...
+  "main": "index.js",
+  ...
+}
+```
+
+3. Create the required entry points:
+
+`index.js` (main app):
+
+```ts
+import { registerRootComponent } from "expo";
+
+import App from "./App";
+
+registerRootComponent(App);
+
+// or if you're using expo-router:
+// import "expo-router/entry";
+```
+
+`index.share.js` (share extension):
+
+```ts
+import { AppRegistry } from "react-native";
+
+// could be any component you want to use as the root component of your share extension's bundle
+import ShareExtension from "./ShareExtension";
+
+// IMPORTANT: the first argument to registerComponent, must be "shareExtension"
+AppRegistry.registerComponent("shareExtension", () => ShareExtension);
+```
+
+4. Update metro.config.js (if you don't have one, run: `npx expo customize metro.config.js` first):
+
+```js
+// Learn more https://docs.expo.io/guides/customizing-metro
+const { getDefaultConfig } = require("expo/metro-config");
+
+/**
+ * Add support for share.js as a recognized extension to the Metro config.
+ * This allows creating an index.share.js entry point for our iOS share extension
+ *
+ * @param {import('expo/metro-config').MetroConfig} config
+ * @returns {import('expo/metro-config').MetroConfig}
+ */
+function withShareExtension(config) {
+  config.transformer.getTransformOptions = () => ({
+    resolver: {
+      sourceExts: [...config.resolver.sourceExts, "share.js"], // Add 'share.js' as a recognized extension
+    },
+  });
+  return config;
+}
+
+module.exports = withShareExtension(getDefaultConfig(__dirname), {
+  // [Web-only]: Enables CSS support in Metro.
+  isCSSEnabled: true,
+});
+```
+
+## Accessing Shared Data
 
 The shared data is passed to the share extension's root component as an initial prop based on this type:
 
@@ -21,6 +129,8 @@ export type InitialProps = {
 ```
 
 You can import `InitialProps` from `expo-share-extension` to use it as a type for your root component's props.
+
+## Activation Rules
 
 The config plugin supports almost all [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10). It currently supports.
 
@@ -88,93 +198,7 @@ If you do not specify the `activationRules` option, `expo-share-extension` enabl
 
 Contributions to support the remaining [NSExtensionActivationRules](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/AppExtensionKeys.html#//apple_ref/doc/uid/TP40014212-SW10) (`NSExtensionActivationSupportsAttachmentsWithMaxCount` and `NSExtensionActivationSupportsAttachmentsWithMinCount`) are welcome!
 
-**Note**: The share extension does not support `expo-updates` as it causes the share extension to crash. Since version `1.5.0`, `expo-updates` is excluded from the share extension's bundle by default. If you're using an older version, you must exclude it by adding it to the `excludedPackages` option in your `app.json`/`app.config.(j|t)s`. See the [Exlude Expo Modules](#exlude-expo-modules) section for more information.
-
-https://github.com/MaxAst/expo-share-extension/assets/13224092/e5a6fb3d-6c85-4571-99c8-4efe0f862266
-
-## Installation
-
-Install the package
-
-```sh
-npx expo install expo-share-extension
-```
-
-Update app.json/app.config.js
-
-```json
-"expo": {
-  ...
-  "plugins": ["expo-share-extension"],
-  ...
-}
-```
-
-Update package.json
-
-```json
-{
-  ...
-  "main": "index.js",
-  ...
-}
-```
-
-Create an `index.js` in the root of your project
-
-```ts
-import { registerRootComponent } from "expo";
-
-import App from "./App";
-
-registerRootComponent(App);
-```
-
-or if you're using expo-router:
-
-```ts
-import "expo-router/entry";
-```
-
-Create an `index.share.js` in the root of your project
-
-```ts
-import { AppRegistry } from "react-native";
-
-// could be any component you want to use as the root component of your share extension's bundle
-import ShareExtension from "./ShareExtension";
-
-// IMPORTANT: the first argument to registerComponent, must be "shareExtension"
-AppRegistry.registerComponent("shareExtension", () => ShareExtension);
-```
-
-Update metro.config.js so that it resolves index.share.js as the entry point for the share extension
-
-```js
-// Learn more https://docs.expo.io/guides/customizing-metro
-const { getDefaultConfig } = require("expo/metro-config");
-
-/**
- * Add support for share.js as a recognized extension to the Metro config.
- * This allows creating an index.share.js entry point for our iOS share extension
- *
- * @param {import('expo/metro-config').MetroConfig} config
- * @returns {import('expo/metro-config').MetroConfig}
- */
-function withShareExtension(config) {
-  config.transformer.getTransformOptions = () => ({
-    resolver: {
-      sourceExts: [...config.resolver.sourceExts, "share.js"], // Add 'share.js' as a recognized extension
-    },
-  });
-  return config;
-}
-
-module.exports = withShareExtension(getDefaultConfig(__dirname), {
-  // [Web-only]: Enables CSS support in Metro.
-  isCSSEnabled: true,
-});
-```
+## Basic Usage
 
 Need a way to close the share extension? Use the `close` method from `expo-share-extension`:
 
@@ -236,7 +260,7 @@ export default function ShareExtension({ url }: { url: string }) {
 }
 ```
 
-## Options
+## Configuration Options
 
 ### Exlude Expo Modules
 
@@ -255,6 +279,8 @@ Exclude unneeded expo modules to reduce the share extension's bundle size by add
     },
 ],
 ```
+
+**Note**: The share extension does not support `expo-updates` as it causes the share extension to crash. Since version `1.5.0`, `expo-updates` is excluded from the share extension's bundle by default. If you're using an older version, you must exclude it by adding it to the `excludedPackages` option in your `app.json`/`app.config.(j|t)s`. See the [Exlude Expo Modules](#exlude-expo-modules) section for more information.
 
 ### React Native Firebase
 

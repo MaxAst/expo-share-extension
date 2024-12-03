@@ -25,9 +25,7 @@ export const withShareExtensionEntitlements: ConfigPlugin = (config) => {
       config.ios?.entitlements?.["com.apple.security.application-groups"];
 
     let shareExtensionEntitlements: Record<string, string | string[]> = {
-      "com.apple.security.application-groups": [
-        existingAppGroup ?? getAppGroup(bundleIdentifier),
-      ],
+      "com.apple.security.application-groups": existingAppGroup ?? [getAppGroup(bundleIdentifier)],
     };
 
     if (config.ios?.usesAppleSignIn) {
