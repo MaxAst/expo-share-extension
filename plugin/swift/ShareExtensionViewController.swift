@@ -1,5 +1,6 @@
 import UIKit
 import React
+import React_RCTAppDelegate
 import AVFoundation
 // switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
 import MobileCoreServices
@@ -11,21 +12,64 @@ import FirebaseCore
 import FirebaseAuth
 #endif
 
+// MARK: - Objective-C Bridge
+@objc class RCTShareExtensionBridge: NSObject {
+  @objc static func createRootViewFactory() -> RCTRootViewFactory {
+    let configuration = RCTRootViewFactoryConfiguration(
+      bundleURLBlock: {
+#if DEBUG
+        print("📱 Getting bundle URL for index.share...")
+        let settings = RCTBundleURLProvider.sharedSettings()
+        settings.enableDev = true
+        settings.enableMinification = false
+        let bundleURL = settings.jsBundleURL(forBundleRoot: "apps/frontend/index.share")
+        print("📦 Bundle URL:", bundleURL?.absoluteString ?? "nil")
+        return bundleURL
+#else
+        print("📱 Getting bundle URL from main bundle...")
+        let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+        print("📦 Bundle URL:", bundleURL?.absoluteString ?? "nil")
+        return bundleURL
+#endif
+      },
+      newArchEnabled: true,
+      turboModuleEnabled: true,
+      bridgelessEnabled: true
+    )
+    
+    return RCTRootViewFactory(configuration: configuration)
+  }
+}
+
 class ShareExtensionViewController: UIViewController {
-  
-  private var host: RCTHost?
-  private weak var rootView: RCTSurfaceHostingView?
+  private var rootViewFactory: RCTRootViewFactory?
+  private weak var rootView: UIView?
   private let loadingIndicator = UIActivityIndicatorView(style: .large)
+  
+  deinit {
+    print("🧹 ShareExtensionViewController deinit")
+    cleanupAfterClose()
+  }
+  
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    // Start cleanup earlier to ensure proper surface teardown
+    if isBeingDismissed {
+      cleanupAfterClose()
+    }
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()
     setupLoadingIndicator()
+    
 #if canImport(FirebaseCore)
     if Bundle.main.object(forInfoDictionaryKey: "WithFirebase") as? Bool ?? false {
       FirebaseApp.configure()
     }
 #endif
-    initializeReactNative()
+    
+    initializeRootViewFactory()
     loadReactNativeContent()
     setupNotificationCenterObserver()
   }
@@ -52,19 +96,10 @@ class ShareExtensionViewController: UIViewController {
     loadingIndicator.startAnimating()
   }
   
-  private func initializeReactNative() {
-    // Create the RCTHost instance
-    let hostConfig = RCTHostConfig()
-    
-    // Configure the bundle URL
-#if DEBUG
-    hostConfig.bundleURL = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index.share")
-#else
-    hostConfig.bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-#endif
-    
-    // Initialize the host
-    host = RCTHost(config: hostConfig)
+  private func initializeRootViewFactory() {
+    if rootViewFactory == nil {
+      rootViewFactory = RCTShareExtensionBridge.createRootViewFactory()
+    }
   }
   
   private func openHostApp(path: String?) {
@@ -115,32 +150,47 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func loadReactNativeContent() {
+    print("🔄 Starting to load React Native content...")
+
     getShareData { [weak self] sharedData in
-      guard let self = self else { return }
+      print("📦 Got share data:", sharedData ?? "nil")
+      
+      guard let self = self else {
+          print("❌ Self was deallocated")
+          return
+      }
       
       DispatchQueue.main.async {
         if self.rootView == nil {
-          // Create a Surface using the host
-          guard let surface = self.host?.createSurface(
-            moduleName: "shareExtension",
-            initialProperties: sharedData ?? [:]
-          ) else { return }
+          guard let factory = self.rootViewFactory else {
+            print("🚨 Factory is nil")
+            return
+          }
           
-          // Create the Surface Hosting View
-          let rootView = RCTSurfaceHostingView(surface: surface)
           
+         print("⚙️ Creating view with factory...")
+         print("📦 Initial props:", sharedData ?? "nil")
+          
+          print("🏗️ About to create view with factory...")
+          
+          let rootView = factory.view(
+              withModuleName: "shareExtension",
+              initialProperties: sharedData
+          )
+          
+          print("🏭 Created view of type:", type(of: rootView))
+
           let backgroundFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionBackgroundColor") as? [String: CGFloat]
           let heightFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionHeight") as? CGFloat
           
           self.configureRootView(rootView, withBackgroundColorDict: backgroundFromInfoPlist, withHeight: heightFromInfoPlist)
           self.rootView = rootView
-          
-          // Start the surface after configuration
-          surface.start()
         } else {
-          // Update existing surface with new data
-          if let surface = self.rootView?.surface {
-            surface.setProps(sharedData ?? [:])
+          // Update properties based on view type
+          if let rctView = self.rootView as? RCTRootView {
+             rctView.appProperties = sharedData
+          } else if let proxyView = self.rootView as? RCTSurfaceHostingProxyRootView {
+            proxyView.appProperties = sharedData ?? [:]
           }
         }
         
@@ -169,38 +219,42 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func cleanupAfterClose() {
-    // Stop the surface
-    if let surface = rootView?.surface {
-      surface.stop()
+    // Clean up notification observers first
+    NotificationCenter.default.removeObserver(self)
+    
+    // Clean up properties based on view type
+    if let rctView = rootView as? RCTRootView {
+        rctView.appProperties = nil
+    } else if let proxyView = rootView as? RCTSurfaceHostingProxyRootView {
+      proxyView.appProperties = [:]
     }
     
     rootView?.removeFromSuperview()
     rootView = nil
     
-    // Cleanup the host
-    host?.invalidate()
-    host = nil
-    
-    NotificationCenter.default.removeObserver(self)
+    // Clean up factory last
+    rootViewFactory = nil
   }
   
-  private func configureRootView(_ rootView: RCTSurfaceHostingView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
+  private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
     rootView.backgroundColor = backgroundColor(from: dict)
     
     let y: CGFloat
     if let withHeight = withHeight {
+      // If withHeight is set, calculate y so the view is at the bottom
       y = self.view.bounds.height - withHeight
     } else {
-      y = 0
+      // If withHeight is nil, use the full height (or adjust as needed)
+      y = 0 // This would make the view cover the entire screen
     }
     
     rootView.frame = CGRect(
-      x: self.view.bounds.minX,
-      y: y,
-      width: self.view.bounds.width,
-      height: withHeight ?? self.view.bounds.height
+        x: self.view.bounds.minX,
+        y: y,
+        width: self.view.bounds.width,
+        height: withHeight ?? self.view.bounds.height
     )
-    
+        
     rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     self.view.addSubview(rootView)
   }
