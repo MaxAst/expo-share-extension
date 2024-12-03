@@ -168,10 +168,9 @@ class ShareExtensionViewController: UIViewController {
           }
           
           
-         print("⚙️ Creating view with factory...")
-         print("📦 Initial props:", sharedData ?? "nil")
+          print("⚙️ Creating view with factory...")
+          print("📦 Initial props:", sharedData ?? "nil")
           
-          print("🏗️ About to create view with factory...")
           
           let rootView = factory.view(
               withModuleName: "shareExtension",
@@ -257,14 +256,6 @@ class ShareExtensionViewController: UIViewController {
         
     rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     self.view.addSubview(rootView)
-  }
-  
-  private func jsCodeLocation() -> URL? {
-#if DEBUG
-    return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index.share")
-#else
-    return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-#endif
   }
   
   private func backgroundColor(from dict: [String: CGFloat]?) -> UIColor {
