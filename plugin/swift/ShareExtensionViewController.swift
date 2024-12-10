@@ -22,7 +22,7 @@ import FirebaseAuth
         let settings = RCTBundleURLProvider.sharedSettings()
         settings.enableDev = true
         settings.enableMinification = false
-        let bundleURL = settings.jsBundleURL(forBundleRoot: "apps/frontend/index.share")
+        let bundleURL = settings.jsBundleURL(forBundleRoot: "index.share")
         print("📦 Bundle URL:", bundleURL?.absoluteString ?? "nil")
         return bundleURL
 #else
