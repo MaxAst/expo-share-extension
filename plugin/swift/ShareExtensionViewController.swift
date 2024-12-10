@@ -32,9 +32,9 @@ import FirebaseAuth
         return bundleURL
 #endif
       },
-      newArchEnabled: true,
+      newArchEnabled: false,
       turboModuleEnabled: true,
-      bridgelessEnabled: true
+      bridgelessEnabled: false
     )
     
     return RCTRootViewFactory(configuration: configuration)
@@ -156,8 +156,8 @@ class ShareExtensionViewController: UIViewController {
       print("📦 Got share data:", sharedData ?? "nil")
       
       guard let self = self else {
-          print("❌ Self was deallocated")
-          return
+        print("❌ Self was deallocated")
+        return
       }
       
       DispatchQueue.main.async {
@@ -167,16 +167,10 @@ class ShareExtensionViewController: UIViewController {
             return
           }
           
-          
-          print("⚙️ Creating view with factory...")
-          print("📦 Initial props:", sharedData ?? "nil")                 
           let rootView = factory.view(
-              withModuleName: "shareExtension",
-              initialProperties: sharedData
-          )
-          
-          print("🏭 Created view of type:", type(of: rootView))
-
+            withModuleName: "shareExtension",
+            initialProperties: sharedData
+          )                 
           let backgroundFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionBackgroundColor") as? [String: CGFloat]
           let heightFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionHeight") as? CGFloat
           
@@ -185,7 +179,7 @@ class ShareExtensionViewController: UIViewController {
         } else {
           // Update properties based on view type
           if let rctView = self.rootView as? RCTRootView {
-             rctView.appProperties = sharedData
+            rctView.appProperties = sharedData
           } else if let proxyView = self.rootView as? RCTSurfaceHostingProxyRootView {
             proxyView.appProperties = sharedData ?? [:]
           }
@@ -221,7 +215,7 @@ class ShareExtensionViewController: UIViewController {
     
     // Clean up properties based on view type
     if let rctView = rootView as? RCTRootView {
-        rctView.appProperties = nil
+      rctView.appProperties = nil
     } else if let proxyView = rootView as? RCTSurfaceHostingProxyRootView {
       proxyView.appProperties = [:]
     }
@@ -234,63 +228,64 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
-      rootView.backgroundColor = backgroundColor(from: dict)
+    rootView.backgroundColor = backgroundColor(from: dict)
+    
+    // Get the screen bounds and scale
+    let screen = UIScreen.main
+    let screenBounds = screen.bounds
+    let screenScale = screen.scale
+    
+    // Calculate proper frame
+    let frame: CGRect
+    if let withHeight = withHeight {
+      frame = CGRect(
+        x: 0,
+        y: screenBounds.height - withHeight,
+        width: screenBounds.width,
+        height: withHeight
+      )
+    } else {
+      frame = screenBounds
+    }
+    
+    if let proxyRootView = rootView as? RCTSurfaceHostingProxyRootView {
+      // Set surface size in points (not pixels)
+      let surfaceSize = CGSize(
+        width: frame.width * screenScale,
+        height: frame.height * screenScale
+      )
       
-      // Get the screen bounds
-      let screenBounds = UIScreen.main.bounds
+      proxyRootView.surface.setMinimumSize(surfaceSize, maximumSize: surfaceSize)
       
-      // Calculate proper frame
-      let frame: CGRect
-      if let withHeight = withHeight {
-          // If height is specified, position at bottom
-          frame = CGRect(
-              x: 0,
-              y: screenBounds.height - withHeight,
-              width: screenBounds.width,
-              height: withHeight
-          )
-      } else {
-          // Use full screen bounds if no height specified
-          frame = screenBounds
-      }
-      
-      if let proxyRootView = rootView as? RCTSurfaceHostingProxyRootView {
-          // Set proper surface size constraints
-          proxyRootView.surface.setMinimumSize(frame.size, maximumSize: frame.size)
-          
-          // Important: Set bounds instead of frame for better layout behavior
-          proxyRootView.bounds = CGRect(origin: .zero, size: frame.size)
-          proxyRootView.center = CGPoint(x: frame.midX, y: frame.midY)
-      } else {
-          rootView.frame = frame
-      }
-      
-      // Use constraints instead of frame when possible
-      rootView.translatesAutoresizingMaskIntoConstraints = false
-      self.view.addSubview(rootView)
-      
+      // Set bounds in points
+      proxyRootView.bounds = CGRect(origin: .zero, size: frame.size)
+      proxyRootView.center = CGPoint(x: frame.midX, y: frame.midY)
+    } else {
+      rootView.frame = frame
+    }
+    
+    rootView.translatesAutoresizingMaskIntoConstraints = false
+    self.view.addSubview(rootView)
+    
+    NSLayoutConstraint.activate([
+      rootView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+      rootView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+      rootView.heightAnchor.constraint(equalToConstant: frame.height)
+    ])
+    
+    if let withHeight = withHeight {
       NSLayoutConstraint.activate([
-          rootView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-          rootView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-          rootView.heightAnchor.constraint(equalToConstant: frame.height),
+        rootView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
       ])
-      
-      if let withHeight = withHeight {
-          // Pin to bottom if height is specified
-          NSLayoutConstraint.activate([
-              rootView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
-          ])
-      } else {
-          // Pin to top if full screen
-          NSLayoutConstraint.activate([
-              rootView.topAnchor.constraint(equalTo: self.view.topAnchor)
-          ])
-      }
-      
-      // Use flexible size mask only when needed
-      if withHeight == nil {
-          rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-      }
+    } else {
+      NSLayoutConstraint.activate([
+        rootView.topAnchor.constraint(equalTo: self.view.topAnchor)
+      ])
+    }
+    
+    if withHeight == nil {
+      rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    }
   }
   
   private func backgroundColor(from dict: [String: CGFloat]?) -> UIColor {
