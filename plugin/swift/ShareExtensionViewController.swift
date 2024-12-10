@@ -169,9 +169,7 @@ class ShareExtensionViewController: UIViewController {
           
           
           print("⚙️ Creating view with factory...")
-          print("📦 Initial props:", sharedData ?? "nil")
-          
-          
+          print("📦 Initial props:", sharedData ?? "nil")                 
           let rootView = factory.view(
               withModuleName: "shareExtension",
               initialProperties: sharedData
@@ -236,26 +234,63 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
-    rootView.backgroundColor = backgroundColor(from: dict)
-    
-    let y: CGFloat
-    if let withHeight = withHeight {
-      // If withHeight is set, calculate y so the view is at the bottom
-      y = self.view.bounds.height - withHeight
-    } else {
-      // If withHeight is nil, use the full height (or adjust as needed)
-      y = 0 // This would make the view cover the entire screen
-    }
-    
-    rootView.frame = CGRect(
-        x: self.view.bounds.minX,
-        y: y,
-        width: self.view.bounds.width,
-        height: withHeight ?? self.view.bounds.height
-    )
-        
-    rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    self.view.addSubview(rootView)
+      rootView.backgroundColor = backgroundColor(from: dict)
+      
+      // Get the screen bounds
+      let screenBounds = UIScreen.main.bounds
+      
+      // Calculate proper frame
+      let frame: CGRect
+      if let withHeight = withHeight {
+          // If height is specified, position at bottom
+          frame = CGRect(
+              x: 0,
+              y: screenBounds.height - withHeight,
+              width: screenBounds.width,
+              height: withHeight
+          )
+      } else {
+          // Use full screen bounds if no height specified
+          frame = screenBounds
+      }
+      
+      if let proxyRootView = rootView as? RCTSurfaceHostingProxyRootView {
+          // Set proper surface size constraints
+          proxyRootView.surface.setMinimumSize(frame.size, maximumSize: frame.size)
+          
+          // Important: Set bounds instead of frame for better layout behavior
+          proxyRootView.bounds = CGRect(origin: .zero, size: frame.size)
+          proxyRootView.center = CGPoint(x: frame.midX, y: frame.midY)
+      } else {
+          rootView.frame = frame
+      }
+      
+      // Use constraints instead of frame when possible
+      rootView.translatesAutoresizingMaskIntoConstraints = false
+      self.view.addSubview(rootView)
+      
+      NSLayoutConstraint.activate([
+          rootView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+          rootView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+          rootView.heightAnchor.constraint(equalToConstant: frame.height),
+      ])
+      
+      if let withHeight = withHeight {
+          // Pin to bottom if height is specified
+          NSLayoutConstraint.activate([
+              rootView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+          ])
+      } else {
+          // Pin to top if full screen
+          NSLayoutConstraint.activate([
+              rootView.topAnchor.constraint(equalTo: self.view.topAnchor)
+          ])
+      }
+      
+      // Use flexible size mask only when needed
+      if withHeight == nil {
+          rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+      }
   }
   
   private func backgroundColor(from dict: [String: CGFloat]?) -> UIColor {
