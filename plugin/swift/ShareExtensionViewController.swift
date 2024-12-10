@@ -18,17 +18,13 @@ import FirebaseAuth
     let configuration = RCTRootViewFactoryConfiguration(
       bundleURLBlock: {
 #if DEBUG
-        print("📱 Getting bundle URL for index.share...")
         let settings = RCTBundleURLProvider.sharedSettings()
         settings.enableDev = true
         settings.enableMinification = false
         let bundleURL = settings.jsBundleURL(forBundleRoot: "index.share")
-        print("📦 Bundle URL:", bundleURL?.absoluteString ?? "nil")
         return bundleURL
 #else
-        print("📱 Getting bundle URL from main bundle...")
         let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-        print("📦 Bundle URL:", bundleURL?.absoluteString ?? "nil")
         return bundleURL
 #endif
       },
@@ -150,11 +146,7 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func loadReactNativeContent() {
-    print("🔄 Starting to load React Native content...")
-
-    getShareData { [weak self] sharedData in
-      print("📦 Got share data:", sharedData ?? "nil")
-      
+    getShareData { [weak self] sharedData in      
       guard let self = self else {
         print("❌ Self was deallocated")
         return
