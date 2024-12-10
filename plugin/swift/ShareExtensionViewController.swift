@@ -1,5 +1,6 @@
 import UIKit
 import React
+import React_RCTAppDelegate
 import AVFoundation
 // switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
 import MobileCoreServices
@@ -11,21 +12,60 @@ import FirebaseCore
 import FirebaseAuth
 #endif
 
+// MARK: - Objective-C Bridge
+@objc class RCTShareExtensionBridge: NSObject {
+  @objc static func createRootViewFactory() -> RCTRootViewFactory {
+    let configuration = RCTRootViewFactoryConfiguration(
+      bundleURLBlock: {
+#if DEBUG
+        let settings = RCTBundleURLProvider.sharedSettings()
+        settings.enableDev = true
+        settings.enableMinification = false
+        let bundleURL = settings.jsBundleURL(forBundleRoot: "index.share")
+        return bundleURL
+#else
+        let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+        return bundleURL
+#endif
+      },
+      newArchEnabled: false,
+      turboModuleEnabled: true,
+      bridgelessEnabled: false
+    )
+    
+    return RCTRootViewFactory(configuration: configuration)
+  }
+}
+
 class ShareExtensionViewController: UIViewController {
-  
-  private static var sharedBridge: RCTBridge?
-  private weak var rootView: RCTRootView?
+  private var rootViewFactory: RCTRootViewFactory?
+  private weak var rootView: UIView?
   private let loadingIndicator = UIActivityIndicatorView(style: .large)
+  
+  deinit {
+    print("🧹 ShareExtensionViewController deinit")
+    cleanupAfterClose()
+  }
+  
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    // Start cleanup earlier to ensure proper surface teardown
+    if isBeingDismissed {
+      cleanupAfterClose()
+    }
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()
     setupLoadingIndicator()
+    
 #if canImport(FirebaseCore)
     if Bundle.main.object(forInfoDictionaryKey: "WithFirebase") as? Bool ?? false {
       FirebaseApp.configure()
     }
 #endif
-    initializeReactNativeBridgeIfNeeded()
+    
+    initializeRootViewFactory()
     loadReactNativeContent()
     setupNotificationCenterObserver()
   }
@@ -52,10 +92,9 @@ class ShareExtensionViewController: UIViewController {
     loadingIndicator.startAnimating()
   }
   
-  private func initializeReactNativeBridgeIfNeeded() {
-    if ShareExtensionViewController.sharedBridge == nil {
-      let jsCodeLocation = self.jsCodeLocation()
-      ShareExtensionViewController.sharedBridge = RCTBridge(bundleURL: jsCodeLocation, moduleProvider: nil, launchOptions: nil)
+  private func initializeRootViewFactory() {
+    if rootViewFactory == nil {
+      rootViewFactory = RCTShareExtensionBridge.createRootViewFactory()
     }
   }
   
@@ -107,20 +146,37 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func loadReactNativeContent() {
-    getShareData { [weak self] sharedData in
-      guard let self = self, let bridge = ShareExtensionViewController.sharedBridge else { return }
+    getShareData { [weak self] sharedData in      
+      guard let self = self else {
+        print("❌ Self was deallocated")
+        return
+      }
       
       DispatchQueue.main.async {
         if self.rootView == nil {
-          let rootView = RCTRootView(bridge: bridge, moduleName: "shareExtension", initialProperties: sharedData)
+          guard let factory = self.rootViewFactory else {
+            print("🚨 Factory is nil")
+            return
+          }
+          
+          let rootView = factory.view(
+            withModuleName: "shareExtension",
+            initialProperties: sharedData
+          )                 
           let backgroundFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionBackgroundColor") as? [String: CGFloat]
           let heightFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionHeight") as? CGFloat
+          
           self.configureRootView(rootView, withBackgroundColorDict: backgroundFromInfoPlist, withHeight: heightFromInfoPlist)
           self.rootView = rootView
         } else {
-          // Update existing rootView with new data
-          self.rootView?.appProperties = sharedData
+          // Update properties based on view type
+          if let rctView = self.rootView as? RCTRootView {
+            rctView.appProperties = sharedData
+          } else if let proxyView = self.rootView as? RCTSurfaceHostingProxyRootView {
+            proxyView.appProperties = sharedData ?? [:]
+          }
         }
+        
         self.loadingIndicator.stopAnimating()
         self.loadingIndicator.removeFromSuperview()
       }
@@ -146,39 +202,82 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func cleanupAfterClose() {
+    // Clean up notification observers first
+    NotificationCenter.default.removeObserver(self)
+    
+    // Clean up properties based on view type
+    if let rctView = rootView as? RCTRootView {
+      rctView.appProperties = nil
+    } else if let proxyView = rootView as? RCTSurfaceHostingProxyRootView {
+      proxyView.appProperties = [:]
+    }
+    
     rootView?.removeFromSuperview()
     rootView = nil
-    ShareExtensionViewController.sharedBridge?.invalidate()
-    ShareExtensionViewController.sharedBridge = nil
-    NotificationCenter.default.removeObserver(self)
+    
+    // Clean up factory last
+    rootViewFactory = nil
   }
   
-  private func configureRootView(_ rootView: RCTRootView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
+  private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
     rootView.backgroundColor = backgroundColor(from: dict)
-    let y: CGFloat
+    
+    // Get the screen bounds and scale
+    let screen = UIScreen.main
+    let screenBounds = screen.bounds
+    let screenScale = screen.scale
+    
+    // Calculate proper frame
+    let frame: CGRect
     if let withHeight = withHeight {
-      // If withHeight is set, calculate y so the view is at the bottom
-      y = self.view.bounds.height - withHeight
+      frame = CGRect(
+        x: 0,
+        y: screenBounds.height - withHeight,
+        width: screenBounds.width,
+        height: withHeight
+      )
     } else {
-      // If withHeight is nil, use the full height (or adjust as needed)
-      y = 0 // This would make the view cover the entire screen
+      frame = screenBounds
     }
-    rootView.frame = CGRect(
-      x: self.view.bounds.minX,
-      y: y,
-      width: self.view.bounds.width,
-      height: withHeight ?? self.view.bounds.height
-    )
-    rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    
+    if let proxyRootView = rootView as? RCTSurfaceHostingProxyRootView {
+      // Set surface size in points (not pixels)
+      let surfaceSize = CGSize(
+        width: frame.width * screenScale,
+        height: frame.height * screenScale
+      )
+      
+      proxyRootView.surface.setMinimumSize(surfaceSize, maximumSize: surfaceSize)
+      
+      // Set bounds in points
+      proxyRootView.bounds = CGRect(origin: .zero, size: frame.size)
+      proxyRootView.center = CGPoint(x: frame.midX, y: frame.midY)
+    } else {
+      rootView.frame = frame
+    }
+    
+    rootView.translatesAutoresizingMaskIntoConstraints = false
     self.view.addSubview(rootView)
-  }
-  
-  private func jsCodeLocation() -> URL? {
-#if DEBUG
-    return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index.share")
-#else
-    return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-#endif
+    
+    NSLayoutConstraint.activate([
+      rootView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+      rootView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+      rootView.heightAnchor.constraint(equalToConstant: frame.height)
+    ])
+    
+    if let withHeight = withHeight {
+      NSLayoutConstraint.activate([
+        rootView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+      ])
+    } else {
+      NSLayoutConstraint.activate([
+        rootView.topAnchor.constraint(equalTo: self.view.topAnchor)
+      ])
+    }
+    
+    if withHeight == nil {
+      rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    }
   }
   
   private func backgroundColor(from dict: [String: CGFloat]?) -> UIColor {
