@@ -106,7 +106,7 @@ export function addBuildPhases(
   export PROJECT_ROOT="$PROJECT_DIR"/..
   
   # Set entry file
-  export ENTRY_FILE="index.share.js"
+  export ENTRY_FILE="$PROJECT_ROOT/index.share.js"
   
   # Set up Expo CLI
   if [[ -z "$CLI_PATH" ]]; then
