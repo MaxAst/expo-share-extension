@@ -6,7 +6,7 @@
   "type": "module",
   "exports": {
     ".": "./build/index.js",
-    "./metro": "./metro.cjs"
+    "./metro": "./metro.js"
   },
   "types": "build/index.d.ts",
   "scripts": {
