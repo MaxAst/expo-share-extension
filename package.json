@@ -3,6 +3,10 @@
   "version": "2.0.2",
   "description": "Expo config plugin to create an iOS share extension.",
   "main": "build/index.js",
+  "exports": {
+    ".": "./build/index.js",
+    "./metro": "./metro.js"
+  },
   "types": "build/index.d.ts",
   "scripts": {
     "build": "expo-module build",
