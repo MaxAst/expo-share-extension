@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "exports": {
     ".": "./build/index.js",
-    "./metro": "./metro.js"
+    "./metro": "./metro.cjs"
   },
   "types": "build/index.d.ts",
   "scripts": {
