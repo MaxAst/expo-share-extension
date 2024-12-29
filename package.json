@@ -4,18 +4,9 @@
   "description": "Expo config plugin to create an iOS share extension.",
   "main": "build/index.js",
   "exports": {
-    ".": {
-      "require": "./build/index.js",
-      "import": "./build/index.js"
-    },
-    "./metro": {
-      "require": "./build/metro.cjs",
-      "import": "./build/metro.cjs"
-    },
-    "./app.plugin": {
-      "require": "./app.plugin.js",
-      "import": "./app.plugin.js"
-    }
+    ".": "./build/index.js",
+    "./metro": "./build/metro.cjs",
+    "./app.plugin": "./app.plugin.js"
   },
   "types": "build/index.d.ts",
   "scripts": {
