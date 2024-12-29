@@ -1,6 +1,6 @@
 {
   "name": "expo-share-extension",
-  "version": "3.0.0-0",
+  "version": "3.0.0-1",
   "description": "Expo config plugin to create an iOS share extension.",
   "main": "build/index.js",
   "exports": {
