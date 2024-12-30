@@ -1,13 +1,15 @@
 import { close, type InitialProps } from "expo-share-extension";
 import { Button, StyleSheet, Text, View } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 
 export default function ShareExtension({ url, text }: InitialProps) {
+  const reanimatedNumber = useSharedValue(10);
   return (
     <View style={styles.container}>
       <Text
         style={{ fontFamily: "Inter-Black", fontSize: 24, marginBottom: 10 }}
       >
-        Basic Example
+        Basic Example {reanimatedNumber.value}
       </Text>
       {url && (
         <Text

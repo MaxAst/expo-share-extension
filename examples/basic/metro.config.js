@@ -1,8 +1,11 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require("expo/metro-config");
 const path = require("path");
+const {
+  wrapWithReanimatedMetroConfig,
+} = require("react-native-reanimated/metro-config");
 
-const { withShareExtension } = require("../../build/metro.cjs");
+const { withShareExtension } = require("../../metro");
 
 const config = getDefaultConfig(__dirname);
 
@@ -21,4 +24,4 @@ config.resolver.nodeModulesPaths = [
 
 config.watchFolders = [path.resolve(__dirname, "../..")];
 
-module.exports = withShareExtension(config);
+module.exports = wrapWithReanimatedMetroConfig(withShareExtension(config));
