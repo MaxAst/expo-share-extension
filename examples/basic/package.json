@@ -12,17 +12,17 @@
     "prebuild": "expo prebuild -p ios --clean"
   },
   "dependencies": {
-    "expo": "~52.0.18",
-    "expo-dev-client": "~5.0.6",
-    "expo-splash-screen": "~0.29.18",
-    "expo-status-bar": "~2.0.0",
+    "expo": "~52.0.28",
+    "expo-dev-client": "~5.0.10",
+    "expo-splash-screen": "~0.29.21",
+    "expo-status-bar": "~2.0.1",
     "react": "18.3.1",
-    "react-native": "0.76.5"
+    "react-native": "0.76.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
+    "@babel/core": "^7.26.7",
     "@types/react": "~18.3.12",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.3"
   },
   "private": true,
   "expo": {
