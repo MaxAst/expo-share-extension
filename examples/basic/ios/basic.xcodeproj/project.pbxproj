@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,6 +17,7 @@
 		54F683EFF83B0138AF4DB79A /* libPods-basicShareExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 986EC8423433CD45E82D5280 /* libPods-basicShareExtension.a */; };
 		8E1A026C5A6941659B877135 /* ShareExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E5BEDF64184CE6AC666637 /* ShareExtensionViewController.swift */; };
 		96905EF65AED1B983A6B3ABC /* libPods-basic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-basic.a */; };
+		9F74CD992D4CAB61000B3968 /* RCTTurboModuleManagerDelegateImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F74CD982D4CAB61000B3968 /* RCTTurboModuleManagerDelegateImpl.mm */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		B84FC5E914384DC9B5CA9E8B /* basicShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = 22FFBA48256C4C5C89CD9F73 /* basicShareExtension.appex */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -64,21 +65,25 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = basic/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = basic/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = basic/main.m; sourceTree = "<group>"; };
-		22FFBA48256C4C5C89CD9F73 /* basicShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = basicShareExtension.appex; path = basicShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		42E5BEDF64184CE6AC666637 /* ShareExtensionViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareExtensionViewController.swift; path = ShareExtensionViewController.swift; sourceTree = "<group>"; };
+		22FFBA48256C4C5C89CD9F73 /* basicShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 9; includeInIndex = 0; path = basicShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		42E5BEDF64184CE6AC666637 /* ShareExtensionViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = ShareExtensionViewController.swift; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-basic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-basic.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		66E5F249DE94446BA304D325 /* Inter-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Black.otf"; path = "Inter-Black.otf"; sourceTree = "<group>"; };
+		66E5F249DE94446BA304D325 /* Inter-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = "Inter-Black.otf"; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-basic.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-basic.debug.xcconfig"; path = "Target Support Files/Pods-basic/Pods-basic.debug.xcconfig"; sourceTree = "<group>"; };
 		720E9099F5094E83B40BC9B5 /* Pods-basicShareExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-basicShareExtension.debug.xcconfig"; path = "Target Support Files/Pods-basicShareExtension/Pods-basicShareExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-basic.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-basic.release.xcconfig"; path = "Target Support Files/Pods-basic/Pods-basic.release.xcconfig"; sourceTree = "<group>"; };
 		7E1BA2FCE7865A48E4C08B78 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-basicShareExtension/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		986EC8423433CD45E82D5280 /* libPods-basicShareExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-basicShareExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F74CD962D4CAB3F000B3968 /* RCTTurboModuleManagerDelegateImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTTurboModuleManagerDelegateImpl.h; sourceTree = "<group>"; };
+		9F74CD972D4CAB61000B3968 /* basicShareExtension-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "basicShareExtension-Bridging-Header.h"; sourceTree = "<group>"; };
+		9F74CD982D4CAB61000B3968 /* RCTTurboModuleManagerDelegateImpl.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = RCTTurboModuleManagerDelegateImpl.mm; sourceTree = "<group>"; };
+		9F74CD9A2D4D267C000B3968 /* RTCAppDelegateUmbrella.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCAppDelegateUmbrella.h; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = basic/SplashScreen.storyboard; sourceTree = "<group>"; };
-		AEA89E1EF8F74C819A4BB71B /* basicShareExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = basicShareExtension.entitlements; path = basicShareExtension.entitlements; sourceTree = "<group>"; };
-		B961F458DD214640889986D0 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
+		AEA89E1EF8F74C819A4BB71B /* basicShareExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = basicShareExtension.entitlements; sourceTree = "<group>"; };
+		B961F458DD214640889986D0 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		C1E1623005A142DDB58C0568 /* basic-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "basic-Bridging-Header.h"; path = "basic/basic-Bridging-Header.h"; sourceTree = "<group>"; };
-		CA6128A5FB8D4D1B9A841CAA /* Inter-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Black.otf"; path = "../assets/fonts/Inter-Black.otf"; sourceTree = "<group>"; };
+		CA6128A5FB8D4D1B9A841CAA /* Inter-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Black.otf"; path = "../assets/fonts/Inter-Black.otf"; sourceTree = "<group>"; };
 		D227D04194E262244F2AA8D0 /* Pods-basicShareExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-basicShareExtension.release.xcconfig"; path = "Target Support Files/Pods-basicShareExtension/Pods-basicShareExtension.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FA80752484A249529C167570 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "basic/noop-file.swift"; sourceTree = "<group>"; };
@@ -145,7 +150,6 @@
 				CA6128A5FB8D4D1B9A841CAA /* Inter-Black.otf */,
 			);
 			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 		7D9973B32A62441D8E9A576D /* basicShareExtension */ = {
@@ -155,8 +159,11 @@
 				B961F458DD214640889986D0 /* Info.plist */,
 				AEA89E1EF8F74C819A4BB71B /* basicShareExtension.entitlements */,
 				66E5F249DE94446BA304D325 /* Inter-Black.otf */,
+				9F74CD962D4CAB3F000B3968 /* RCTTurboModuleManagerDelegateImpl.h */,
+				9F74CD982D4CAB61000B3968 /* RCTTurboModuleManagerDelegateImpl.mm */,
+				9F74CD972D4CAB61000B3968 /* basicShareExtension-Bridging-Header.h */,
+				9F74CD9A2D4D267C000B3968 /* RTCAppDelegateUmbrella.h */,
 			);
-			name = basicShareExtension;
 			path = basicShareExtension;
 			sourceTree = "<group>";
 		};
@@ -292,7 +299,7 @@
 						LastSwiftMigration = 1250;
 					};
 					13EC0098FB0E4C0D92E20CB7 = {
-						LastSwiftMigration = 1250;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
@@ -572,6 +579,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E1A026C5A6941659B877135 /* ShareExtensionViewController.swift in Sources */,
+				9F74CD992D4CAB61000B3968 /* RCTTurboModuleManagerDelegateImpl.mm in Sources */,
 				D909240A12D11E20A5CB5E56 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -602,7 +610,10 @@
 				);
 				INFOPLIST_FILE = basic/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -630,7 +641,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = basic/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -658,11 +672,17 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = basicShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = expo.modules.shareextension.basic.ShareExtension;
 				PRODUCT_NAME = basicShareExtension;
+				SWIFT_OBJC_BRIDGING_HEADER = "basicShareExtension/basicShareExtension-Bridging-Header.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -716,14 +736,14 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
-				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -772,13 +792,13 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
-				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -797,12 +817,19 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = basicShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = expo.modules.shareextension.basic.ShareExtension;
 				PRODUCT_NAME = basicShareExtension;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "basicShareExtension/basicShareExtension-Bridging-Header.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

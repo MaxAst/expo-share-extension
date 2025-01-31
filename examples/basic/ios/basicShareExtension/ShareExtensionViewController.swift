@@ -41,7 +41,9 @@ import FirebaseAuth
       bridgelessEnabled: false
     )
     
-    return RCTRootViewFactory(configuration: configuration)
+    let turboModuleDelegate = RCTTurboModuleManagerDelegateImpl()
+    
+    return RCTRootViewFactory.init(configuration: configuration, andTurboModuleManagerDelegate: turboModuleDelegate)
   }
 }
 
