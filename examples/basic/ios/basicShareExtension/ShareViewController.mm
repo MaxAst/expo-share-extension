@@ -1,5 +1,5 @@
 //
-//  ShareViewController.m
+//  ShareViewController.mm
 //  basicShareExtension
 //
 //  Created by Maximilian Ast on 01.02.25.
@@ -134,9 +134,9 @@
 }
 
 - (void)loadReactNativeContent {
-    __weak typeof(self) weakSelf = self;
+    ShareViewController * __weak weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        ShareViewController *strongSelf = weakSelf;
         if (!strongSelf) {
             NSLog(@"❌ Self was deallocated");
             return;

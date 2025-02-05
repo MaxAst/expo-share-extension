@@ -16,8 +16,9 @@
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		54F683EFF83B0138AF4DB79A /* libPods-basicShareExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 986EC8423433CD45E82D5280 /* libPods-basicShareExtension.a */; };
 		96905EF65AED1B983A6B3ABC /* libPods-basic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-basic.a */; };
-		9FBE62752D4E1E7300B6FCA2 /* ShareViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBE62742D4E1E7300B6FCA2 /* ShareViewController.m */; };
-		9FBE62772D4E210C00B6FCA2 /* RCTShareView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBE62762D4E210C00B6FCA2 /* RCTShareView.m */; };
+		9FBE62752D4E1E7300B6FCA2 /* ShareViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBE62742D4E1E7300B6FCA2 /* ShareViewController.mm */; };
+		9FBE62772D4E210C00B6FCA2 /* RCTShareView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBE62762D4E210C00B6FCA2 /* RCTShareView.mm */; };
+		9FBE627B2D4FB19A00B6FCA2 /* RCTTurboModuleDelegateImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBE627A2D4FB19A00B6FCA2 /* RCTTurboModuleDelegateImpl.mm */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		B84FC5E914384DC9B5CA9E8B /* basicShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = 22FFBA48256C4C5C89CD9F73 /* basicShareExtension.appex */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -72,9 +73,11 @@
 		7A4D352CD337FB3A3BF06240 /* Pods-basic.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-basic.release.xcconfig"; path = "Target Support Files/Pods-basic/Pods-basic.release.xcconfig"; sourceTree = "<group>"; };
 		986EC8423433CD45E82D5280 /* libPods-basicShareExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-basicShareExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FBE62732D4E1E7300B6FCA2 /* ShareViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShareViewController.h; sourceTree = "<group>"; };
-		9FBE62742D4E1E7300B6FCA2 /* ShareViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShareViewController.m; sourceTree = "<group>"; };
-		9FBE62762D4E210C00B6FCA2 /* RCTShareView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTShareView.m; sourceTree = "<group>"; };
+		9FBE62742D4E1E7300B6FCA2 /* ShareViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ShareViewController.mm; sourceTree = "<group>"; };
+		9FBE62762D4E210C00B6FCA2 /* RCTShareView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RCTShareView.mm; sourceTree = "<group>"; };
 		9FBE62782D4E212D00B6FCA2 /* RCTShareView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTShareView.h; sourceTree = "<group>"; };
+		9FBE62792D4FB18100B6FCA2 /* RCTTurboModuleDelegateImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTTurboModuleDelegateImpl.h; sourceTree = "<group>"; };
+		9FBE627A2D4FB19A00B6FCA2 /* RCTTurboModuleDelegateImpl.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RCTTurboModuleDelegateImpl.mm; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = basic/SplashScreen.storyboard; sourceTree = "<group>"; };
 		AEA89E1EF8F74C819A4BB71B /* basicShareExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = basicShareExtension.entitlements; sourceTree = "<group>"; };
 		B961F458DD214640889986D0 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -148,9 +151,11 @@
 				AEA89E1EF8F74C819A4BB71B /* basicShareExtension.entitlements */,
 				66E5F249DE94446BA304D325 /* Inter-Black.otf */,
 				9FBE62732D4E1E7300B6FCA2 /* ShareViewController.h */,
-				9FBE62742D4E1E7300B6FCA2 /* ShareViewController.m */,
-				9FBE62762D4E210C00B6FCA2 /* RCTShareView.m */,
+				9FBE62742D4E1E7300B6FCA2 /* ShareViewController.mm */,
+				9FBE62762D4E210C00B6FCA2 /* RCTShareView.mm */,
 				9FBE62782D4E212D00B6FCA2 /* RCTShareView.h */,
+				9FBE62792D4FB18100B6FCA2 /* RCTTurboModuleDelegateImpl.h */,
+				9FBE627A2D4FB19A00B6FCA2 /* RCTTurboModuleDelegateImpl.mm */,
 			);
 			path = basicShareExtension;
 			sourceTree = "<group>";
@@ -565,8 +570,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9FBE62772D4E210C00B6FCA2 /* RCTShareView.m in Sources */,
-				9FBE62752D4E1E7300B6FCA2 /* ShareViewController.m in Sources */,
+				9FBE62772D4E210C00B6FCA2 /* RCTShareView.mm in Sources */,
+				9FBE62752D4E1E7300B6FCA2 /* ShareViewController.mm in Sources */,
+				9FBE627B2D4FB19A00B6FCA2 /* RCTTurboModuleDelegateImpl.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
