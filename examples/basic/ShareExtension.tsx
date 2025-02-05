@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 
 export default function ShareExtension() {
+  const animatedHeight = useSharedValue(300);
   return (
     <View style={styles.container}>
       <View
@@ -17,7 +19,7 @@ export default function ShareExtension() {
           marginBottom: 10,
         }}
       >
-        Basic Example
+        Basic Example {animatedHeight.value}
       </Text>
     </View>
   );
