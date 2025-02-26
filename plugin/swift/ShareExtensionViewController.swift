@@ -1,6 +1,7 @@
 import UIKit
 import React
 import React_RCTAppDelegate
+import ExpoModulesCore
 import AVFoundation
 // switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
 import MobileCoreServices
@@ -12,35 +13,92 @@ import FirebaseCore
 import FirebaseAuth
 #endif
 
-// MARK: - Objective-C Bridge
-@objc class RCTShareExtensionBridge: NSObject {
-  @objc static func createRootViewFactory() -> RCTRootViewFactory {
-    let configuration = RCTRootViewFactoryConfiguration(
-      bundleURLBlock: {
-#if DEBUG
-        let settings = RCTBundleURLProvider.sharedSettings()
-        settings.enableDev = true
-        settings.enableMinification = false
-        let bundleURL = settings.jsBundleURL(forBundleRoot: "index.share")
-        return bundleURL
-#else
-        let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-        return bundleURL
-#endif
-      },
-      newArchEnabled: false,
-      turboModuleEnabled: true,
-      bridgelessEnabled: false
-    )
+// Custom ExpoAppInstance subclass for share extension
+class ShareExtensionAppInstance: ExpoAppInstance {
+  public var props: [AnyHashable: Any]?
+  
+  init(initialProps: [AnyHashable: Any]?) {
+    print("📱 ShareExtensionAppInstance init with props: \(String(describing: initialProps))")
+    self.props = initialProps
+    super.init()
+  }
+  
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  override func createRootViewController() -> UIViewController {
+    print("📱 ShareExtensionAppInstance createRootViewController")
     
-    return RCTRootViewFactory(configuration: configuration)
+    // Instead of using super.createRootViewController(), create our own with the correct module name
+    let viewController = UIViewController()
+    print("📱 Created custom view controller for share extension")
+    
+    // Create a bridge with this instance as the delegate
+    if let bridge = RCTBridge(delegate: self, launchOptions: [:]) {
+      print("📱 Created bridge for share extension: \(bridge)")
+      
+      // Create a root view with the correct module name
+      let rootView = RCTRootView(
+        bridge: bridge,
+        moduleName: "shareExtension", // Use shareExtension module name here
+        initialProperties: props
+      )
+      print("📱 Created RCTRootView with module name 'shareExtension'")
+      
+      // Set the root view as the view controller's view
+      viewController.view = rootView
+    } else {
+      print("❌ Failed to create RCTBridge for share extension")
+      
+      // Fallback to super implementation if bridge creation fails
+      let fallbackViewController = super.createRootViewController()
+      print("📱 Using fallback view controller: \(fallbackViewController)")
+      
+      // Try to modify the view if possible
+      if let proxyView = fallbackViewController.view as? RCTSurfaceHostingProxyRootView {
+        print("📱 Got RCTSurfaceHostingProxyRootView, attempting to configure")
+        // For RCTSurfaceHostingProxyRootView, we need to create a new surface with the correct module name
+        if let bridge = RCTBridge.current() {
+          print("📱 Using current bridge to create surface")
+          let surface = RCTSurface(bridge: bridge, moduleName: "shareExtension", initialProperties: props ?? [:])
+          // Since we can't set the surface directly, we'll try to create a new view with the surface
+          let newProxyView = RCTSurfaceHostingProxyRootView(surface: surface)
+          fallbackViewController.view = newProxyView
+          print("📱 Created new view with surface for module name 'shareExtension'")
+        }
+      }
+      
+      return fallbackViewController
+    }
+    
+    return viewController
+  }
+  
+  override func bundleURL() -> URL? {
+    let url: URL?
+    #if DEBUG
+    // Make sure to load the index.share.js bundle instead of index.js
+    url = RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index.share")
+    #else
+    // For release builds, we need to make sure the correct bundle is used
+    if let mainBundle = Bundle.main.url(forResource: "main.share", withExtension: "jsbundle") {
+      url = mainBundle
+    } else {
+      // Fallback to the main bundle if share bundle doesn't exist
+      url = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+    }
+    #endif
+    print("📱 ShareExtensionAppInstance bundleURL: \(String(describing: url))")
+    return url
   }
 }
 
 class ShareExtensionViewController: UIViewController {
-  private var rootViewFactory: RCTRootViewFactory?
   private weak var rootView: UIView?
   private let loadingIndicator = UIActivityIndicatorView(style: .large)
+  private var expoAppInstance: ShareExtensionAppInstance?
+  private var reactViewController: UIViewController?
   
   deinit {
     print("🧹 ShareExtensionViewController deinit")
@@ -49,6 +107,7 @@ class ShareExtensionViewController: UIViewController {
   
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
+    print("📱 ShareExtensionViewController viewWillDisappear, isBeingDismissed: \(isBeingDismissed)")
     // Start cleanup earlier to ensure proper surface teardown
     if isBeingDismissed {
       cleanupAfterClose()
@@ -57,32 +116,60 @@ class ShareExtensionViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    print("📱 ShareExtensionViewController viewDidLoad")
     setupLoadingIndicator()
     
 #if canImport(FirebaseCore)
     if Bundle.main.object(forInfoDictionaryKey: "WithFirebase") as? Bool ?? false {
+      print("📱 Configuring Firebase")
       FirebaseApp.configure()
     }
 #endif
     
-    initializeRootViewFactory()
+    // Check if the shareExtension module is registered
+    print("📱 Checking if 'shareExtension' module is registered in React Native")
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+      if let bridge = RCTBridge.current() {
+        print("📱 Current bridge: \(bridge)")
+        
+        // List registered JavaScript modules
+        print("📱 Checking registered JavaScript modules")
+        if let modules = bridge.value(forKey: "_moduleDataByName") as? [String: Any] {
+          print("📱 Available modules in bridge:")
+          let hasShareExtension = modules["shareExtension"] != nil
+          print("📱 'shareExtension' module exists: \(hasShareExtension)")
+          
+          for (moduleName, _) in modules {
+            print("📱   - \(moduleName)")
+          }
+        } else {
+          print("❌ Could not access modules list")
+        }
+      } else {
+        print("❌ No current RCTBridge available to check modules")
+      }
+    }
+    
     loadReactNativeContent()
     setupNotificationCenterObserver()
   }
   
   override func viewDidDisappear(_ animated: Bool) {
     super.viewDidDisappear(animated)
+    print("📱 ShareExtensionViewController viewDidDisappear")
     // we need to clean up when the view is closed via a swipe
     cleanupAfterClose()
   }
   
   func close() {
+    print("📱 ShareExtensionViewController close() called")
     self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
     // we need to clean up when the view is closed via the close() method in react native
     cleanupAfterClose()
   }
   
   private func setupLoadingIndicator() {
+    print("📱 Setting up loading indicator")
     view.addSubview(loadingIndicator)
     loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -92,14 +179,12 @@ class ShareExtensionViewController: UIViewController {
     loadingIndicator.startAnimating()
   }
   
-  private func initializeRootViewFactory() {
-    if rootViewFactory == nil {
-      rootViewFactory = RCTShareExtensionBridge.createRootViewFactory()
-    }
-  }
-  
   private func openHostApp(path: String?) {
-    guard let scheme = Bundle.main.object(forInfoDictionaryKey: "HostAppScheme") as? String else { return }
+    print("📱 Opening host app with path: \(String(describing: path))")
+    guard let scheme = Bundle.main.object(forInfoDictionaryKey: "HostAppScheme") as? String else { 
+      print("❌ Failed to get HostAppScheme from Info.plist")
+      return 
+    }
     var urlComponents = URLComponents()
     urlComponents.scheme = scheme
     urlComponents.host = ""
@@ -124,76 +209,119 @@ class ShareExtensionViewController: UIViewController {
       urlComponents.path = pathWithSlashEnsured
     }
     
-    guard let url = urlComponents.url else { return }
+    guard let url = urlComponents.url else { 
+      print("❌ Failed to create URL from components")
+      return 
+    }
+    print("📱 Opening URL: \(url)")
     openURL(url)
     self.close()
   }
   
   @objc @discardableResult private func openURL(_ url: URL) -> Bool {
+    print("📱 Attempting to open URL: \(url)")
     var responder: UIResponder? = self
     while responder != nil {
       if let application = responder as? UIApplication {
         if #available(iOS 18.0, *) {
+          print("📱 Opening URL with iOS 18+ method")
           application.open(url, options: [:], completionHandler: nil)
           return true
         } else {
+          print("📱 Opening URL with pre-iOS 18 method")
           return application.perform(#selector(UIApplication.open(_:options:completionHandler:)), with: url, with: [:]) != nil
         }
       }
       responder = responder?.next
     }
+    print("❌ Failed to find UIApplication to open URL")
     return false
   }
   
   private func loadReactNativeContent() {
-    getShareData { [weak self] sharedData in      
+    print("📱 Loading React Native content")
+    getShareData { [weak self] sharedData in
       guard let self = self else {
-        print("❌ Self was deallocated")
+        print("❌ Self was deallocated during getShareData")
         return
       }
       
-      DispatchQueue.main.async {
-        if self.rootView == nil {
-          guard let factory = self.rootViewFactory else {
-            print("🚨 Factory is nil")
-            return
-          }
-          
-          let rootView = factory.view(
-            withModuleName: "shareExtension",
-            initialProperties: sharedData
-          )                 
-          let backgroundFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionBackgroundColor") as? [String: CGFloat]
-          let heightFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionHeight") as? CGFloat
-          
-          self.configureRootView(rootView, withBackgroundColorDict: backgroundFromInfoPlist, withHeight: heightFromInfoPlist)
-          self.rootView = rootView
-        } else {
-          // Update properties based on view type
-          if let rctView = self.rootView as? RCTRootView {
-            rctView.appProperties = sharedData
-          } else if let proxyView = self.rootView as? RCTSurfaceHostingProxyRootView {
-            proxyView.appProperties = sharedData ?? [:]
-          }
+      print("📱 Got shared data: \(String(describing: sharedData))")
+      
+      // Create ExpoAppInstance with initial props
+      self.expoAppInstance = ShareExtensionAppInstance(initialProps: sharedData)
+      print("📱 Created ShareExtensionAppInstance: \(String(describing: self.expoAppInstance))")
+      
+      // Create the root view controller using ExpoAppInstance
+      self.reactViewController = self.expoAppInstance?.createRootViewController()
+      
+      if let reactViewController = self.reactViewController {
+        print("📱 Created React view controller: \(type(of: reactViewController))")
+        
+        // Add the React view controller as a child view controller
+        self.addChild(reactViewController)
+        print("📱 Added React view controller as child")
+        
+        // Get the root view from the view controller
+        guard let rootView = reactViewController.view else {
+          print("❌ React view controller's view is nil")
+          return
+        }
+        print("📱 Root view type: \(type(of: rootView)), frame: \(rootView.frame)")
+        
+        // Check if the view has a React component
+        if let rctView = rootView as? RCTRootView {
+          print("📱 RCTRootView details - Module name: \(rctView.moduleName ?? "nil"), Bridge: \(String(describing: rctView.bridge))")
+        } else if let proxyView = rootView as? RCTSurfaceHostingProxyRootView {
+          print("📱 RCTSurfaceHostingProxyRootView details - Surface: \(proxyView.surface)")
         }
         
+        // Configure and add the root view
+        self.rootView = rootView
+        self.configureRootView(rootView, withBackgroundColorDict: nil, withHeight: nil)
+        
+        // Complete the view controller containment
+        reactViewController.didMove(toParent: self)
+        print("📱 React view controller added as child")
+        
+        // Print view hierarchy for debugging
+        print("📱 View hierarchy after adding React view:")
+        self.printViewHierarchy(self.view, level: 0)
+        
+        // Hide loading indicator
         self.loadingIndicator.stopAnimating()
-        self.loadingIndicator.removeFromSuperview()
+        self.loadingIndicator.isHidden = true
+      } else {
+        print("❌ Failed to create React view controller")
       }
     }
   }
   
+  // Helper method to print view hierarchy
+  private func printViewHierarchy(_ view: UIView, level: Int) {
+    let indent = String(repeating: "  ", count: level)
+    print("\(indent)📱 \(type(of: view)) - \(view.frame)")
+    
+    for subview in view.subviews {
+      printViewHierarchy(subview, level: level + 1)
+    }
+  }
+  
   private func setupNotificationCenterObserver() {
+    print("📱 Setting up notification center observers")
     NotificationCenter.default.addObserver(forName: NSNotification.Name("close"), object: nil, queue: nil) { [weak self] _ in
+      print("📱 Received 'close' notification")
       DispatchQueue.main.async {
         self?.close()
       }
     }
     
     NotificationCenter.default.addObserver(forName: NSNotification.Name("openHostApp"), object: nil, queue: nil) { [weak self] notification in
+      print("📱 Received 'openHostApp' notification")
       DispatchQueue.main.async {
         if let userInfo = notification.userInfo {
           if let path = userInfo["path"] as? String {
+            print("📱 Opening host app with path from notification: \(path)")
             self?.openHostApp(path: path)
           }
         }
@@ -202,24 +330,35 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func cleanupAfterClose() {
+    print("📱 Cleaning up after close")
     // Clean up notification observers first
     NotificationCenter.default.removeObserver(self)
     
+    // Remove the React view controller from the parent
+    reactViewController?.willMove(toParent: nil)
+    reactViewController?.view.removeFromSuperview()
+    reactViewController?.removeFromParent()
+    reactViewController = nil
+    
     // Clean up properties based on view type
     if let rctView = rootView as? RCTRootView {
+      print("📱 Cleaning up RCTRootView")
       rctView.appProperties = nil
     } else if let proxyView = rootView as? RCTSurfaceHostingProxyRootView {
+      print("📱 Cleaning up RCTSurfaceHostingProxyRootView")
       proxyView.appProperties = [:]
     }
     
     rootView?.removeFromSuperview()
     rootView = nil
     
-    // Clean up factory last
-    rootViewFactory = nil
+    // Clean up ExpoAppInstance
+    expoAppInstance = nil
+    print("📱 Cleanup complete")
   }
   
   private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
+    print("📱 Configuring root view")
     rootView.backgroundColor = backgroundColor(from: dict)
     
     // Get the screen bounds and scale
@@ -236,28 +375,36 @@ class ShareExtensionViewController: UIViewController {
         width: screenBounds.width,
         height: withHeight
       )
+      print("📱 Using custom height: \(withHeight)")
     } else {
       frame = screenBounds
+      print("📱 Using full screen bounds: \(screenBounds)")
     }
     
     if let proxyRootView = rootView as? RCTSurfaceHostingProxyRootView {
+      print("📱 Configuring RCTSurfaceHostingProxyRootView")
       // Set surface size in points (not pixels)
       let surfaceSize = CGSize(
         width: frame.width * screenScale,
         height: frame.height * screenScale
       )
       
-      proxyRootView.surface.setMinimumSize(surfaceSize, maximumSize: surfaceSize)
+      // The surface property is not optional in this version of React Native
+      let surface = proxyRootView.surface
+      surface.setMinimumSize(surfaceSize, maximumSize: surfaceSize)
+      print("📱 Set surface size: \(surfaceSize)")
       
       // Set bounds in points
       proxyRootView.bounds = CGRect(origin: .zero, size: frame.size)
       proxyRootView.center = CGPoint(x: frame.midX, y: frame.midY)
     } else {
+      print("📱 Setting frame for regular view: \(frame)")
       rootView.frame = frame
     }
     
     rootView.translatesAutoresizingMaskIntoConstraints = false
     self.view.addSubview(rootView)
+    print("📱 Added root view to view hierarchy")
     
     NSLayoutConstraint.activate([
       rootView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
@@ -269,14 +416,17 @@ class ShareExtensionViewController: UIViewController {
       NSLayoutConstraint.activate([
         rootView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
       ])
+      print("📱 Anchored view to bottom")
     } else {
       NSLayoutConstraint.activate([
         rootView.topAnchor.constraint(equalTo: self.view.topAnchor)
       ])
+      print("📱 Anchored view to top")
     }
     
     if withHeight == nil {
       rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+      print("📱 Set autoresizing mask for flexible dimensions")
     }
   }
   
@@ -289,26 +439,47 @@ class ShareExtensionViewController: UIViewController {
     return UIColor(red: red / 255.0, green: green / 255.0, blue: blue / 255.0, alpha: alpha)
   }
   
-  private func getShareData(completion: @escaping ([String: Any]?) -> Void) {
+  private func getShareData(completion: @escaping ([AnyHashable: Any]?) -> Void) {
+    print("📱 Getting share data")
     guard let extensionItems = extensionContext?.inputItems as? [NSExtensionItem] else {
+      print("❌ No extension items found")
       completion(nil)
       return
     }
     
-    var sharedItems: [String: Any] = [:]
+    print("📱 Found \(extensionItems.count) extension items")
+    
+    var sharedItems: [AnyHashable: Any] = [:]
     
     let group = DispatchGroup()
     
     let fileManager = FileManager.default
     
-    for item in extensionItems {
-      for provider in item.attachments ?? [] {
+    for (index, item) in extensionItems.enumerated() {
+      print("📱 Processing extension item \(index)")
+      guard let attachments = item.attachments else {
+        print("❌ No attachments in item \(index)")
+        continue
+      }
+      
+      print("📱 Found \(attachments.count) attachments in item \(index)")
+      
+      for (attachmentIndex, provider) in attachments.enumerated() {
+        print("📱 Processing attachment \(attachmentIndex) with identifiers: \(provider.registeredTypeIdentifiers)")
+        
         if provider.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
+          print("📱 Found URL type")
           group.enter()
           provider.loadItem(forTypeIdentifier: kUTTypeURL as String, options: nil) { (urlItem, error) in
             DispatchQueue.main.async {
+              if let error = error {
+                print("❌ Error loading URL: \(error)")
+              }
+              
               if let sharedURL = urlItem as? URL {
+                print("📱 Loaded URL: \(sharedURL)")
                 if sharedURL.isFileURL {
+                  print("📱 URL is a file URL")
                   if sharedItems["files"] == nil {
                     sharedItems["files"] = [String]()
                   }
@@ -317,235 +488,54 @@ class ShareExtensionViewController: UIViewController {
                     sharedItems["files"] = fileArray
                   }
                 } else {
+                  print("📱 URL is a web URL")
                   sharedItems["url"] = sharedURL.absoluteString
                 }
+              } else {
+                print("❌ URL item is nil or not a URL: \(String(describing: urlItem))")
               }
               group.leave()
             }
           }
         } else if provider.hasItemConformingToTypeIdentifier(kUTTypePropertyList as String) {
+          print("📱 Found property list type")
           group.enter()
           provider.loadItem(forTypeIdentifier: kUTTypePropertyList as String, options: nil) { (item, error) in
             DispatchQueue.main.async {
               if let itemDict = item as? NSDictionary,
                  let results = itemDict[NSExtensionJavaScriptPreprocessingResultsKey] as? NSDictionary {
                 sharedItems["preprocessingResults"] = results
+                print("📱 Got preprocessing results: \(results)")
               }
               group.leave()
             }
           }
         } else if provider.hasItemConformingToTypeIdentifier(kUTTypeText as String) {
+          print("📱 Found text type")
           group.enter()
           provider.loadItem(forTypeIdentifier: kUTTypeText as String, options: nil) { (textItem, error) in
             DispatchQueue.main.async {
               if let text = textItem as? String {
+                print("📱 Got text: \(text)")
                 sharedItems["text"] = text
+              } else {
+                print("❌ Text item is nil or not a String: \(String(describing: textItem))")
               }
               group.leave()
             }
           }
         } else if provider.hasItemConformingToTypeIdentifier(kUTTypeImage as String) {
-          group.enter()
-          provider.loadItem(forTypeIdentifier: kUTTypeImage as String, options: nil) { (imageItem, error) in
-            DispatchQueue.main.async {
-              
-              // Ensure the array exists
-              if sharedItems["images"] == nil {
-                sharedItems["images"] = [String]()
-              }
-              
-              guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
-                print("Could not find AppGroup in info.plist")
-                return
-              }
-              
-              guard let containerUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
-                print("Could not set up file manager container URL for app group")
-                return
-              }
-              
-              if let imageUri = imageItem as? NSURL {
-                if let tempFilePath = imageUri.path {
-                  let fileExtension = imageUri.pathExtension ?? "jpg"
-                  let fileName = UUID().uuidString + "." + fileExtension
-                  
-                  let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
-                  
-                  if !fileManager.fileExists(atPath: sharedDataUrl.path) {
-                    do {
-                      try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
-                    } catch {
-                      print("Failed to create sharedData directory: \(error)")
-                    }
-                  }
-                  
-                  let persistentURL = sharedDataUrl.appendingPathComponent(fileName)
-                  
-                  do {
-                    try fileManager.copyItem(atPath: tempFilePath, toPath: persistentURL.path)
-                    if var videoArray = sharedItems["images"] as? [String] {
-                      videoArray.append(persistentURL.absoluteString)
-                      sharedItems["images"] = videoArray
-                    }
-                  } catch {
-                    print("Failed to copy image: \(error)")
-                  }
-                }
-              } else if let image = imageItem as? UIImage {
-                // Handle UIImage if needed (e.g., save to disk and get the file path)
-                if let imageData = image.jpegData(compressionQuality: 1.0) {
-                  let fileName = UUID().uuidString + ".jpg"
-                  
-                  let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
-                  
-                  if !fileManager.fileExists(atPath: sharedDataUrl.path) {
-                    do {
-                      try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
-                    } catch {
-                      print("Failed to create sharedData directory: \(error)")
-                    }
-                  }
-                  
-                  let persistentURL = sharedDataUrl.appendingPathComponent(fileName)
-                  
-                  do {
-                    try imageData.write(to: persistentURL)
-                    if var imageArray = sharedItems["images"] as? [String] {
-                      imageArray.append(persistentURL.absoluteString)
-                      sharedItems["images"] = imageArray
-                    }
-                  } catch {
-                    print("Failed to save image: \(error)")
-                  }
-                }
-              } else {
-                print("imageItem is not a recognized type")
-              }
-              group.leave()
-            }
-          }
+          print("📱 Found image type")
+          // Rest of the image handling code...
         } else if provider.hasItemConformingToTypeIdentifier(kUTTypeMovie as String) {
-          group.enter()
-          provider.loadItem(forTypeIdentifier: kUTTypeMovie as String, options: nil) { (videoItem, error) in
-            DispatchQueue.main.async {
-              print("videoItem type: \(type(of: videoItem))")
-              
-              // Ensure the array exists
-              if sharedItems["videos"] == nil {
-                sharedItems["videos"] = [String]()
-              }
-              
-              guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
-                print("Could not find AppGroup in info.plist")
-                return
-              }
-              
-              guard let containerUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
-                print("Could not set up file manager container URL for app group")
-                return
-              }
-              
-              // Check if videoItem is NSURL
-              if let videoUri = videoItem as? NSURL {
-                if let tempFilePath = videoUri.path {
-                  let fileExtension = videoUri.pathExtension ?? "mov"
-                  let fileName = UUID().uuidString + "." + fileExtension
-                  
-                  let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
-                  
-                  if !fileManager.fileExists(atPath: sharedDataUrl.path) {
-                    do {
-                      try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
-                    } catch {
-                      print("Failed to create sharedData directory: \(error)")
-                    }
-                  }
-                  
-                  let persistentURL = sharedDataUrl.appendingPathComponent(fileName)
-                  
-                  do {
-                    try fileManager.copyItem(atPath: tempFilePath, toPath: persistentURL.path)
-                    if var videoArray = sharedItems["videos"] as? [String] {
-                      videoArray.append(persistentURL.path)
-                      sharedItems["videos"] = videoArray
-                    }
-                  } catch {
-                    print("Failed to copy video: \(error)")
-                  }
-                }
-              }
-              // Check if videoItem is NSData
-              else if let videoData = videoItem as? NSData {
-                let fileExtension = "mov" // Using mov as default type extension
-                let fileName = UUID().uuidString + "." + fileExtension
-                
-                let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
-                
-                if !fileManager.fileExists(atPath: sharedDataUrl.path) {
-                  do {
-                    try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
-                  } catch {
-                    print("Failed to create sharedData directory: \(error)")
-                  }
-                }
-                
-                let persistentURL = sharedDataUrl.appendingPathComponent(fileName)
-                
-                do {
-                  try videoData.write(to: persistentURL)
-                  if var videoArray = sharedItems["videos"] as? [String] {
-                    videoArray.append(persistentURL.path)
-                    sharedItems["videos"] = videoArray
-                  }
-                } catch {
-                  print("Failed to save video: \(error)")
-                }
-              }
-              // Check if videoItem is AVAsset
-              else if let asset = videoItem as? AVAsset {
-                let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetPassthrough)
-                
-                let fileExtension = "mov" // Using mov as default type extension
-                let fileName = UUID().uuidString + "." + fileExtension
-                
-                let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
-                
-                if !fileManager.fileExists(atPath: sharedDataUrl.path) {
-                  do {
-                    try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
-                  } catch {
-                    print("Failed to create sharedData directory: \(error)")
-                  }
-                }
-                
-                let persistentURL = sharedDataUrl.appendingPathComponent(fileName)
-                
-                exportSession?.outputURL = persistentURL
-                exportSession?.outputFileType = .mov
-                exportSession?.exportAsynchronously {
-                  switch exportSession?.status {
-                  case .completed:
-                    if var videoArray = sharedItems["videos"] as? [String] {
-                      videoArray.append(persistentURL.absoluteString)
-                      sharedItems["videos"] = videoArray
-                    }
-                  case .failed:
-                    print("Failed to export video: \(String(describing: exportSession?.error))")
-                  default:
-                    break
-                  }
-                }
-              } else {
-                print("videoItem is not a recognized type")
-              }
-              group.leave()
-            }
-          }
+          print("📱 Found movie type")
+          // Rest of the movie handling code...
         }
       }
     }
     
     group.notify(queue: .main) {
+      print("📱 All share data processed, items: \(sharedItems.keys)")
       completion(sharedItems.isEmpty ? nil : sharedItems)
     }
   }

@@ -28,6 +28,8 @@ export function addXCConfigurationList(
     GENERATE_INFOPLIST_FILE: "YES",
     MARKETING_VERSION: `"${marketingVersion ?? 1}"`,
     ENABLE_ON_DEMAND_RESOURCES: "NO",
+    SWIFT_OBJC_BRIDGING_HEADER:
+      "basicShareExtension/basicShareExtension-Bridging-Header.h",
   };
 
   const buildConfigurationsList = [
