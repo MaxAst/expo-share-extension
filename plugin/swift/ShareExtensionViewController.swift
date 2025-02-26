@@ -12,35 +12,26 @@ import FirebaseCore
 import FirebaseAuth
 #endif
 
-// MARK: - Objective-C Bridge
-@objc class RCTShareExtensionBridge: NSObject {
-  @objc static func createRootViewFactory() -> RCTRootViewFactory {
-    let configuration = RCTRootViewFactoryConfiguration(
-      bundleURLBlock: {
-#if DEBUG
-        let settings = RCTBundleURLProvider.sharedSettings()
-        settings.enableDev = true
-        settings.enableMinification = false
-        let bundleURL = settings.jsBundleURL(forBundleRoot: "index.share")
-        return bundleURL
-#else
-        let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-        return bundleURL
-#endif
-      },
-      newArchEnabled: false,
-      turboModuleEnabled: true,
-      bridgelessEnabled: false
-    )
-    
-    return RCTRootViewFactory(configuration: configuration)
+class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
+  override func sourceURL(for bridge: RCTBridge) -> URL? {
+    self.bundleURL()
   }
+  
+  override func bundleURL() -> URL? {
+#if DEBUG
+    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+#else
+    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+#endif
+  }
+  
 }
 
 class ShareExtensionViewController: UIViewController {
-  private var rootViewFactory: RCTRootViewFactory?
   private weak var rootView: UIView?
   private let loadingIndicator = UIActivityIndicatorView(style: .large)
+  var reactNativeFactory: RCTReactNativeFactory?
+  var reactNativeFactoryDelegate: RCTReactNativeFactoryDelegate?
   
   deinit {
     print("🧹 ShareExtensionViewController deinit")
@@ -65,7 +56,7 @@ class ShareExtensionViewController: UIViewController {
     }
 #endif
     
-    initializeRootViewFactory()
+    
     loadReactNativeContent()
     setupNotificationCenterObserver()
   }
@@ -90,12 +81,6 @@ class ShareExtensionViewController: UIViewController {
       loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
     ])
     loadingIndicator.startAnimating()
-  }
-  
-  private func initializeRootViewFactory() {
-    if rootViewFactory == nil {
-      rootViewFactory = RCTShareExtensionBridge.createRootViewFactory()
-    }
   }
   
   private func openHostApp(path: String?) {
@@ -146,40 +131,15 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func loadReactNativeContent() {
-    getShareData { [weak self] sharedData in      
+    getShareData { [weak self] sharedData in
       guard let self = self else {
         print("❌ Self was deallocated")
         return
       }
       
-      DispatchQueue.main.async {
-        if self.rootView == nil {
-          guard let factory = self.rootViewFactory else {
-            print("🚨 Factory is nil")
-            return
-          }
-          
-          let rootView = factory.view(
-            withModuleName: "shareExtension",
-            initialProperties: sharedData
-          )                 
-          let backgroundFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionBackgroundColor") as? [String: CGFloat]
-          let heightFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionHeight") as? CGFloat
-          
-          self.configureRootView(rootView, withBackgroundColorDict: backgroundFromInfoPlist, withHeight: heightFromInfoPlist)
-          self.rootView = rootView
-        } else {
-          // Update properties based on view type
-          if let rctView = self.rootView as? RCTRootView {
-            rctView.appProperties = sharedData
-          } else if let proxyView = self.rootView as? RCTSurfaceHostingProxyRootView {
-            proxyView.appProperties = sharedData ?? [:]
-          }
-        }
-        
-        self.loadingIndicator.stopAnimating()
-        self.loadingIndicator.removeFromSuperview()
-      }
+      reactNativeFactoryDelegate = ReactNativeDelegate()
+      reactNativeFactory = RCTReactNativeFactory(delegate: reactNativeFactoryDelegate!)
+      rootView = reactNativeFactory!.rootViewFactory.view(withModuleName: "shareExtension", initialProperties: sharedData)
     }
   }
   
@@ -214,9 +174,6 @@ class ShareExtensionViewController: UIViewController {
     
     rootView?.removeFromSuperview()
     rootView = nil
-    
-    // Clean up factory last
-    rootViewFactory = nil
   }
   
   private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
