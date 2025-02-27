@@ -1,0 +1,98 @@
+{
+  "expo": {
+    "name": "kitchen-sink",
+    "slug": "kitchen-sink",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "expo.modules.shareextension.basic"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "expo.modules.shareextension.basic"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Inter-Black.otf"
+          ]
+        }
+      ],
+      [
+        "../../app.plugin.js",
+        {
+          "backgroundColor": {
+            "red": 255,
+            "green": 255,
+            "blue": 255,
+            "alpha": 0
+          },
+          "height": 500,
+          "activationRules": [
+            {
+              "type": "file",
+              "max": 3
+            },
+            {
+              "type": "image",
+              "max": 2
+            },
+            {
+              "type": "video",
+              "max": 1
+            },
+            {
+              "type": "text"
+            },
+            {
+              "type": "url",
+              "max": 1
+            }
+          ]
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "kitchensinkShareExtension",
+                  "bundleIdentifier": "expo.modules.shareextension.basic.ShareExtension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.expo.modules.shareextension.basic"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "ea35a029-08d5-41e5-b4e6-e31218c295fe"
+      },
+      "appleApplicationGroup": "group.expo.modules.shareextension.basic"
+    }
+  }
+}
