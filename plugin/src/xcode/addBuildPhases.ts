@@ -38,7 +38,7 @@ export function addBuildPhases(
 
   // Sources build phase
   xcodeProject.addBuildPhase(
-    ["ShareExtensionViewController.swift"],
+    ["ShareExtensionViewController.swift", "ExpoShareAppInstance.swift"],
     "PBXSourcesBuildPhase",
     groupName,
     targetUuid,
