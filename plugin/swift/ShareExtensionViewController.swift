@@ -21,10 +21,18 @@ import FirebaseAuth
         let settings = RCTBundleURLProvider.sharedSettings()
         settings.enableDev = true
         settings.enableMinification = false
-        let bundleURL = settings.jsBundleURL(forBundleRoot: "index.share")
-        return bundleURL
+        if let bundleURL = settings.jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry") {
+          if var components = URLComponents(url: bundleURL, resolvingAgainstBaseURL: false) {
+            components.queryItems = (components.queryItems ?? []) + [URLQueryItem(name: "shareExtension", value: "true")]
+            return components.url ?? bundleURL
+          }
+          return bundleURL
+        }
+        fatalError("Could not create bundle URL")
 #else
-        let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+        guard let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle") else {
+          fatalError("Could not load bundle URL")
+        }
         return bundleURL
 #endif
       },
