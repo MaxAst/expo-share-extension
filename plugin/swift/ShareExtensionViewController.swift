@@ -1,6 +1,7 @@
 import UIKit
 import React
 import React_RCTAppDelegate
+
 import AVFoundation
 // switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
 import MobileCoreServices
@@ -12,35 +13,13 @@ import FirebaseCore
 import FirebaseAuth
 #endif
 
-// MARK: - Objective-C Bridge
-@objc class RCTShareExtensionBridge: NSObject {
-  @objc static func createRootViewFactory() -> RCTRootViewFactory {
-    let configuration = RCTRootViewFactoryConfiguration(
-      bundleURLBlock: {
-#if DEBUG
-        let settings = RCTBundleURLProvider.sharedSettings()
-        settings.enableDev = true
-        settings.enableMinification = false
-        let bundleURL = settings.jsBundleURL(forBundleRoot: "index.share")
-        return bundleURL
-#else
-        let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-        return bundleURL
-#endif
-      },
-      newArchEnabled: false,
-      turboModuleEnabled: true,
-      bridgelessEnabled: false
-    )
-    
-    return RCTRootViewFactory(configuration: configuration)
-  }
-}
+class ShareExtensionAppInstance: ExpoShareAppInstance {}
 
 class ShareExtensionViewController: UIViewController {
   private var rootViewFactory: RCTRootViewFactory?
   private weak var rootView: UIView?
   private let loadingIndicator = UIActivityIndicatorView(style: .large)
+  private var expoAppInstance: ShareExtensionAppInstance?
   
   deinit {
     print("🧹 ShareExtensionViewController deinit")
@@ -58,6 +37,8 @@ class ShareExtensionViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupLoadingIndicator()
+    
+    expoAppInstance = ShareExtensionAppInstance()
     
 #if canImport(FirebaseCore)
     if Bundle.main.object(forInfoDictionaryKey: "WithFirebase") as? Bool ?? false {
@@ -94,7 +75,7 @@ class ShareExtensionViewController: UIViewController {
   
   private func initializeRootViewFactory() {
     if rootViewFactory == nil {
-      rootViewFactory = RCTShareExtensionBridge.createRootViewFactory()
+      rootViewFactory = expoAppInstance?.createRCTRootViewFactory()
     }
   }
   
@@ -146,7 +127,7 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func loadReactNativeContent() {
-    getShareData { [weak self] sharedData in      
+    getShareData { [weak self] sharedData in
       guard let self = self else {
         print("❌ Self was deallocated")
         return
@@ -162,7 +143,7 @@ class ShareExtensionViewController: UIViewController {
           let rootView = factory.view(
             withModuleName: "shareExtension",
             initialProperties: sharedData
-          )                 
+          )
           let backgroundFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionBackgroundColor") as? [String: CGFloat]
           let heightFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionHeight") as? CGFloat
           

@@ -64,6 +64,10 @@ const withShareExtension: ConfigPlugin<{
     rgbaSchema.parse(props.backgroundColor);
   }
 
+  if (props?.height) {
+    heightSchema.parse(props.height);
+  }
+
   const expoFontPlugin = config.plugins?.find(
     (p) => Array.isArray(p) && p.length && p.at(0) === "expo-font",
   );
