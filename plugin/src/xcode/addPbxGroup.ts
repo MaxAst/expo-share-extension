@@ -31,9 +31,9 @@ export function addPbxGroup(
   );
 
   copyFileSync(
-    path.join(__dirname, "../../swift/ExpoAppInstance.swift"),
+    path.join(__dirname, "../../swift/ExpoShareAppInstance.swift"),
     targetPath,
-    "ExpoAppInstance.swift",
+    "ExpoShareAppInstance.swift",
   );
 
   copyFileSync(
@@ -48,7 +48,7 @@ export function addPbxGroup(
 
   const files = [
     "ShareExtensionViewController.swift",
-    "ExpoAppInstance.swift",
+    "ExpoShareAppInstance.swift",
     "basicShareExtension-Bridging-Header.h",
     "Info.plist",
     `${targetName}.entitlements`,
