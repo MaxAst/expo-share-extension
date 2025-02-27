@@ -75,7 +75,6 @@ class ShareExtensionViewController: UIViewController {
   
   private func initializeRootViewFactory() {
     if rootViewFactory == nil {
-      print("am I being called?")
       rootViewFactory = expoAppInstance?.createRCTRootViewFactory()
     }
   }
