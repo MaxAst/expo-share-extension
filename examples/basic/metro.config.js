@@ -2,7 +2,7 @@
 const { getDefaultConfig } = require("expo/metro-config");
 const path = require("path");
 
-const { withShareExtension } = require("../../build/metro.cjs");
+const { withShareExtension } = require("../../metro.js");
 
 const config = getDefaultConfig(__dirname);
 
