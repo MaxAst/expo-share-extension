@@ -2,6 +2,8 @@
 const { getDefaultConfig } = require("expo/metro-config");
 const path = require("path");
 
+const { withShareExtension } = require("../../metro.js");
+
 const config = getDefaultConfig(__dirname);
 
 // npm v7+ will install ../node_modules/react-native because of peerDependencies.
@@ -19,10 +21,4 @@ config.resolver.nodeModulesPaths = [
 
 config.watchFolders = [path.resolve(__dirname, "../..")];
 
-config.transformer.getTransformOptions = () => ({
-  resolver: {
-    sourceExts: [...config.resolver.sourceExts, "share.js"], // Add 'share.js' as a recognized extension
-  },
-});
-
-module.exports = config;
+module.exports = withShareExtension(config);
