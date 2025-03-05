@@ -19,7 +19,7 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
   
   override func bundleURL() -> URL? {
 #if DEBUG
-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index.share")
 #else
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
@@ -140,6 +140,15 @@ class ShareExtensionViewController: UIViewController {
       reactNativeFactoryDelegate = ReactNativeDelegate()
       reactNativeFactory = RCTReactNativeFactory(delegate: reactNativeFactoryDelegate!)
       rootView = reactNativeFactory!.rootViewFactory.view(withModuleName: "shareExtension", initialProperties: sharedData)
+      
+      if let rootView = rootView {
+        // Hide loading indicator once React content is ready
+        self.loadingIndicator.stopAnimating()
+        self.loadingIndicator.removeFromSuperview()
+        
+        // Configure and add the root view to the view hierarchy
+        self.configureRootView(rootView, withBackgroundColorDict: nil, withHeight: nil)
+      }
     }
   }
   
