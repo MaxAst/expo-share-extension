@@ -16,6 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.shareextension.basic"
     },
+    "newArchEnabled": true,
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -67,6 +68,9 @@
         },
         "projectId": "f729978a-6def-41c5-96b5-ae416ab2112f"
       }
+    },
+    "experiments": {
+      "reactCanary": true
     }
   }
 }
