@@ -14,17 +14,17 @@ import FirebaseAuth
 #endif
 
 class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
-    override func sourceURL(for bridge: RCTBridge) -> URL? {
-      self.bundleURL()
-    }
-
-    override func bundleURL() -> URL? {
-      #if DEBUG
-      RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index.share")
-      #else
-      Bundle.main.url(forResource: "main", withExtension: "jsbundle")
-      #endif
-    }
+  override func sourceURL(for bridge: RCTBridge) -> URL? {
+    self.bundleURL()
+  }
+  
+  override func bundleURL() -> URL? {
+#if DEBUG
+    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index.share")
+#else
+    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+#endif
+  }
 }
 
 class ShareExtensionViewController: UIViewController {

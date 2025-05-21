@@ -1,6 +1,7 @@
 import UIKit
 import React
 import React_RCTAppDelegate
+import ReactAppDependencyProvider
 import AVFoundation
 // switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
 import MobileCoreServices
@@ -24,11 +25,9 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
   }
-  
 }
 
 class ShareExtensionViewController: UIViewController {
-  private weak var rootView: UIView?
   private let loadingIndicator = UIActivityIndicatorView(style: .large)
   var reactNativeFactory: RCTReactNativeFactory?
   var reactNativeFactoryDelegate: RCTReactNativeFactoryDelegate?
@@ -56,7 +55,6 @@ class ShareExtensionViewController: UIViewController {
     }
 #endif
     
-    
     loadReactNativeContent()
     setupNotificationCenterObserver()
   }
@@ -71,6 +69,28 @@ class ShareExtensionViewController: UIViewController {
     self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
     // we need to clean up when the view is closed via the close() method in react native
     cleanupAfterClose()
+  }
+  
+  private func loadReactNativeContent() {
+    getShareData { [weak self] sharedData in
+      guard let self = self else {
+        print("❌ Self was deallocated")
+        return
+      }
+      
+      reactNativeFactoryDelegate = ReactNativeDelegate()
+      reactNativeFactoryDelegate!.dependencyProvider = RCTAppDependencyProvider()
+      reactNativeFactory = RCTReactNativeFactory(delegate: reactNativeFactoryDelegate!)
+      
+      // Add screen metrics to the initial properties
+      var initialProps = sharedData ?? [:]
+      
+      view = reactNativeFactory!.rootViewFactory.view(withModuleName: "shareExtension", initialProperties: initialProps)
+      
+      // Hide loading indicator once React content is ready
+      self.loadingIndicator.stopAnimating()
+      self.loadingIndicator.removeFromSuperview()
+    }
   }
   
   private func setupLoadingIndicator() {
@@ -130,28 +150,6 @@ class ShareExtensionViewController: UIViewController {
     return false
   }
   
-  private func loadReactNativeContent() {
-    getShareData { [weak self] sharedData in
-      guard let self = self else {
-        print("❌ Self was deallocated")
-        return
-      }
-      
-      reactNativeFactoryDelegate = ReactNativeDelegate()
-      reactNativeFactory = RCTReactNativeFactory(delegate: reactNativeFactoryDelegate!)
-      rootView = reactNativeFactory!.rootViewFactory.view(withModuleName: "shareExtension", initialProperties: sharedData)
-      
-      if let rootView = rootView {
-        // Hide loading indicator once React content is ready
-        self.loadingIndicator.stopAnimating()
-        self.loadingIndicator.removeFromSuperview()
-        
-        // Configure and add the root view to the view hierarchy
-        self.configureRootView(rootView, withBackgroundColorDict: nil, withHeight: nil)
-      }
-    }
-  }
-  
   private func setupNotificationCenterObserver() {
     NotificationCenter.default.addObserver(forName: NSNotification.Name("close"), object: nil, queue: nil) { [weak self] _ in
       DispatchQueue.main.async {
@@ -171,79 +169,7 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func cleanupAfterClose() {
-    // Clean up notification observers first
     NotificationCenter.default.removeObserver(self)
-    
-    // Clean up properties based on view type
-    if let rctView = rootView as? RCTRootView {
-      rctView.appProperties = nil
-    } else if let proxyView = rootView as? RCTSurfaceHostingProxyRootView {
-      proxyView.appProperties = [:]
-    }
-    
-    rootView?.removeFromSuperview()
-    rootView = nil
-  }
-  
-  private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
-    rootView.backgroundColor = backgroundColor(from: dict)
-    
-    // Get the screen bounds and scale
-    let screen = UIScreen.main
-    let screenBounds = screen.bounds
-    let screenScale = screen.scale
-    
-    // Calculate proper frame
-    let frame: CGRect
-    if let withHeight = withHeight {
-      frame = CGRect(
-        x: 0,
-        y: screenBounds.height - withHeight,
-        width: screenBounds.width,
-        height: withHeight
-      )
-    } else {
-      frame = screenBounds
-    }
-    
-    if let proxyRootView = rootView as? RCTSurfaceHostingProxyRootView {
-      // Set surface size in points (not pixels)
-      let surfaceSize = CGSize(
-        width: frame.width * screenScale,
-        height: frame.height * screenScale
-      )
-      
-      proxyRootView.surface.setMinimumSize(surfaceSize, maximumSize: surfaceSize)
-      
-      // Set bounds in points
-      proxyRootView.bounds = CGRect(origin: .zero, size: frame.size)
-      proxyRootView.center = CGPoint(x: frame.midX, y: frame.midY)
-    } else {
-      rootView.frame = frame
-    }
-    
-    rootView.translatesAutoresizingMaskIntoConstraints = false
-    self.view.addSubview(rootView)
-    
-    NSLayoutConstraint.activate([
-      rootView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-      rootView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-      rootView.heightAnchor.constraint(equalToConstant: frame.height)
-    ])
-    
-    if let withHeight = withHeight {
-      NSLayoutConstraint.activate([
-        rootView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
-      ])
-    } else {
-      NSLayoutConstraint.activate([
-        rootView.topAnchor.constraint(equalTo: self.view.topAnchor)
-      ])
-    }
-    
-    if withHeight == nil {
-      rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    }
   }
   
   private func backgroundColor(from dict: [String: CGFloat]?) -> UIColor {
