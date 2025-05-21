@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "kitchen-sink",
+    "slug": "kitchen-sink",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "kitchensink",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "bundleIdentifier": "com.expo.modules.shareextension.kitchen-sink",
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+
+      ["expo-font", { "fonts": ["./assets/fonts/Inter-Black.otf"] }],
+      [
+        "../../app.plugin.js",
+        {
+          "backgroundColor": {
+            "red": 255,
+            "green": 255,
+            "blue": 255,
+            "alpha": 0 // make the background transparent
+          },
+          "height": 500
+        }
+      ]
+    ],
+    "experiments": { "typedRoutes": true }
+  }
+}
