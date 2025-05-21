@@ -49,6 +49,9 @@ class ShareExtensionViewController: UIViewController {
     super.viewDidLoad()
     setupLoadingIndicator()
     
+    // Set the contentScaleFactor for the main view of this view controller
+    self.view.contentScaleFactor = UIScreen.main.scale
+    
 #if canImport(FirebaseCore)
     if Bundle.main.object(forInfoDictionaryKey: "WithFirebase") as? Bool ?? false {
       FirebaseApp.configure()
@@ -82,11 +85,49 @@ class ShareExtensionViewController: UIViewController {
       reactNativeFactoryDelegate!.dependencyProvider = RCTAppDependencyProvider()
       reactNativeFactory = RCTReactNativeFactory(delegate: reactNativeFactoryDelegate!)
       
-      // Add screen metrics to the initial properties
       var initialProps = sharedData ?? [:]
       
-      view = reactNativeFactory!.rootViewFactory.view(withModuleName: "shareExtension", initialProperties: initialProps)
+      // Capture current view's properties before replacing it
+      let currentBounds = self.view.bounds
+      let currentScale = UIScreen.main.scale
       
+      // Log the scale of the parent view
+      print("[ShareExtension] self.view.contentScaleFactor before adding subview: \(self.view.contentScaleFactor)")
+      print("[ShareExtension] UIScreen.main.scale: \(currentScale)")
+      
+      // Add screen metrics to initial properties for React Native
+      // These can be used by the JS side to understand its container size and scale
+      initialProps["initialViewWidth"] = currentBounds.width
+      initialProps["initialViewHeight"] = currentBounds.height
+      initialProps["pixelRatio"] = currentScale
+      // It's also good practice to pass the font scale for accessibility
+      // Default body size on iOS is 17pt, used as a reference for calculating fontScale.
+      initialProps["fontScale"] = UIFont.preferredFont(forTextStyle: .body).pointSize / 17.0
+      
+      // Create the React Native root view
+      let reactNativeRootView = reactNativeFactory!.rootViewFactory.view(
+          withModuleName: "shareExtension",
+          initialProperties: initialProps
+      )
+      
+      // Set the content scale factor for the new view (the React Native view) BEFORE setting frame and assigning
+      reactNativeRootView.contentScaleFactor = currentScale
+      
+      // Set the frame of the React Native view to fill the bounds of the original view
+      reactNativeRootView.frame = currentBounds
+  
+
+      view.addSubview(reactNativeRootView)
+
+      // Ensure the React Native root view fills its parent (self.view)
+      reactNativeRootView.translatesAutoresizingMaskIntoConstraints = false
+      NSLayoutConstraint.activate([
+        reactNativeRootView.topAnchor.constraint(equalTo: self.view.topAnchor),
+        reactNativeRootView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+        reactNativeRootView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+        reactNativeRootView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+      ])
+
       // Hide loading indicator once React content is ready
       self.loadingIndicator.stopAnimating()
       self.loadingIndicator.removeFromSuperview()
