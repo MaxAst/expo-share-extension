@@ -4,6 +4,9 @@ import {
   PixelRatio,
   useWindowDimensions,
   StyleSheet,
+  TextProps,
+  Pressable,
+  Alert,
 } from "react-native";
 // Assuming InitialProps is correctly defined in your project if you use it for props typing
 // For this minimal test, we'll just use a generic props type if InitialProps isn't vital here.
@@ -17,6 +20,10 @@ interface MinimalProps {
   initialViewWidth?: number;
   initialViewHeight?: number;
 }
+
+const ShareExtensionText = (props: TextProps) => {
+  return <Text {...props} allowFontScaling={false} />;
+};
 
 export default function ShareExtension(props: MinimalProps) {
   const { fontScale: jsFontScaleFromHook, scale: jsScaleFromHook } =
@@ -38,7 +45,6 @@ export default function ShareExtension(props: MinimalProps) {
     wrapper: {
       flex: 1,
       justifyContent: "center",
-      alignItems: "center",
       backgroundColor: "lightyellow",
       padding: 20,
     },
@@ -47,15 +53,15 @@ export default function ShareExtension(props: MinimalProps) {
 
   return (
     <View style={styles.wrapper}>
-      <Text
+      <ShareExtensionText
         style={[
           styles.textStyle,
           { fontSize: 20, color: "black", fontWeight: "bold" },
         ]}
       >
         Test: Base Size 20pt
-      </Text>
-      <Text
+      </ShareExtensionText>
+      <ShareExtensionText
         style={[
           styles.textStyle,
           { fontSize: 20 * PixelRatio.getFontScale(), color: "blue" },
@@ -63,8 +69,8 @@ export default function ShareExtension(props: MinimalProps) {
       >
         Test: JS Scaled (20pt * PixelRatio.getFontScale() ={" "}
         {20 * PixelRatio.getFontScale()}pt)
-      </Text>
-      <Text
+      </ShareExtensionText>
+      <ShareExtensionText
         style={[
           styles.textStyle,
           { fontSize: 20 * (nativeFontScale || 1), color: "green" },
@@ -72,15 +78,33 @@ export default function ShareExtension(props: MinimalProps) {
       >
         Test: Native Prop Scaled (20pt * nativeFontScale ={" "}
         {20 * (nativeFontScale || 1)}pt)
-      </Text>
-      <Text style={[styles.textStyle, { fontSize: 12, color: "grey" }]}>
+      </ShareExtensionText>
+      <ShareExtensionText
+        style={[styles.textStyle, { fontSize: 14, color: "grey" }]}
+      >
         (Device Scale from useWindowDimensions: {jsScaleFromHook}x, from Prop:{" "}
         {nativePixelRatio}x)
-      </Text>
+      </ShareExtensionText>
+      <Pressable
+        style={{
+          marginVertical: 10,
+          borderRadius: 10,
+          height: 48,
+          backgroundColor: "lightblue",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <ShareExtensionText
+          style={{ fontSize: 16, fontWeight: "600", fontFamily: "Inter" }}
+        >
+          Press me
+        </ShareExtensionText>
+      </Pressable>
       {props.url && (
-        <Text style={[styles.textStyle, { fontSize: 14 }]}>
+        <ShareExtensionText style={[styles.textStyle, { fontSize: 14 }]}>
           URL: {props.url}
-        </Text>
+        </ShareExtensionText>
       )}
     </View>
   );

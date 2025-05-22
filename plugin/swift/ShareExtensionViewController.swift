@@ -31,6 +31,7 @@ class ShareExtensionViewController: UIViewController {
   private let loadingIndicator = UIActivityIndicatorView(style: .large)
   var reactNativeFactory: RCTReactNativeFactory?
   var reactNativeFactoryDelegate: RCTReactNativeFactoryDelegate?
+  private var isCleanedUp = false
   
   deinit {
     print("🧹 ShareExtensionViewController deinit")
@@ -48,6 +49,7 @@ class ShareExtensionViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupLoadingIndicator()
+    isCleanedUp = false
     
     // Set the contentScaleFactor for the main view of this view controller
     self.view.contentScaleFactor = UIScreen.main.scale
@@ -210,7 +212,22 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func cleanupAfterClose() {
+    if isCleanedUp { return }
+    isCleanedUp = true
+    
     NotificationCenter.default.removeObserver(self)
+    
+    // Remove React Native view and deallocate resources
+    view.subviews.forEach { subview in
+        if subview is RCTRootView {
+            subview.removeFromSuperview()
+        }
+    }
+    
+    reactNativeFactory = nil
+    reactNativeFactoryDelegate = nil
+    
+    print("🧹 ShareExtensionViewController cleaned up")
   }
   
   private func backgroundColor(from dict: [String: CGFloat]?) -> UIColor {
