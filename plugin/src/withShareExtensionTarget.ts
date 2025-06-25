@@ -43,7 +43,7 @@ export const withShareExtensionTarget: ConfigPlugin<{
       : undefined;
 
     if (googleServicesFile) {
-      resources.push(path.basename(googleServicesFile));
+      resources.push("GoogleService-Info.plist");
     }
 
     const preprocessingFilePath = preprocessingFile
