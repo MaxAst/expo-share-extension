@@ -20,8 +20,22 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
   
   override func bundleURL() -> URL? {
 #if DEBUG
-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index.share")
+    let settings = RCTBundleURLProvider.sharedSettings()
+    settings.enableDev = true
+    settings.enableMinification = false
+    if let bundleURL = settings.jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry") {
+      if var components = URLComponents(url: bundleURL, resolvingAgainstBaseURL: false) {
+        components.queryItems = (components.queryItems ?? []) + [URLQueryItem(name: "shareExtension", value: "true")]
+        return components.url ?? bundleURL
+      }
+      return bundleURL
+    }
+    fatalError("Could not create bundle URL")
 #else
+    guard let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle") else {
+      fatalError("Could not load bundle URL")
+    }
+    return bundleURL
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
   }
@@ -32,7 +46,7 @@ class ShareExtensionViewController: UIViewController {
   var reactNativeFactory: RCTReactNativeFactory?
   var reactNativeFactoryDelegate: RCTReactNativeFactoryDelegate?
   private var isCleanedUp = false
-  
+
   deinit {
     print("🧹 ShareExtensionViewController deinit")
     cleanupAfterClose()
