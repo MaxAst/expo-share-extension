@@ -5,16 +5,6 @@
 ![Downloads](https://img.shields.io/npm/dm/expo-share-extension.svg)
 ![GitHub stars](https://img.shields.io/github/stars/MaxAst/expo-share-extension.svg)
 
-> **Note**: Support for the New Architecture is under active development. For the time being, you need to disable it in your `app.json`/`app.config.(j|t)s`:
->
-> ```json
-> {
->   "expo": {
->     "newArchEnabled": false
->   }
-> }
-> ```
-
 ## Overview
 
 Create an [iOS share extension](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Share.html) with a custom view (similar to e.g. Pinterest). Supports Apple Sign-In, [React Native Firebase](https://rnfirebase.io/) (including shared auth session via access groups), custom background, custom height, and custom fonts.
@@ -25,7 +15,8 @@ https://github.com/MaxAst/expo-share-extension/assets/13224092/e5a6fb3d-6c85-457
 
 | Expo       | `expo-share-extension` |
 | ---------- | ---------------------- |
-| **SDK 52** | 2.0.0+                 |
+| **SDK 53** | 4.0.0+                 |
+| **SDK 52** | 2.0.0+ and 3.0.0+      |
 | **SDK 51** | 1.5.3+                 |
 | **SDK 50** | 1.0.0+                 |
 
