@@ -126,28 +126,39 @@ class ShareExtensionViewController: UIViewController {
           initialProperties: initialProps
       )
       
-      // Set the content scale factor for the new view (the React Native view) BEFORE setting frame and assigning
-      reactNativeRootView.contentScaleFactor = currentScale
+      let backgroundFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionBackgroundColor") as? [String: CGFloat]
+      let heightFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionHeight") as? CGFloat
       
-      // Set the frame of the React Native view to fill the bounds of the original view
-      reactNativeRootView.frame = currentBounds
-  
-
+      configureRootView(reactNativeRootView, withBackgroundColorDict: backgroundFromInfoPlist, withHeight: heightFromInfoPlist)
       view.addSubview(reactNativeRootView)
-
-      // Ensure the React Native root view fills its parent (self.view)
-      reactNativeRootView.translatesAutoresizingMaskIntoConstraints = false
-      NSLayoutConstraint.activate([
-        reactNativeRootView.topAnchor.constraint(equalTo: self.view.topAnchor),
-        reactNativeRootView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-        reactNativeRootView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-        reactNativeRootView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
-      ])
 
       // Hide loading indicator once React content is ready
       self.loadingIndicator.stopAnimating()
       self.loadingIndicator.removeFromSuperview()
     }
+  }
+  
+  private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
+    rootView.backgroundColor = backgroundColor(from: dict)
+
+    // Get the screen bounds
+    let screenBounds = UIScreen.main.bounds
+
+    // Calculate proper frame
+    let frame: CGRect
+    if let withHeight = withHeight {
+      rootView.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
+      frame = CGRect(
+        x: 0,
+        y: screenBounds.height - withHeight,
+        width: screenBounds.width,
+        height: withHeight
+      )
+    } else {
+      rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+      frame = screenBounds
+    }
+    rootView.frame = frame
   }
   
   private func setupLoadingIndicator() {
