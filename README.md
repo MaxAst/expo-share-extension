@@ -5,6 +5,8 @@
 ![Downloads](https://img.shields.io/npm/dm/expo-share-extension.svg)
 ![GitHub stars](https://img.shields.io/github/stars/MaxAst/expo-share-extension.svg)
 
+> **Note**: The default `Text` and `TextInput` components by React Native do not work in the share extension due to a font scaling issue. You can fix this by setting `allowFontScaling={false}` or by importing the given components from `expo-share-extension`.
+
 ## Overview
 
 Create an [iOS share extension](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Share.html) with a custom view (similar to e.g. Pinterest). Supports Apple Sign-In, [React Native Firebase](https://rnfirebase.io/) (including shared auth session via access groups), custom background, custom height, and custom fonts.
