@@ -1,6 +1,6 @@
-import { close, type InitialProps } from "expo-share-extension";
+import { close, type InitialProps, Text, View } from "expo-share-extension";
 import { useEffect } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
   withSpring,
