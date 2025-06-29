@@ -1,6 +1,6 @@
 import { type ExpoConfig } from "@expo/config-types";
 import { ConfigPlugin, IOSConfig, withPlugins } from "expo/config-plugins";
-import { z } from "zod";
+import * as v from "valibot";
 
 import { withAppEntitlements } from "./withAppEntitlements";
 import { withAppInfoPlist } from "./withAppInfoPlist";
@@ -32,18 +32,18 @@ export const getShareExtensionEntitlementsFileName = (config: ExpoConfig) => {
   return `${name}.entitlements`;
 };
 
-const rgbaSchema = z.object({
-  red: z.number().min(0).max(255),
-  green: z.number().min(0).max(255),
-  blue: z.number().min(0).max(255),
-  alpha: z.number().min(0).max(1),
+const rgbaSchema = v.object({
+  red: v.pipe(v.number(), v.minValue(0), v.maxValue(255)),
+  green: v.pipe(v.number(), v.minValue(0), v.maxValue(255)),
+  blue: v.pipe(v.number(), v.minValue(0), v.maxValue(255)),
+  alpha: v.pipe(v.number(), v.minValue(0), v.maxValue(255)),
 });
 
-export type BackgroundColor = z.infer<typeof rgbaSchema>;
+export type BackgroundColor = v.InferOutput<typeof rgbaSchema>;
 
-const heightSchema = z.number().int().min(50).max(1000);
+const heightSchema = v.pipe(v.number(), v.minValue(50), v.maxValue(1000));
 
-export type Height = z.infer<typeof heightSchema>;
+export type Height = v.InferOutput<typeof heightSchema>;
 
 type ActivationType = "image" | "video" | "text" | "url" | "file";
 
@@ -61,7 +61,11 @@ const withShareExtension: ConfigPlugin<{
   preprocessingFile?: string;
 }> = (config, props) => {
   if (props?.backgroundColor) {
-    rgbaSchema.parse(props.backgroundColor);
+    v.parse(rgbaSchema, props.backgroundColor);
+  }
+
+  if (props?.height) {
+    v.parse(heightSchema, props.height);
   }
 
   const expoFontPlugin = config.plugins?.find(

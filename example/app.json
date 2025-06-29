@@ -1,0 +1,76 @@
+{
+  "expo": {
+    "name": "basic",
+    "slug": "basic",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "expo.modules.shareextension.basic"
+    },
+    "newArchEnabled": true,
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "expo.modules.shareextension.basic"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/Inter-Black.otf"]
+        }
+      ],
+      [
+        "../../app.plugin.js",
+        {
+          "backgroundColor": {
+            "red": 255,
+            "green": 255,
+            "blue": 255,
+            "alpha": 0 // make the background transparent
+          },
+          "height": 500
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "basicShareExtension",
+                  "bundleIdentifier": "expo.modules.shareextension.basic.ShareExtension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.expo.modules.shareextension.basic"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "f729978a-6def-41c5-96b5-ae416ab2112f"
+      }
+    },
+    "experiments": {
+      "reactCanary": true
+    }
+  }
+}

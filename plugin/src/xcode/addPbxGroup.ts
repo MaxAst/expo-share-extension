@@ -42,8 +42,12 @@ export function addPbxGroup(
   ];
 
   if (googleServicesFilePath?.length) {
-    copyFileSync(googleServicesFilePath, targetPath);
-    files.push(path.basename(googleServicesFilePath));
+    copyFileSync(
+      googleServicesFilePath,
+      targetPath,
+      "GoogleService-Info.plist"
+    );
+    files.push("GoogleService-Info.plist");
   }
 
   if (preprocessingFilePath?.length) {

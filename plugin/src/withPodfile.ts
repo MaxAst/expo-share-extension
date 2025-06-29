@@ -57,10 +57,8 @@ target '${targetName}' do
     config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];
   else
     config_command = [
-      'node',
-      '--no-warnings',
-      '--eval',
-      'require(require.resolve(\\'expo-modules-autolinking\\', { paths: [require.resolve(\\'expo/package.json\\')] }))(process.argv.slice(1))',
+      'npx',
+      'expo-modules-autolinking',
       'react-native-config',
       '--json',
       '--platform',
@@ -77,13 +75,8 @@ target '${targetName}' do
     :path => config[:reactNativePath],
     :hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
     # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/..",${majorVersion >= 51
-          ? `
-    # Temporarily disable privacy file aggregation by default, until React
-    # Native 0.74.2 is released with fixes.
-    :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] == 'true',`
-          : ""
-        }
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
   )
 end`;
 

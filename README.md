@@ -5,15 +5,7 @@
 ![Downloads](https://img.shields.io/npm/dm/expo-share-extension.svg)
 ![GitHub stars](https://img.shields.io/github/stars/MaxAst/expo-share-extension.svg)
 
-> **Note**: Support for the New Architecture is under active development. For the time being, you need to disable it in your `app.json`/`app.config.(j|t)s`:
->
-> ```json
-> {
->   "expo": {
->     "newArchEnabled": false
->   }
-> }
-> ```
+> **Note**: The default `Text` and `TextInput` components by React Native do not work in the share extension due to a font scaling issue. You can fix this by setting `allowFontScaling={false}` or by importing the given components from `expo-share-extension`.
 
 ## Overview
 
@@ -25,7 +17,8 @@ https://github.com/MaxAst/expo-share-extension/assets/13224092/e5a6fb3d-6c85-457
 
 | Expo       | `expo-share-extension` |
 | ---------- | ---------------------- |
-| **SDK 52** | 2.0.0+                 |
+| **SDK 53** | 4.0.0+                 |
+| **SDK 52** | 2.0.0+ and 3.0.0+      |
 | **SDK 51** | 1.5.3+                 |
 | **SDK 50** | 1.0.0+                 |
 
