@@ -3,8 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "expo-share-extension": ["../../src/index"],
-      "expo-share-extension/*": ["../../src/*"]
+      "expo-share-extension": ["../src/index"],
+      "expo-share-extension/*": ["../src/*"]
     }
   }
 }
