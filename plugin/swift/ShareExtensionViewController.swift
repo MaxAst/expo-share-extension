@@ -256,7 +256,7 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func backgroundColor(from dict: [String: CGFloat]?) -> UIColor {
-    guard let dict = dict else { return .white }
+    guard let dict = dict else { return .systemBackground }
     let red = dict["red"] ?? 255.0
     let green = dict["green"] ?? 255.0
     let blue = dict["blue"] ?? 255.0
