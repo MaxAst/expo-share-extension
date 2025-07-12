@@ -121,6 +121,8 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
                   NSExtensionActivationSupportsFileWithMaxCount:
                     current.max ?? 1,
                 };
+              case "custom-query":
+                return current.query;
               default:
                 return acc;
             }
