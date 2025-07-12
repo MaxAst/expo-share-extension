@@ -47,10 +47,17 @@ export type Height = v.InferOutput<typeof heightSchema>;
 
 type ActivationType = "image" | "video" | "text" | "url" | "file";
 
-export type ActivationRule = {
-  type: ActivationType;
-  max?: number;
+type CustomActivationRule = {
+  type: "custom-query";
+  query: string;
 };
+
+export type ActivationRule =
+  | {
+      type: ActivationType;
+      max?: number;
+    }
+  | CustomActivationRule;
 
 const withShareExtension: ConfigPlugin<{
   activationRules?: ActivationRule[];
