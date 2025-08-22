@@ -27,12 +27,38 @@ export const withPodfile: ConfigPlugin<{
       end
     end`;
 
+      // Determine where to insert the post install build settings. We want the
+      // snippet to execute inside the `post_install` block after
+      // `react_native_post_install` has finished. The amount of lines between
+      // the `react_native_post_install` call and the end of the block can vary
+      // across Expo SDK versions, so we calculate the offset dynamically
+      // instead of using a hard coded value.
+      const lines = podfileContent.split("\n");
+      const anchorIndex = lines.findIndex((line) =>
+        line.includes("react_native_post_install"),
+      );
+      if (anchorIndex === -1) {
+        throw new Error(
+          "Could not find `react_native_post_install` in the Podfile",
+        );
+      }
+      // Find the first `end` after the `react_native_post_install` call, this is
+      // the end of the `post_install` block. Insert our snippet just before it
+      // so that `installer` is defined when the generated code runs.
+      let offset = 0;
+      for (let i = anchorIndex + 1; i < lines.length; i++) {
+        offset++;
+        if (lines[i].trim() === "end") {
+          break;
+        }
+      }
+
       podfileContent = mergeContents({
         tag: "post-install-build-settings",
         src: podfileContent,
         newSrc: postInstallBuildSettings,
-        anchor: `react_native_post_install`,
-        offset: 7,
+        anchor: /react_native_post_install/,
+        offset,
         comment: "#",
       }).contents;
 
