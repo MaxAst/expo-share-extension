@@ -1,7 +1,6 @@
 import UIKit
 import React
 import React_RCTAppDelegate
-import ReactAppDependencyProvider
 import AVFoundation
 // switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
 import MobileCoreServices
@@ -13,40 +12,44 @@ import FirebaseCore
 import FirebaseAuth
 #endif
 
-class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
-  override func sourceURL(for bridge: RCTBridge) -> URL? {
-    self.bundleURL()
-  }
-  
-  override func bundleURL() -> URL? {
+// MARK: - Objective-C Bridge
+@objc class RCTShareExtensionBridge: NSObject {
+  @objc static func createRootViewFactory() -> RCTRootViewFactory {
+    let configuration = RCTRootViewFactoryConfiguration(
+      bundleURLBlock: {
 #if DEBUG
-    let settings = RCTBundleURLProvider.sharedSettings()
-    settings.enableDev = true
-    settings.enableMinification = false
-    if let bundleURL = settings.jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry") {
-      if var components = URLComponents(url: bundleURL, resolvingAgainstBaseURL: false) {
-        components.queryItems = (components.queryItems ?? []) + [URLQueryItem(name: "shareExtension", value: "true")]
-        return components.url ?? bundleURL
-      }
-      return bundleURL
-    }
-    fatalError("Could not create bundle URL")
+        let settings = RCTBundleURLProvider.sharedSettings()
+        settings.enableDev = true
+        settings.enableMinification = false
+        if let bundleURL = settings.jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry") {
+          if var components = URLComponents(url: bundleURL, resolvingAgainstBaseURL: false) {
+            components.queryItems = (components.queryItems ?? []) + [URLQueryItem(name: "shareExtension", value: "true")]
+            return components.url ?? bundleURL
+          }
+          return bundleURL
+        }
+        fatalError("Could not create bundle URL")
 #else
-    guard let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle") else {
-      fatalError("Could not load bundle URL")
-    }
-    return bundleURL
-    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+        guard let bundleURL = Bundle.main.url(forResource: "main", withExtension: "jsbundle") else {
+          fatalError("Could not load bundle URL")
+        }
+        return bundleURL
 #endif
+      },
+      newArchEnabled: false,
+      turboModuleEnabled: true,
+      bridgelessEnabled: false
+    )
+    
+    return RCTRootViewFactory(configuration: configuration)
   }
 }
 
 class ShareExtensionViewController: UIViewController {
+  private var rootViewFactory: RCTRootViewFactory?
+  private weak var rootView: UIView?
   private let loadingIndicator = UIActivityIndicatorView(style: .large)
-  var reactNativeFactory: RCTReactNativeFactory?
-  var reactNativeFactoryDelegate: RCTReactNativeFactoryDelegate?
-  private var isCleanedUp = false
-
+  
   deinit {
     print("🧹 ShareExtensionViewController deinit")
     cleanupAfterClose()
@@ -63,10 +66,6 @@ class ShareExtensionViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupLoadingIndicator()
-    isCleanedUp = false
-    
-    // Set the contentScaleFactor for the main view of this view controller
-    self.view.contentScaleFactor = UIScreen.main.scale
     
 #if canImport(FirebaseCore)
     if Bundle.main.object(forInfoDictionaryKey: "WithFirebase") as? Bool ?? false {
@@ -74,6 +73,7 @@ class ShareExtensionViewController: UIViewController {
     }
 #endif
     
+    initializeRootViewFactory()
     loadReactNativeContent()
     setupNotificationCenterObserver()
   }
@@ -90,77 +90,6 @@ class ShareExtensionViewController: UIViewController {
     cleanupAfterClose()
   }
   
-  private func loadReactNativeContent() {
-    getShareData { [weak self] sharedData in
-      guard let self = self else {
-        print("❌ Self was deallocated")
-        return
-      }
-      
-      reactNativeFactoryDelegate = ReactNativeDelegate()
-      reactNativeFactoryDelegate!.dependencyProvider = RCTAppDependencyProvider()
-      reactNativeFactory = RCTReactNativeFactory(delegate: reactNativeFactoryDelegate!)
-      
-      var initialProps = sharedData ?? [:]
-      
-      // Capture current view's properties before replacing it
-      let currentBounds = self.view.bounds
-      let currentScale = UIScreen.main.scale
-      
-      // Log the scale of the parent view
-      print("[ShareExtension] self.view.contentScaleFactor before adding subview: \(self.view.contentScaleFactor)")
-      print("[ShareExtension] UIScreen.main.scale: \(currentScale)")
-      
-      // Add screen metrics to initial properties for React Native
-      // These can be used by the JS side to understand its container size and scale
-      initialProps["initialViewWidth"] = currentBounds.width
-      initialProps["initialViewHeight"] = currentBounds.height
-      initialProps["pixelRatio"] = currentScale
-      // It's also good practice to pass the font scale for accessibility
-      // Default body size on iOS is 17pt, used as a reference for calculating fontScale.
-      initialProps["fontScale"] = UIFont.preferredFont(forTextStyle: .body).pointSize / 17.0
-      
-      // Create the React Native root view
-      let reactNativeRootView = reactNativeFactory!.rootViewFactory.view(
-          withModuleName: "shareExtension",
-          initialProperties: initialProps
-      )
-      
-      let backgroundFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionBackgroundColor") as? [String: CGFloat]
-      let heightFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionHeight") as? CGFloat
-      
-      configureRootView(reactNativeRootView, withBackgroundColorDict: backgroundFromInfoPlist, withHeight: heightFromInfoPlist)
-      view.addSubview(reactNativeRootView)
-
-      // Hide loading indicator once React content is ready
-      self.loadingIndicator.stopAnimating()
-      self.loadingIndicator.removeFromSuperview()
-    }
-  }
-  
-  private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
-    rootView.backgroundColor = backgroundColor(from: dict)
-
-    // Get the screen bounds
-    let screenBounds = UIScreen.main.bounds
-
-    // Calculate proper frame
-    let frame: CGRect
-    if let withHeight = withHeight {
-      rootView.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
-      frame = CGRect(
-        x: 0,
-        y: screenBounds.height - withHeight,
-        width: screenBounds.width,
-        height: withHeight
-      )
-    } else {
-      rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-      frame = screenBounds
-    }
-    rootView.frame = frame
-  }
-  
   private func setupLoadingIndicator() {
     view.addSubview(loadingIndicator)
     loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -171,10 +100,29 @@ class ShareExtensionViewController: UIViewController {
     loadingIndicator.startAnimating()
   }
   
+  private func initializeRootViewFactory() {
+    if rootViewFactory == nil {
+      rootViewFactory = RCTShareExtensionBridge.createRootViewFactory()
+    }
+  }
+  
   private func openHostApp(path: String?) {
-    guard let scheme = Bundle.main.object(forInfoDictionaryKey: "HostAppScheme") as? String else { return }
+    // Get the scheme - can be either String or Array
+    var scheme: String? = nil
+    
+    if let schemeString = Bundle.main.object(forInfoDictionaryKey: "HostAppScheme") as? String {
+      scheme = schemeString
+    } else if let schemeArray = Bundle.main.object(forInfoDictionaryKey: "HostAppScheme") as? [String], !schemeArray.isEmpty {
+      scheme = schemeArray[0] // Use the first scheme in the array
+    }
+    
+    guard let finalScheme = scheme else {
+      return
+    }
+    
+    // Build URL Components
     var urlComponents = URLComponents()
-    urlComponents.scheme = scheme
+    urlComponents.scheme = finalScheme
     urlComponents.host = ""
     
     if let path = path {
@@ -197,7 +145,10 @@ class ShareExtensionViewController: UIViewController {
       urlComponents.path = pathWithSlashEnsured
     }
     
-    guard let url = urlComponents.url else { return }
+    guard let url = urlComponents.url else {
+      return
+    }
+    
     openURL(url)
     self.close()
   }
@@ -215,7 +166,56 @@ class ShareExtensionViewController: UIViewController {
       }
       responder = responder?.next
     }
+    
+    // Alternative approach for share extensions
+    if let sharedApp = UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as? UIApplication {
+      if sharedApp.canOpenURL(url) {
+        if #available(iOS 10.0, *) {
+          sharedApp.open(url, options: [:], completionHandler: nil)
+          return true
+        }
+      }
+    }
+    
     return false
+  }
+  
+  private func loadReactNativeContent() {
+    getShareData { [weak self] sharedData in      
+      guard let self = self else {
+        print("❌ Self was deallocated")
+        return
+      }
+      
+      DispatchQueue.main.async {
+        if self.rootView == nil {
+          guard let factory = self.rootViewFactory else {
+            print("🚨 Factory is nil")
+            return
+          }
+          
+          let rootView = factory.view(
+            withModuleName: "shareExtension",
+            initialProperties: sharedData
+          )                 
+          let backgroundFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionBackgroundColor") as? [String: CGFloat]
+          let heightFromInfoPlist = Bundle.main.object(forInfoDictionaryKey: "ShareExtensionHeight") as? CGFloat
+          
+          self.configureRootView(rootView, withBackgroundColorDict: backgroundFromInfoPlist, withHeight: heightFromInfoPlist)
+          self.rootView = rootView
+        } else {
+          // Update properties based on view type
+          if let rctView = self.rootView as? RCTRootView {
+            rctView.appProperties = sharedData
+          } else if let proxyView = self.rootView as? RCTSurfaceHostingProxyRootView {
+            proxyView.appProperties = sharedData ?? [:]
+          }
+        }
+        
+        self.loadingIndicator.stopAnimating()
+        self.loadingIndicator.removeFromSuperview()
+      }
+    }
   }
   
   private func setupNotificationCenterObserver() {
@@ -237,26 +237,86 @@ class ShareExtensionViewController: UIViewController {
   }
   
   private func cleanupAfterClose() {
-    if isCleanedUp { return }
-    isCleanedUp = true
-    
+    // Clean up notification observers first
     NotificationCenter.default.removeObserver(self)
     
-    // Remove React Native view and deallocate resources
-    view.subviews.forEach { subview in
-        if subview is RCTRootView {
-            subview.removeFromSuperview()
-        }
+    // Clean up properties based on view type
+    if let rctView = rootView as? RCTRootView {
+      rctView.appProperties = nil
+    } else if let proxyView = rootView as? RCTSurfaceHostingProxyRootView {
+      proxyView.appProperties = [:]
     }
     
-    reactNativeFactory = nil
-    reactNativeFactoryDelegate = nil
+    rootView?.removeFromSuperview()
+    rootView = nil
     
-    print("🧹 ShareExtensionViewController cleaned up")
+    // Clean up factory last
+    rootViewFactory = nil
+  }
+  
+  private func configureRootView(_ rootView: UIView, withBackgroundColorDict dict: [String: CGFloat]?, withHeight: CGFloat?) {
+    rootView.backgroundColor = backgroundColor(from: dict)
+    
+    // Get the screen bounds and scale
+    let screen = UIScreen.main
+    let screenBounds = screen.bounds
+    let screenScale = screen.scale
+    
+    // Calculate proper frame
+    let frame: CGRect
+    if let withHeight = withHeight {
+      frame = CGRect(
+        x: 0,
+        y: screenBounds.height - withHeight,
+        width: screenBounds.width,
+        height: withHeight
+      )
+    } else {
+      frame = screenBounds
+    }
+    
+    if let proxyRootView = rootView as? RCTSurfaceHostingProxyRootView {
+      // Set surface size in points (not pixels)
+      let surfaceSize = CGSize(
+        width: frame.width * screenScale,
+        height: frame.height * screenScale
+      )
+      
+      proxyRootView.surface.setMinimumSize(surfaceSize, maximumSize: surfaceSize)
+      
+      // Set bounds in points
+      proxyRootView.bounds = CGRect(origin: .zero, size: frame.size)
+      proxyRootView.center = CGPoint(x: frame.midX, y: frame.midY)
+    } else {
+      rootView.frame = frame
+    }
+    
+    rootView.translatesAutoresizingMaskIntoConstraints = false
+    self.view.addSubview(rootView)
+    
+    NSLayoutConstraint.activate([
+      rootView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+      rootView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+      rootView.heightAnchor.constraint(equalToConstant: frame.height)
+    ])
+    
+    if let withHeight = withHeight {
+      NSLayoutConstraint.activate([
+        rootView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+      ])
+    } else {
+      NSLayoutConstraint.activate([
+        rootView.topAnchor.constraint(equalTo: self.view.topAnchor)
+      ])
+    }
+    
+    if withHeight == nil {
+      rootView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    }
   }
   
   private func backgroundColor(from dict: [String: CGFloat]?) -> UIColor {
-    guard let dict = dict else { return .systemBackground }
+    guard let dict = dict else { return .white }
     let red = dict["red"] ?? 255.0
     let green = dict["green"] ?? 255.0
     let blue = dict["blue"] ?? 255.0
@@ -525,3 +585,4 @@ class ShareExtensionViewController: UIViewController {
     }
   }
 }
+
