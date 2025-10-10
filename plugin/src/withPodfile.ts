@@ -15,7 +15,7 @@ export const withPodfile: ConfigPlugin<{
     (config) => {
       const podFilePath = path.join(
         config.modRequest.platformProjectRoot,
-        "Podfile",
+        "Podfile"
       );
       let podfileContent = fs.readFileSync(podFilePath).toString();
 
@@ -32,7 +32,7 @@ export const withPodfile: ConfigPlugin<{
         src: podfileContent,
         newSrc: postInstallBuildSettings,
         anchor: `react_native_post_install`,
-        offset: 7,
+        offset: 6,
         comment: "#",
       }).contents;
 
