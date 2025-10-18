@@ -1,24 +1,14 @@
-// Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require("expo/metro-config");
-const path = require("path");
 
-const { withShareExtension } = require("../metro.js");
-
+/** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 
-// npm v7+ will install ../node_modules/react-native because of peerDependencies.
-// To prevent the incompatible react-native bewtween ./node_modules/react-native and ../node_modules/react-native,
-// excludes the one from the parent folder when bundling.
-config.resolver.blockList = [
-  ...Array.from(config.resolver.blockList ?? []),
-  new RegExp(path.resolve("..", "node_modules", "react-native")),
-];
+const path = require("path");
 
-config.resolver.nodeModulesPaths = [
-  path.resolve(__dirname, "./node_modules"),
-  path.resolve(__dirname, "../node_modules"),
-];
+const { withShareExtension } = require("../metro");
 
 config.watchFolders = [path.resolve(__dirname, "..")];
 
 module.exports = withShareExtension(config);
+
+module.exports = config;

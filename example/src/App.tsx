@@ -15,7 +15,7 @@ export default function App() {
           fontSize: 16,
         }}
       >
-        Go to Safari and open the share menu to trigger this app's share
+        Go to Safari and open the share menu to trigger this app&apos;s share
         extension.
       </Text>
     </View>
