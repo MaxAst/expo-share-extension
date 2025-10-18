@@ -17,6 +17,7 @@ https://github.com/MaxAst/expo-share-extension/assets/13224092/e5a6fb3d-6c85-457
 
 | Expo       | `expo-share-extension` |
 | ---------- | ---------------------- |
+| **SDK 54** | 5.0.0+                 |
 | **SDK 53** | 4.0.0+                 |
 | **SDK 52** | 2.0.0+ and 3.0.0+      |
 | **SDK 51** | 1.5.3+                 |
