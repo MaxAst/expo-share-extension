@@ -1,5 +1,12 @@
-import { close, type InitialProps, Text, View } from "expo-share-extension";
-import { useEffect } from "react";
+import { File } from "expo-file-system";
+import {
+  clearAppGroupContainer,
+  close,
+  type InitialProps,
+  Text,
+  View,
+} from "expo-share-extension";
+import { useEffect, useMemo } from "react";
 import { Button, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
@@ -7,7 +14,17 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 
-export default function ShareExtension({ url, text }: InitialProps) {
+function processFiles(urls: string[]) {
+  return urls
+    .map((url) => {
+      const file = new File(url);
+      const info = file.info();
+      return `Filename: ${file.name}; exists: ${info.exists}; size: ${info.size}`;
+    })
+    .join("\n");
+}
+
+export default function ShareExtension({ url, text, files }: InitialProps) {
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.8);
 
@@ -15,7 +32,7 @@ export default function ShareExtension({ url, text }: InitialProps) {
     // Animate in when component mounts
     opacity.value = withSpring(1, { damping: 20, stiffness: 90 });
     scale.value = withSpring(1, { damping: 20, stiffness: 90 });
-  }, []);
+  }, [opacity, scale]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -23,6 +40,16 @@ export default function ShareExtension({ url, text }: InitialProps) {
       transform: [{ scale: scale.value }],
     };
   });
+
+  const onClose = async () => {
+    await clearAppGroupContainer();
+    close();
+  };
+
+  const filesInfo = useMemo(
+    () => (files ? processFiles(files) : undefined),
+    [files]
+  );
 
   return (
     <View style={styles.container}>
@@ -54,7 +81,18 @@ export default function ShareExtension({ url, text }: InitialProps) {
             Text: {text}
           </Text>
         )}
-        <Button title="Close" onPress={close} />
+        {filesInfo && (
+          <Text
+            style={{
+              textAlign: "center",
+              color: "#313639",
+              fontSize: 16,
+            }}
+          >
+            Files: {filesInfo}
+          </Text>
+        )}
+        <Button title="Close" onPress={onClose} />
       </Animated.View>
     </View>
   );

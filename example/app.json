@@ -43,7 +43,19 @@
             "blue": 255,
             "alpha": 0
           },
-          "height": 500
+          "height": 500,
+          "activationRules": [
+            {
+              "type": "file",
+              "max": 3
+            },
+            {
+              "type": "text"
+            },
+            {
+              "type": "url"
+            }
+          ]
         }
       ]
     ],
