@@ -78,8 +78,9 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
         UISceneConfigurations: {},
       },
       UIAppFonts: fonts.map((font) => path.basename(font)) ?? [],
-      // we need to add an AppGroup key for compatibility with react-native-mmkv https://github.com/mrousavy/react-native-mmkv
+      // we need to add AppGroup and AppGroupIdentifier keys for compatibility with react-native-mmkv https://github.com/mrousavy/react-native-mmkv
       AppGroup: appGroup,
+      AppGroupIdentifier: bundleIdentifier,
       NSExtension: {
         NSExtensionAttributes: {
           NSExtensionActivationRule: activationRules.reduce((acc, current) => {

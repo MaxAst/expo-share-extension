@@ -7,6 +7,7 @@ export const withAppInfoPlist: ConfigPlugin = (config) => {
     const bundleIdentifier = getAppBundleIdentifier(config);
 
     config.modResults["AppGroup"] = getAppGroup(bundleIdentifier);
+    config.modResults["AppGroupIdentifier"] = bundleIdentifier;
 
     return config;
   });
