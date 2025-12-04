@@ -423,6 +423,31 @@ class ShareExtensionViewController: UIViewController {
                     print("Failed to save image: \(error)")
                   }
                 }
+              } else if let image = imageItem as? Data {
+                print("📸 Handling Data type image")
+                let fileName = UUID().uuidString + ".jpg"
+                let sharedDataUrl = containerUrl.appendingPathComponent("sharedData")
+
+                if !fileManager.fileExists(atPath: sharedDataUrl.path) {
+                  do {
+                    try fileManager.createDirectory(at: sharedDataUrl, withIntermediateDirectories: true)
+                  } catch {
+                    print("Failed to create sharedData directory: \(error)")
+                  }
+                }
+
+                let persistentURL = sharedDataUrl.appendingPathComponent(fileName)
+
+                do {
+                  try image.write(to: persistentURL)
+                  if var imageArray = sharedItems["images"] as? [String] {
+                    imageArray.append(persistentURL.path)
+                    sharedItems["images"] = imageArray
+                  }
+                  print("📸 Successfully saved Data type image to: \(persistentURL.path)")
+                } catch {
+                  print("Failed to save Data image: \(error)")
+                }
               } else {
                 print("imageItem is not a recognized type")
               }
