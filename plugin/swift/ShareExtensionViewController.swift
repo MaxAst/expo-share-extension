@@ -284,16 +284,25 @@ class ShareExtensionViewController: UIViewController {
             DispatchQueue.main.async {
               if let sharedURL = urlItem as? URL {
                 if sharedURL.isFileURL {
-                  if sharedItems["files"] == nil {
-                    sharedItems["files"] = [String]()
+                  // Screenshot overlay sends public.url (file URLs) instead of public.image
+                  let fileExtension = sharedURL.pathExtension.lowercased()
+                  let imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif", "heic", "heif", "webp"]
+                  var isImage = imageExtensions.contains(fileExtension)
+                  
+                  if !isImage, let resourceValues = try? sharedURL.resourceValues(forKeys: [.typeIdentifierKey]),
+                     let typeIdentifier = resourceValues.typeIdentifier {
+                    isImage = UTTypeConformsTo(typeIdentifier as CFString, kUTTypeImage)
                   }
-                 guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
+                  
+                  guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
                     print("Could not find AppGroup in info.plist")
+                    group.leave()
                     return
                   }
                   
                   guard let containerUrl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
                     print("Could not set up file manager container URL for app group")
+                    group.leave()
                     return
                   }
                   
@@ -314,9 +323,13 @@ class ShareExtensionViewController: UIViewController {
                   
                   do {
                     try fileManager.copyItem(atPath: tempFilePath, toPath: persistentURL.path)
-                    if var fileArray = sharedItems["files"] as? [String] {
-                      fileArray.append(persistentURL.path)
-                      sharedItems["files"] = fileArray
+                    let key = isImage ? "images" : "files"
+                    if sharedItems[key] == nil {
+                      sharedItems[key] = [String]()
+                    }
+                    if var array = sharedItems[key] as? [String] {
+                      array.append(persistentURL.absoluteString)
+                      sharedItems[key] = array
                     }
                   } catch {
                     print("Failed to copy file: \(error)")
