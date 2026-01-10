@@ -3,8 +3,7 @@ import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
 import AVFoundation
-// switch to UniformTypeIdentifiers, once 14.0 is the minimum deploymnt target on expo (currently 13.4 in expo v50)
-import MobileCoreServices
+import UniformTypeIdentifiers
 // if react native firebase is installed, we import and configure it
 #if canImport(FirebaseCore)
 import FirebaseCore
@@ -278,9 +277,9 @@ class ShareExtensionViewController: UIViewController {
     
     for item in extensionItems {
       for provider in item.attachments ?? [] {
-        if provider.hasItemConformingToTypeIdentifier(kUTTypeURL as String) {
+        if provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
           group.enter()
-          provider.loadItem(forTypeIdentifier: kUTTypeURL as String, options: nil) { (urlItem, error) in
+          provider.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { (urlItem, error) in
             DispatchQueue.main.async {
               if let sharedURL = urlItem as? URL {
                 if sharedURL.isFileURL {
@@ -328,9 +327,9 @@ class ShareExtensionViewController: UIViewController {
               group.leave()
             }
           }
-        } else if provider.hasItemConformingToTypeIdentifier(kUTTypePropertyList as String) {
+        } else if provider.hasItemConformingToTypeIdentifier(UTType.propertyList.identifier) {
           group.enter()
-          provider.loadItem(forTypeIdentifier: kUTTypePropertyList as String, options: nil) { (item, error) in
+          provider.loadItem(forTypeIdentifier: UTType.propertyList.identifier, options: nil) { (item, error) in
             DispatchQueue.main.async {
               if let itemDict = item as? NSDictionary,
                  let results = itemDict[NSExtensionJavaScriptPreprocessingResultsKey] as? NSDictionary {
@@ -339,9 +338,9 @@ class ShareExtensionViewController: UIViewController {
               group.leave()
             }
           }
-        } else if provider.hasItemConformingToTypeIdentifier(kUTTypeText as String) {
+        } else if provider.hasItemConformingToTypeIdentifier(UTType.text.identifier) {
           group.enter()
-          provider.loadItem(forTypeIdentifier: kUTTypeText as String, options: nil) { (textItem, error) in
+          provider.loadItem(forTypeIdentifier: UTType.text.identifier, options: nil) { (textItem, error) in
             DispatchQueue.main.async {
               if let text = textItem as? String {
                 sharedItems["text"] = text
@@ -349,9 +348,9 @@ class ShareExtensionViewController: UIViewController {
               group.leave()
             }
           }
-        } else if provider.hasItemConformingToTypeIdentifier(kUTTypeImage as String) {
+        } else if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
           group.enter()
-          provider.loadItem(forTypeIdentifier: kUTTypeImage as String, options: nil) { (imageItem, error) in
+          provider.loadItem(forTypeIdentifier: UTType.image.identifier, options: nil) { (imageItem, error) in
             DispatchQueue.main.async {
               
               // Ensure the array exists
@@ -454,9 +453,9 @@ class ShareExtensionViewController: UIViewController {
               group.leave()
             }
           }
-        } else if provider.hasItemConformingToTypeIdentifier(kUTTypeMovie as String) {
+        } else if provider.hasItemConformingToTypeIdentifier(UTType.movie.identifier) {
           group.enter()
-          provider.loadItem(forTypeIdentifier: kUTTypeMovie as String, options: nil) { (videoItem, error) in
+          provider.loadItem(forTypeIdentifier: UTType.movie.identifier, options: nil) { (videoItem, error) in
             DispatchQueue.main.async {
               print("videoItem type: \(type(of: videoItem))")
               
