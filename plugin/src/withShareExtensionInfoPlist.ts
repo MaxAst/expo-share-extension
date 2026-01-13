@@ -82,49 +82,71 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
       AppGroupIdentifier: appGroup,
       NSExtension: {
         NSExtensionAttributes: {
-          NSExtensionActivationRule: activationRules.reduce((acc, current) => {
-            switch (current.type) {
-              case "image":
-                return {
-                  ...acc,
-                  NSExtensionActivationSupportsImageWithMaxCount:
-                    current.max ?? 1,
-                };
-              case "video":
-                return {
-                  ...acc,
-                  NSExtensionActivationSupportsMovieWithMaxCount:
-                    current.max ?? 1,
-                };
-              case "text":
-                return {
-                  ...acc,
-                  NSExtensionActivationSupportsText: true,
-                };
-              case "url":
-                return preprocessingFile
-                  ? {
-                      ...acc,
-                      NSExtensionActivationSupportsWebPageWithMaxCount:
-                        current.max ?? 1,
-                      NSExtensionActivationSupportsWebURLWithMaxCount:
-                        current.max ?? 1,
-                    }
-                  : {
-                      ...acc,
-                      NSExtensionActivationSupportsWebURLWithMaxCount:
-                        current.max ?? 1,
-                    };
-              case "file":
-                return {
-                  ...acc,
-                  NSExtensionActivationSupportsFileWithMaxCount:
-                    current.max ?? 1,
-                };
-              default:
-                return acc;
-            }
-          }, {}),
+          NSExtensionActivationRule: (() => {
+            // Screenshot overlay sends public.url instead of public.image, so add file support when image is requested
+            const hasImage = activationRules.some(
+              (rule) => rule.type === "image"
+            );
+            const hasFile = activationRules.some(
+              (rule) => rule.type === "file"
+            );
+            const rulesToProcess =
+              hasImage && !hasFile
+                ? [
+                    ...activationRules,
+                    {
+                      type: "file" as const,
+                      max:
+                        activationRules.find((rule) => rule.type === "image")
+                          ?.max ?? 1,
+                    },
+                  ]
+                : activationRules;
+
+            return rulesToProcess.reduce((acc, current) => {
+              switch (current.type) {
+                case "image":
+                  return {
+                    ...acc,
+                    NSExtensionActivationSupportsImageWithMaxCount:
+                      current.max ?? 1,
+                  };
+                case "video":
+                  return {
+                    ...acc,
+                    NSExtensionActivationSupportsMovieWithMaxCount:
+                      current.max ?? 1,
+                  };
+                case "text":
+                  return {
+                    ...acc,
+                    NSExtensionActivationSupportsText: true,
+                  };
+                case "url":
+                  return preprocessingFile
+                    ? {
+                        ...acc,
+                        NSExtensionActivationSupportsWebPageWithMaxCount:
+                          current.max ?? 1,
+                        NSExtensionActivationSupportsWebURLWithMaxCount:
+                          current.max ?? 1,
+                      }
+                    : {
+                        ...acc,
+                        NSExtensionActivationSupportsWebURLWithMaxCount:
+                          current.max ?? 1,
+                      };
+                case "file":
+                  return {
+                    ...acc,
+                    NSExtensionActivationSupportsFileWithMaxCount:
+                      current.max ?? 1,
+                  };
+                default:
+                  return acc;
+              }
+            }, {});
+          })(),
           ...(preprocessingFile && {
             NSExtensionJavaScriptPreprocessingFile: path.basename(
               preprocessingFile,
