@@ -202,18 +202,27 @@ class ShareExtensionViewController: UIViewController {
   }
   
   @objc @discardableResult private func openURL(_ url: URL) -> Bool {
+    // Method 1: Try responder chain to find UIApplication
     var responder: UIResponder? = self
     while responder != nil {
       if let application = responder as? UIApplication {
-        if #available(iOS 18.0, *) {
-          application.open(url, options: [:], completionHandler: nil)
-          return true
-        } else {
-          return application.perform(#selector(UIApplication.open(_:options:completionHandler:)), with: url, with: [:]) != nil
-        }
+        application.open(url, options: [:], completionHandler: nil)
+        return true
       }
       responder = responder?.next
     }
+
+    // Method 2: Try selector-based approach as fallback
+    let selector = NSSelectorFromString("openURL:")
+    var responder2: UIResponder? = self
+    while responder2 != nil {
+      if responder2!.responds(to: selector) {
+        responder2!.perform(selector, with: url)
+        return true
+      }
+      responder2 = responder2?.next
+    }
+
     return false
   }
   
@@ -340,7 +349,11 @@ class ShareExtensionViewController: UIViewController {
               group.leave()
             }
           }
-        } else if provider.hasItemConformingToTypeIdentifier(UTType.propertyList.identifier) {
+        }
+
+        // Check for propertyList separately (not else-if) to handle preprocessing results
+        // Safari provides both URL and propertyList when JavaScript preprocessing is enabled
+        if provider.hasItemConformingToTypeIdentifier(UTType.propertyList.identifier) {
           group.enter()
           provider.loadItem(forTypeIdentifier: UTType.propertyList.identifier, options: nil) { (item, error) in
             DispatchQueue.main.async {
@@ -351,7 +364,10 @@ class ShareExtensionViewController: UIViewController {
               group.leave()
             }
           }
-        } else if provider.hasItemConformingToTypeIdentifier(UTType.text.identifier) {
+        }
+
+        // Only check for plain text if no URL was found
+        if !provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) && provider.hasItemConformingToTypeIdentifier(UTType.text.identifier) {
           group.enter()
           provider.loadItem(forTypeIdentifier: UTType.text.identifier, options: nil) { (textItem, error) in
             DispatchQueue.main.async {
