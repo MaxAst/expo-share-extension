@@ -290,7 +290,7 @@ class ShareExtensionViewController: UIViewController {
                   
                   if !isImage, let resourceValues = try? sharedURL.resourceValues(forKeys: [.typeIdentifierKey]),
                      let typeIdentifier = resourceValues.typeIdentifier {
-                    isImage = UTTypeConformsTo(typeIdentifier as CFString, kUTTypeImage)
+                    isImage = UTType(typeIdentifier)?.conforms(to: .image) ?? false
                   }
                   
                   guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
