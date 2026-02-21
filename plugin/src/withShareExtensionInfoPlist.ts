@@ -11,7 +11,6 @@ import {
   type ActivationRule,
   type BackgroundColor,
   type Height,
-  getAppBundleIdentifier,
   getAppGroup,
   getShareExtensionName,
 } from "./index";
@@ -44,8 +43,7 @@ export const withShareExtensionInfoPlist: ConfigPlugin<{
 
     const filePath = path.join(targetPath, "Info.plist");
 
-    const bundleIdentifier = getAppBundleIdentifier(config);
-    const appGroup = getAppGroup(bundleIdentifier);
+    const appGroup = getAppGroup(config);
 
     let infoPlist: InfoPlist = {
       CFBundleDevelopmentRegion: "$(DEVELOPMENT_LANGUAGE)",

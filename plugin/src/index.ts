@@ -10,7 +10,22 @@ import { withShareExtensionEntitlements } from "./withShareExtensionEntitlements
 import { withShareExtensionInfoPlist } from "./withShareExtensionInfoPlist";
 import { withShareExtensionTarget } from "./withShareExtensionTarget";
 
-export const getAppGroup = (identifier: string) => `group.${identifier}`;
+/**
+ * Get the app group for the app by:
+ * - Checking if AppGroup or AppGroupIdentifier is set in the info.plist configuation value.
+ * - Falling back to the bundle identifier.
+ * 
+ * This allows to user to control the app group in case it doesn't match their
+ * bundle identifier.
+ */
+export const getAppGroup = (config: ExpoConfig) => {
+  if (config.ios?.infoPlist?.AppGroup) {
+    return config.ios?.infoPlist?.AppGroup;
+  } else if (config.ios?.infoPlist?.AppGroupIdentifier) {
+    return config.ios?.infoPlist?.AppGroupIdentifier;
+  }
+  return `group.${getAppBundleIdentifier(config)}`;
+};
 
 export const getAppBundleIdentifier = (config: ExpoConfig) => {
   if (!config.ios?.bundleIdentifier) {

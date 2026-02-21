@@ -3,11 +3,7 @@ import { ConfigPlugin, withEntitlementsPlist } from "expo/config-plugins";
 import fs from "fs";
 import path from "path";
 
-import {
-  getAppBundleIdentifier,
-  getAppGroup,
-  getShareExtensionName,
-} from "./index";
+import { getAppGroup, getShareExtensionName } from "./index";
 
 export const withShareExtensionEntitlements: ConfigPlugin = (config) => {
   return withEntitlementsPlist(config, (config) => {
@@ -19,13 +15,11 @@ export const withShareExtensionEntitlements: ConfigPlugin = (config) => {
     );
     const filePath = path.join(targetPath, `${targetName}.entitlements`);
 
-    const bundleIdentifier = getAppBundleIdentifier(config);
-
     const existingAppGroup =
       config.ios?.entitlements?.["com.apple.security.application-groups"];
 
     let shareExtensionEntitlements: Record<string, string | string[]> = {
-      "com.apple.security.application-groups": existingAppGroup ?? [getAppGroup(bundleIdentifier)],
+      "com.apple.security.application-groups": existingAppGroup ?? [getAppGroup(config)],
     };
 
     if (config.ios?.usesAppleSignIn) {
