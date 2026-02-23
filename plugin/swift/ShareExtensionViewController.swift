@@ -12,7 +12,16 @@ import FirebaseCore
 import FirebaseAuth
 #endif
 
-class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
+#if canImport(Expo)
+internal import Expo
+typealias ShareExtensionReactNativeDelegateSuperclass = ExpoReactNativeFactoryDelegate
+typealias ShareExtensionReactNativeFactory = ExpoReactNativeFactory
+#else
+typealias ShareExtensionReactNativeDelegateSuperclass = RCTDefaultReactNativeFactoryDelegate
+typealias ShareExtensionReactNativeFactory = RCTReactNativeFactory
+#endif
+
+class ReactNativeDelegate: ShareExtensionReactNativeDelegateSuperclass {
   override func sourceURL(for bridge: RCTBridge) -> URL? {
     self.bundleURL()
   }
@@ -42,8 +51,8 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 
 class ShareExtensionViewController: UIViewController {
   private let loadingIndicator = UIActivityIndicatorView(style: .large)
-  var reactNativeFactory: RCTReactNativeFactory?
-  var reactNativeFactoryDelegate: RCTReactNativeFactoryDelegate?
+  var reactNativeFactory: ShareExtensionReactNativeFactory?
+  var reactNativeFactoryDelegate: ShareExtensionReactNativeDelegateSuperclass?
   private var isCleanedUp = false
 
   deinit {
@@ -98,7 +107,7 @@ class ShareExtensionViewController: UIViewController {
       
       reactNativeFactoryDelegate = ReactNativeDelegate()
       reactNativeFactoryDelegate!.dependencyProvider = RCTAppDependencyProvider()
-      reactNativeFactory = RCTReactNativeFactory(delegate: reactNativeFactoryDelegate!)
+      reactNativeFactory = ShareExtensionReactNativeFactory(delegate: reactNativeFactoryDelegate!)
       
       var initialProps = sharedData ?? [:]
       

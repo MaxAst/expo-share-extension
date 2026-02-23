@@ -260,7 +260,7 @@ Exclude unneeded expo modules to reduce the share extension's bundle size by add
 ],
 ```
 
-**Note**: The share extension does not support `expo-updates` as it causes the share extension to crash. Since version `1.5.0`, `expo-updates` is excluded from the share extension's bundle by default. If you're using an older version, you must exclude it by adding it to the `excludedPackages` option in your `app.json`/`app.config.(j|t)s`. See the [Exlude Expo Modules](#exlude-expo-modules) section for more information.
+**Note**: The share extension should not include app-level runtime/dev modules such as `expo-updates`, `expo-dev-client`, `expo-dev-launcher`, and `expo-dev-menu` in its target. These are excluded by default. If you're using an older version, you should exclude them manually via `excludedPackages` in your `app.json`/`app.config.(j|t)s`.
 
 ### React Native Firebase
 
