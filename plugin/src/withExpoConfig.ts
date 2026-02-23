@@ -1,7 +1,6 @@
 import { ConfigPlugin } from "@expo/config-plugins";
 
 import {
-  getAppBundleIdentifier,
   getAppGroup,
   getShareExtensionBundleIdentifier,
   getShareExtensionName,
@@ -21,7 +20,6 @@ export const withExpoConfig: ConfigPlugin = (config) => {
 
   const extensionName = getShareExtensionName(config);
   const extensionBundleIdentifier = getShareExtensionBundleIdentifier(config);
-  const appBundleIdentifier = getAppBundleIdentifier(config);
 
   const iosExtensions: iOSExtensionConfig[] =
     config.extra?.eas?.build?.experimental?.ios?.appExtensions;
@@ -51,7 +49,7 @@ export const withExpoConfig: ConfigPlugin = (config) => {
                   entitlements: {
                     ...shareExtensionConfig?.entitlements,
                     "com.apple.security.application-groups": [
-                      getAppGroup(config.ios?.bundleIdentifier),
+                      getAppGroup(config),
                     ],
                     ...(config.ios.usesAppleSignIn && {
                       "com.apple.developer.applesignin": ["Default"],
@@ -66,7 +64,7 @@ export const withExpoConfig: ConfigPlugin = (config) => {
           },
         },
       },
-      appleApplicationGroup: getAppGroup(appBundleIdentifier),
+      appleApplicationGroup: getAppGroup(config),
     },
   };
 };

@@ -362,6 +362,27 @@ class ShareExtensionPreprocessor {
 }
 ```
 
+## App Group
+
+By default the App Group is set to the bundle identifier with the `group.` prefix, e.g. `group.com.example.app`.
+
+You can override this by setting the `AppGroup` or `AppGroupIdentifier` key in your the `infoPlist` configuration of your Expo config, and it will be grabbed from there instead.
+
+Example:
+
+```json
+{
+  "expo": {
+    // ..rest of your app.json config..
+    "ios": {
+      "infoPlist": {
+        "AppGroup": "group.com.example.app", // First priority.
+        "AppGroupIdentifier": "group.com.example.app" // Second priority.
+      }
+    }
+  }
+```
+
 ## Development
 
 If you want to contribute to this project, you can use the example app to test your changes. Run the following commands to get started:
