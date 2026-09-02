@@ -394,6 +394,10 @@ If you want to contribute to this project, you can use the example app to test y
 
 ### Troubleshooting
 
+#### Invariant Violation: "shareExtension" has not been registered
+
+In development the share extension asks Metro for `.expo/.virtual-metro-entry`, which Expo CLI resolves from your `package.json` `"main"`. Older versions only redirected the request to `index.share.js` when `"main"` was `index.js`; with `"main": "expo-router/entry"` (the `create-expo-app` default) the extension silently loaded the host app's bundle instead, which never registers `shareExtension`. Upgrade, or set `"main": "index.js"` and import `expo-router/entry` from `index.js` as shown in step 2 of the Quick Start. Release builds are not affected because the Xcode build phase bundles `index.share.js` directly.
+
 #### Command PhaseScriptExecution failed with a nonzero exit code
 
 If you encounter this error when building your app in XCode and you use yarn as a package manager, it is most likely caused by XCode using the wrong node binary. To fix this, navigate into your project's ios directory and replace the contents in the `.xcode.env.local` file with the contents of the `.xcode.env` file.
